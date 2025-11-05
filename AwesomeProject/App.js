@@ -148,6 +148,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     fontStyle: 'bold',
+    textDecorationLine: 'underline',
   },
   loginButton: {
     backgroundColor: '#bc010c',
