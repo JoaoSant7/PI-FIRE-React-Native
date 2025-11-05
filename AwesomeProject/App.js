@@ -111,9 +111,6 @@ const styles = StyleSheet.create({
     color: '#bc010c', // Laranja que remete ao fogo - pode ajustar a cor
     textAlign: 'center',
     marginBottom: 10,
-    //textShadowColor: 'rgba(255, 107, 53, 0.3)',
-    //textShadowOffset: { width: 0, height: 4 },
-    //textShadowRadius: 10,
   },
   subtitle: {
     fontSize: 16,
