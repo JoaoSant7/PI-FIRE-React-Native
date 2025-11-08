@@ -1,124 +1,89 @@
+// screens/NovaOcorrenciaScreen.js
 import React, { useState } from 'react';
 import {
   View,
-  Text,
-  TextInput,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Alert,
-  Switch,
-  Platform
+  Text,
+  Alert
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
 
-// Função de formatação de horário
-const formatTime = (text) => {
-  // Remove tudo que não é número
-  let cleaned = text.replace(/\D/g, '');
-  
-  // Limita a 6 caracteres (HHMMSS)
-  cleaned = cleaned.substring(0, 6);
-  
-  // Aplica a formatação
-  let formatted = '';
-  for (let i = 0; i < cleaned.length; i++) {
-    if (i === 2 || i === 4) {
-      formatted += ':';
-    }
-    formatted += cleaned[i];
-  }
-  
-  return formatted;
-};
+// Import dos componentes
+import Section from '../components/Section';
+import InputGroup from '../components/InputGroup';
+import TimeInput from '../components/TimeInput';
+import DatePickerInput from '../components/DatePickerInput';
+import PickerInput from '../components/PickerInput';
+import TextInput from '../components/TextInput';
 
-const OcorrenciaScreen = () => {
-  // Estados para informações da vítima
-  const [envolvida, setEnvolvida] = useState(true);
-  const [sexo, setSexo] = useState('Masculino');
-  const [idade, setIdade] = useState('');
-  const [classificacao, setClassificacao] = useState('Vítima ilesa');
-  const [destino, setDestino] = useState('Entregue ao Hospital');
+// Import dos dados dos pickers
+import {
+  GRUPAMENTOS,
+  NATUREZAS,
+  GRUPOS_OCORRENCIA,
+  SUBGRUPOS_OCORRENCIA,
+  SITUACOES,
+  SEXOS,
+  CLASSIFICACOES,
+  DESTINOS,
+  ACIONAMENTOS,
+  TIPOS_LOGRADOURO
+} from '../constants/pickerData';
 
-  // Estados para viatura
-  const [viatura, setViatura] = useState('');
-  const [numeroViatura, setNumeroViatura] = useState('');
-  const [acionamento, setAcionamento] = useState('PESSOALMENTE');
-  const [localAcionamento, setLocalAcionamento] = useState('');
+const NovaOcorrenciaScreen = ({ navigation }) => {
+  // Estado principal do formulário
+  const [formData, setFormData] = useState({
+    // Dados Internos
+    numeroAviso: '',
+    diretoria: 'DIM',
+    grupamento: '',
+    pontoBase: '',
+    
+    // Ocorrência
+    natureza: 'APH',
+    grupoOcorrencia: 'Emergências Clínicas Diversas',
+    subgrupoOcorrencia: 'Queda da Própria Altura',
+    situacao: 'Atendida',
+    horaSaidaQuartel: '',
+    horaLocal: '',
+    horaSaidaLocal: '',
+    motivoNaoAtendida: '',
+    vitimaSamu: false,
+    
+    // Vítima
+    envolvida: true,
+    sexo: 'Masculino',
+    idade: '',
+    classificacao: 'Vítima ilesa',
+    destino: 'Entregue ao Hospital',
+    
+    // Viatura
+    viatura: '',
+    numeroViatura: '',
+    acionamento: 'PESSOALMENTE',
+    localAcionamento: '',
+    
+    // Endereço
+    municipio: '',
+    regiao: '',
+    bairro: '',
+    tipoLogradouro: 'AVENIDA',
+    ais: '',
+    logradouro: '',
+    latitude: '',
+    longitude: '',
+  });
 
-  // Estados para endereço
-  const [municipio, setMunicipio] = useState('');
-  const [regiao, setRegiao] = useState('');
-  const [bairro, setBairro] = useState('');
-  const [tipoLogradouro, setTipoLogradouro] = useState('AVENIDA');
-  const [ais, setAis] = useState('');
-  const [logradouro, setLogradouro] = useState('');
-  const [latitude, setLatitude] = useState('');
-  const [longitude, setLongitude] = useState('');
-
-  // Estados para dados internos
   const [dataHora, setDataHora] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [numeroAviso, setNumeroAviso] = useState('');
-  const [diretoria, setDiretoria] = useState('DIM');
-  const [grupamento, setGrupamento] = useState('');
-  const [pontoBase, setPontoBase] = useState('');
-  const [dataAcionamento, setDataAcionamento] = useState(new Date());
 
-  // Estados para ocorrência
-  const [natureza, setNatureza] = useState('APH');
-  const [grupoOcorrencia, setGrupoOcorrencia] = useState('Emergências Clínicas Diversas');
-  const [subgrupoOcorrencia, setSubgrupoOcorrencia] = useState('Queda da Própria Altura');
-  const [situacao, setSituacao] = useState('Atendida');
-  const [horaSaidaQuartel, setHoraSaidaQuartel] = useState('');
-  const [horaLocal, setHoraLocal] = useState('');
-  const [horaSaidaLocal, setHoraSaidaLocal] = useState('');
-  const [ocorrenciaNaoAtendida, setOcorrenciaNaoAtendida] = useState(false);
-  const [motivoNaoAtendida, setMotivoNaoAtendida] = useState('');
-  const [vitimaSamu, setVitimaSamu] = useState(false);
-  
-
-  const handleSave = () => {
-    Alert.alert('Sucesso', 'Ocorrência salva com sucesso!');
+  // Função para atualizar o formData
+  const updateFormData = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleClear = () => {
-    setEnvolvida(true);
-    setSexo('Masculino');
-    setIdade('');
-    setClassificacao('Vítima ilesa');
-    setDestino('Entregue ao Hospital');
-    setViatura('');
-    setNumeroViatura('');
-    setAcionamento('PESSOALMENTE');
-    setLocalAcionamento('');
-    setMunicipio('');
-    setRegiao('');
-    setBairro('');
-    setTipoLogradouro('AVENIDA');
-    setAis('');
-    setLogradouro('');
-    setLatitude('');
-    setLongitude('');
-    setDataHora(new Date());
-    setNumeroAviso('');
-    setDiretoria('');
-    setGrupamento('');
-    setPontoBase('');
-    setDataAcionamento(new Date());
-    setNatureza('APH');
-    setGrupoOcorrencia('Emergências Clínicas Diversas');
-    setSubgrupoOcorrencia('Queda da Própria Altura');
-    setSituacao('Atendida');
-    setHoraSaidaQuartel('');
-    setHoraLocal('');
-    setHoraSaidaLocal('');
-    setOcorrenciaNaoAtendida(false);
-    setMotivoNaoAtendida('');
-    setVitimaSamu(false);
-  };
-
+  // Função para lidar com mudança de data
   const onDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
     if (selectedDate) {
@@ -126,497 +91,427 @@ const OcorrenciaScreen = () => {
     }
   };
 
+  // Validação do formulário
+  const validateForm = () => {
+    const requiredFields = [
+      'natureza', 'grupoOcorrencia', 'subgrupoOcorrencia', 
+      'situacao', 'grupamento'
+    ];
+
+    const missingFields = requiredFields.filter(field => !formData[field]);
+
+    if (missingFields.length > 0) {
+      Alert.alert(
+        'Campos Obrigatórios',
+        'Preencha todos os campos obrigatórios antes de salvar.',
+        [{ text: 'OK' }]
+      );
+      return false;
+    }
+
+    if (formData.situacao === 'Não atendida' && !formData.motivoNaoAtendida) {
+      Alert.alert(
+        'Motivo Obrigatório',
+        'Informe o motivo da ocorrência não atendida.',
+        [{ text: 'OK' }]
+      );
+      return false;
+    }
+
+    return true;
+  };
+
+  // Função para salvar a ocorrência
+  const handleSave = () => {
+    if (!validateForm()) return;
+
+    const ocorrenciaData = {
+      ...formData,
+      dataHora: dataHora.toISOString(),
+    };
+
+    console.log('Dados da ocorrência:', ocorrenciaData);
+    
+    Alert.alert(
+      'Sucesso',
+      'Ocorrência salva com sucesso!',
+      [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack()
+        }
+      ]
+    );
+  };
+
+  // Função para limpar o formulário
+  const handleClear = () => {
+    Alert.alert(
+      'Limpar Formulário',
+      'Tem certeza que deseja limpar todos os campos?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { 
+          text: 'Limpar', 
+          style: 'destructive',
+          onPress: () => {
+            setFormData({
+              numeroAviso: '',
+              diretoria: 'DIM',
+              grupamento: '',
+              pontoBase: '',
+              natureza: 'APH',
+              grupoOcorrencia: 'Emergências Clínicas Diversas',
+              subgrupoOcorrencia: 'Queda da Própria Altura',
+              situacao: 'Atendida',
+              horaSaidaQuartel: '',
+              horaLocal: '',
+              horaSaidaLocal: '',
+              motivoNaoAtendida: '',
+              vitimaSamu: false,
+              envolvida: true,
+              sexo: 'Masculino',
+              idade: '',
+              classificacao: 'Vítima ilesa',
+              destino: 'Entregue ao Hospital',
+              viatura: '',
+              numeroViatura: '',
+              acionamento: 'PESSOALMENTE',
+              localAcionamento: '',
+              municipio: '',
+              regiao: '',
+              bairro: '',
+              tipoLogradouro: 'AVENIDA',
+              ais: '',
+              logradouro: '',
+              latitude: '',
+              longitude: '',
+            });
+            setDataHora(new Date());
+          }
+        }
+      ]
+    );
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        {/* Dados Internos - PRIMEIRO */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Dados internos</Text>
-          
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Data e hora:</Text>
-            <TouchableOpacity 
-              style={styles.dateInput}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Text style={dataHora ? styles.dateText : styles.placeholderText}>
-                {dataHora ? dataHora.toLocaleDateString('pt-BR') : 'Selecione a data e hora'}
-              </Text>
-            </TouchableOpacity>
-            {showDatePicker && (
-              <DateTimePicker
-                value={dataHora}
-                mode="datetime"
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                onChange={onDateChange}
-              />
-            )}
-          </View>
+        
+        {/* Seção: Dados Internos */}
+        <Section title="Dados Internos">
+          <InputGroup label="Data e Hora *">
+            <DatePickerInput
+              value={dataHora}
+              onDateChange={onDateChange}
+              showPicker={showDatePicker}
+              setShowPicker={setShowDatePicker}
+              placeholder="Selecione a data e hora"
+            />
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>N° do aviso (I-NETOISPATCHER):</Text>
+          <InputGroup label="Número do Aviso (I-NETOISPATCHER)">
             <TextInput
-              style={styles.input}
-              value={numeroAviso}
-              onChangeText={setNumeroAviso}
+              value={formData.numeroAviso}
+              onChangeText={(value) => updateFormData('numeroAviso', value)}
               placeholder="Digite o número do aviso"
-              placeholderTextColor="#999"
             />
-          </View>
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Diretoria:</Text>
-          <TextInput
-          style={styles.input}
-          value={diretoria}
-          onChangeText={setDiretoria}
-          placeholder="Digite a diretoria"
-          placeholderTextColor="#999"
-        />
-  </View>
-
-<View style={styles.inputGroup}>
-  <Text style={styles.label}>Grupamento:</Text>
-  <View style={styles.pickerContainer}>
-    <Picker
-      selectedValue={grupamento}
-      onValueChange={(itemValue) => setGrupamento(itemValue)}
-      style={styles.picker}
-      mode="dropdown"
-      dropdownIconColor="#000"
-    >
-      <Picker.Item label="Selecione o grupamento" value="" />
-      <Picker.Item label="GBAPH" value="GBAPH" />
-      <Picker.Item label="GBMar" value="GBMar" />
-      <Picker.Item label="GBI" value="GBI" />
-      <Picker.Item label="GBS" value="GBS" />
-    </Picker>
-  </View>
-</View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Ponto base:</Text>
+          <InputGroup label="Diretoria">
             <TextInput
-              style={styles.input}
-              value={pontoBase}
-              onChangeText={setPontoBase}
-              placeholder="Digite o ponto base"
-              placeholderTextColor="#999"
+              value={formData.diretoria}
+              onChangeText={(value) => updateFormData('diretoria', value)}
+              placeholder="Digite a diretoria"
             />
-          </View>
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Data do acionamento:</Text>
-            <TouchableOpacity 
-              style={styles.dateInput}
-              onPress={() => {}}
-            >
-              <Text>{dataAcionamento.toLocaleDateString('pt-BR')}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+          <InputGroup label="Grupamento *">
+            <PickerInput
+              selectedValue={formData.grupamento}
+              onValueChange={(value) => updateFormData('grupamento', value)}
+              items={GRUPAMENTOS}
+              placeholder="Selecione o grupamento"
+            />
+          </InputGroup>
 
-        {/* Ocorrência - SEGUNDO */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Ocorrência</Text>
-          
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Natureza da ocorrência:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={natureza}
-                onValueChange={setNatureza}
-                style={styles.picker}
-              >
-                <Picker.Item label="APH" value="APH" />
-                <Picker.Item label="INCÊNDIO" value="Incêndio" />
-                <Picker.Item label="SALVAMENTO" value="Resgate" />
-                <Picker.Item label="PRODUTOS PERIGOSOS" value="PRODUTOS PERIGOSOS" />
-                <Picker.Item label="PREVENÇÃO" value="PREVENÇÃO" />
-              </Picker>
-            </View>
-          </View>
+          <InputGroup label="Ponto Base">
+            <TextInput
+              value={formData.pontoBase}
+              onChangeText={(value) => updateFormData('pontoBase', value)}
+              placeholder="Digite o ponto base"
+            />
+          </InputGroup>
+        </Section>
 
-<View style={styles.inputGroup}>
-  <Text style={styles.label}>Grupo da ocorrência:</Text>
-  <View style={styles.pickerContainer}>
-    <Picker
-      selectedValue={grupoOcorrencia}
-      onValueChange={setGrupoOcorrencia}
-      style={styles.picker}
-    >
-      <Picker.Item label="Acidente de Trânsito Atropelamento" value="Acidente de Trânsito Atropelamento" />
-      <Picker.Item label="Acidente de Trânsito Choque" value="Acidente de Trânsito Choque" />
-      <Picker.Item label="Acidente de Trânsito Colisão Abalroamento" value="Acidente de Trânsito Colisão Abalroamento" />
-      <Picker.Item label="Apoio em Operações" value="Apoio em Operações" />
-      <Picker.Item label="APH Diversos" value="APH Diversos" />
-      <Picker.Item label="Emergência Cardíaca" value="Emergência Cardíaca" />
-      <Picker.Item label="Emergência Respiratória" value="Emergência Respiratória" />
-      <Picker.Item label="Emergências Clínicas Diversas" value="Emergências Clínicas Diversas" />
-      <Picker.Item label="Evento com Animal" value="Evento com Animal" />
-      <Picker.Item label="Evento com Árvores" value="Evento com Árvores" />
-      <Picker.Item label="Evento com Cadáver" value="Evento com Cadáver" />
-      <Picker.Item label="Evento com Meio de Transporte" value="Evento com Meio de Transporte" />
-      <Picker.Item label="Evento com Pessoa" value="Evento com Pessoa" />
-      <Picker.Item label="Evento Esportivo" value="Evento Esportivo" />
-      <Picker.Item label="Evento Festivo" value="Evento Festivo" />
-      <Picker.Item label="Explosão" value="Explosão" />
-      <Picker.Item label="Incêndio em Edificação Concentração de Público" value="Incêndio em Edificação Concentração de Público" />
-      <Picker.Item label="Incêndio em Edificação Escolar" value="Incêndio em Edificação Escolar" />
-      <Picker.Item label="Incêndio em Edificação Industrial" value="Incêndio em Edificação Industrial" />
-      <Picker.Item label="Incêndio em Edificação Outros" value="Incêndio em Edificação Outros" />
-      <Picker.Item label="Incêndio em Edificação Residencial" value="Incêndio em Edificação Residencial" />
-      <Picker.Item label="Incêndio em Meio de Transporte Terrestre" value="Incêndio em Meio de Transporte Terrestre" />
-      <Picker.Item label="Incêndio em Vegetação" value="Incêndio em Vegetação" />
-      <Picker.Item label="Incêndio em Via Pública" value="Incêndio em Via Pública" />
-      <Picker.Item label="Incêndios Diversos" value="Incêndios Diversos" />
-      <Picker.Item label="Prevenção Aquática" value="Prevenção Aquática" />
-      <Picker.Item label="Prevenção Diversos" value="Prevenção Diversos" />
-      <Picker.Item label="Queda" value="Queda" />
-      <Picker.Item label="Vazamento" value="Vazamento" />
-      <Picker.Item label="Vítima de Agressão" value="Vítima de Agressão" />
-    </Picker>
-  </View>
-</View>
+        {/* Seção: Ocorrência */}
+        <Section title="Ocorrência">
+          <InputGroup label="Natureza da Ocorrência *">
+            <PickerInput
+              selectedValue={formData.natureza}
+              onValueChange={(value) => updateFormData('natureza', value)}
+              items={NATUREZAS}
+            />
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Subgrupo da ocorrência:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={subgrupoOcorrencia}
-                onValueChange={setSubgrupoOcorrencia}
-                style={styles.picker}
-              >
-                <Picker.Item label="Queda da Própria Altura" value="Queda da Própria Altura" />
-                <Picker.Item label="Queda de Altura" value="Queda de Altura" />
-                <Picker.Item label="Desmaio" value="Desmaio" />
-                <Picker.Item label="Outros" value="Outros" />
-              </Picker>
-            </View>
-          </View>
+          <InputGroup label="Grupo da Ocorrência *">
+            <PickerInput
+              selectedValue={formData.grupoOcorrencia}
+              onValueChange={(value) => updateFormData('grupoOcorrencia', value)}
+              items={GRUPOS_OCORRENCIA}
+            />
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Situação da ocorrência:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={situacao}
-                onValueChange={setSituacao}
-                style={styles.picker}
-              >
-                <Picker.Item label="Atendida" value="Atendida" />
-                <Picker.Item label="Não atendida" value="Não atendida" />
-                <Picker.Item label="Cancelada" value="Cancelada" />
-              </Picker>
-            </View>
-          </View>
+          <InputGroup label="Subgrupo da Ocorrência *">
+            <PickerInput
+              selectedValue={formData.subgrupoOcorrencia}
+              onValueChange={(value) => updateFormData('subgrupoOcorrencia', value)}
+              items={SUBGRUPOS_OCORRENCIA}
+            />
+          </InputGroup>
 
+          <InputGroup label="Situação da Ocorrência *">
+            <PickerInput
+              selectedValue={formData.situacao}
+              onValueChange={(value) => updateFormData('situacao', value)}
+              items={SITUACOES}
+            />
+          </InputGroup>
+
+          {/* Horários */}
           <View style={styles.row}>
-            <View style={[styles.inputGroup, styles.flex1]}>
-              <Text style={styles.label}>Horário de saída do quartel:</Text>
-              <TextInput
-                style={styles.input}
-                value={horaSaidaQuartel}
-                onChangeText={(text) => setHoraSaidaQuartel(formatTime(text))}
+            <InputGroup label="Saída do Quartel" style={styles.flex1}>
+              <TimeInput
+                value={formData.horaSaidaQuartel}
+                onChangeText={(value) => updateFormData('horaSaidaQuartel', value)}
                 placeholder="HH:MM:SS"
-                placeholderTextColor="#999"
-                keyboardType="numeric"
-                maxLength={8}
               />
-            </View>
-            <View style={[styles.inputGroup, styles.flex1, styles.marginLeft]}>
-              <Text style={styles.label}>Horário no local da ocorrência:</Text>
-              <TextInput
-                style={styles.input}
-                value={horaLocal}
-                onChangeText={(text) => setHoraLocal(formatTime(text))}
+            </InputGroup>
+            
+            <InputGroup label="Chegada no Local" style={[styles.flex1, styles.marginLeft]}>
+              <TimeInput
+                value={formData.horaLocal}
+                onChangeText={(value) => updateFormData('horaLocal', value)}
                 placeholder="HH:MM:SS"
-                placeholderTextColor="#999"
-                keyboardType="numeric"
-                maxLength={8}
               />
-            </View>
+            </InputGroup>
           </View>
 
-          {situacao === 'Não atendida' && (
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Ocorrência não atendida - Motivo:</Text>
+          {/* Motivo para ocorrência não atendida */}
+          {formData.situacao === 'Não atendida' && (
+            <InputGroup label="Motivo da Não Atendimento *">
               <TextInput
-                style={[styles.input, styles.textArea]}
-                value={motivoNaoAtendida}
-                onChangeText={setMotivoNaoAtendida}
+                value={formData.motivoNaoAtendida}
+                onChangeText={(value) => updateFormData('motivoNaoAtendida', value)}
+                placeholder="Digite o motivo"
                 multiline
                 numberOfLines={3}
-                placeholder="Digite o motivo da ocorrência não atendida"
-                placeholderTextColor="#999"
+                style={styles.textArea}
               />
-            </View>
+            </InputGroup>
           )}
 
-          <View style={styles.switchContainer}>
-            <Text style={styles.label}>Vítima socorrida pelo SAMU:</Text>
-            <Switch
-              value={vitimaSamu}
-              onValueChange={setVitimaSamu}
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Horário de saída do local:</Text>
-            <TextInput
-              style={styles.input}
-              value={horaSaidaLocal}
-              onChangeText={(text) => setHoraSaidaLocal(formatTime(text))}
+          <InputGroup label="Saída do Local">
+            <TimeInput
+              value={formData.horaSaidaLocal}
+              onChangeText={(value) => updateFormData('horaSaidaLocal', value)}
               placeholder="HH:MM:SS"
-              placeholderTextColor="#999"
-              keyboardType="numeric"
-              maxLength={8}
             />
-          </View>
-        </View>
+          </InputGroup>
 
-        {/* Informações da Vítima - TERCEIRO */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Informações da vítima</Text>
-          
           <View style={styles.switchContainer}>
-            <Text style={styles.label}>Vítima envolvida:</Text>
-            <Switch
-              value={envolvida}
-              onValueChange={setEnvolvida}
+            <Text style={styles.label}>Vítima socorrida pelo SAMU</Text>
+            <TouchableOpacity
+              style={[
+                styles.switch,
+                formData.vitimaSamu ? styles.switchOn : styles.switchOff
+              ]}
+              onPress={() => updateFormData('vitimaSamu', !formData.vitimaSamu)}
+            >
+              <Text style={styles.switchText}>
+                {formData.vitimaSamu ? 'SIM' : 'NÃO'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Section>
+
+        {/* Seção: Informações da Vítima */}
+        <Section title="Informações da Vítima">
+          <View style={styles.switchContainer}>
+            <Text style={styles.label}>Vítima Envolvida</Text>
+            <TouchableOpacity
+              style={[
+                styles.switch,
+                formData.envolvida ? styles.switchOn : styles.switchOff
+              ]}
+              onPress={() => updateFormData('envolvida', !formData.envolvida)}
+            >
+              <Text style={styles.switchText}>
+                {formData.envolvida ? 'SIM' : 'NÃO'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <InputGroup label="Sexo da Vítima">
+            <PickerInput
+              selectedValue={formData.sexo}
+              onValueChange={(value) => updateFormData('sexo', value)}
+              items={SEXOS}
             />
-            <Text style={styles.switchLabel}>{envolvida ? 'Sim' : 'Não'}</Text>
-          </View>
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Sexo da vítima:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={sexo}
-                onValueChange={setSexo}
-                style={styles.picker}
-              >
-                <Picker.Item label="Masculino" value="Masculino" />
-                <Picker.Item label="Feminino" value="Feminino" />
-                <Picker.Item label="Outro" value="Outro" />
-              </Picker>
-            </View>
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Idade da vítima:</Text>
+          <InputGroup label="Idade da Vítima">
             <TextInput
-              style={styles.input}
-              value={idade}
-              onChangeText={setIdade}
+              value={formData.idade}
+              onChangeText={(value) => updateFormData('idade', value)}
               placeholder="Digite a idade"
-              placeholderTextColor="#999"
               keyboardType="numeric"
             />
-          </View>
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Classificação da vítima:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={classificacao}
-                onValueChange={setClassificacao}
-                style={styles.picker}
-              >
-                <Picker.Item label="Vítima ilesa" value="Vítima ilesa" />
-                <Picker.Item label="Ferida leve" value="Ferida leve" />
-                <Picker.Item label="Ferida grave" value="Ferida grave" />
-                <Picker.Item label="Óbito" value="Óbito" />
-              </Picker>
-            </View>
-          </View>
+          <InputGroup label="Classificação da Vítima">
+            <PickerInput
+              selectedValue={formData.classificacao}
+              onValueChange={(value) => updateFormData('classificacao', value)}
+              items={CLASSIFICACOES}
+            />
+          </InputGroup>
 
-<View style={styles.inputGroup}>
-  <Text style={styles.label}>Destino da vítima:</Text>
-  <View style={styles.pickerContainer}>
-    <Picker
-      selectedValue={destino}
-      onValueChange={setDestino}
-      style={styles.picker}
-    >
-      <Picker.Item label="Encaminhado ao Suporte Avançado" value="Encaminhado ao Suporte Avançado" />
-      <Picker.Item label="Encaminhado ao Suporte Básico" value="Encaminhado ao Suporte Básico" />
-      <Picker.Item label="Entregue ao Hospital" value="Entregue ao Hospital" />
-      <Picker.Item label="Óbito" value="Óbito" />
-      <Picker.Item label="Outro" value="Outro" />
-      <Picker.Item label="Permaneceu no Local após atendimento" value="Permaneceu no Local após atendimento" />
-    </Picker>
-  </View>
-</View>
-        </View>
+          <InputGroup label="Destino da Vítima">
+            <PickerInput
+              selectedValue={formData.destino}
+              onValueChange={(value) => updateFormData('destino', value)}
+              items={DESTINOS}
+            />
+          </InputGroup>
+        </Section>
 
-        {/* Viatura e Forma de acionamento - QUARTO */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Viatura e Forma de acionamento</Text>
-          
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Viatura empregada:</Text>
+        {/* Seção: Viatura e Acionamento */}
+        <Section title="Viatura e Acionamento">
+          <InputGroup label="Viatura Empregada">
             <TextInput
-              style={styles.input}
-              value={viatura}
-              onChangeText={setViatura}
+              value={formData.viatura}
+              onChangeText={(value) => updateFormData('viatura', value)}
               placeholder="Digite a viatura empregada"
-              placeholderTextColor="#999"
             />
-          </View>
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Número da viatura:</Text>
+          <InputGroup label="Número da Viatura">
             <TextInput
-              style={styles.input}
-              value={numeroViatura}
-              onChangeText={setNumeroViatura}
+              value={formData.numeroViatura}
+              onChangeText={(value) => updateFormData('numeroViatura', value)}
               placeholder="Digite o número da viatura"
-              placeholderTextColor="#999"
             />
-          </View>
+          </InputGroup>
 
-<View style={styles.inputGroup}>
-  <Text style={styles.label}>Forma de acionamento:</Text>
-  <View style={styles.pickerContainer}>
-    <Picker
-      selectedValue={acionamento}
-      onValueChange={setAcionamento}
-      style={styles.picker}
-    >
-      <Picker.Item label="CIODS" value="CIODS" />
-      <Picker.Item label="CO DO GRUPAMENTO" value="CO DO GRUPAMENTO" />
-      <Picker.Item label="OUTRO" value="OUTRO" />
-      <Picker.Item label="PESSOALMENTE" value="PESSOALMENTE" />
-    </Picker>
-  </View>
-</View>
+          <InputGroup label="Forma de Acionamento">
+            <PickerInput
+              selectedValue={formData.acionamento}
+              onValueChange={(value) => updateFormData('acionamento', value)}
+              items={ACIONAMENTOS}
+            />
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Local do acionamento:</Text>
+          <InputGroup label="Local do Acionamento">
             <TextInput
-              style={styles.input}
-              value={localAcionamento}
-              onChangeText={setLocalAcionamento}
+              value={formData.localAcionamento}
+              onChangeText={(value) => updateFormData('localAcionamento', value)}
               placeholder="Digite o local do acionamento"
-              placeholderTextColor="#999"
             />
-          </View>
-        </View>
+          </InputGroup>
+        </Section>
 
-        {/* Endereço - QUINTO */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Endereço</Text>
-          
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Município:</Text>
+        {/* Seção: Endereço */}
+        <Section title="Endereço da Ocorrência">
+          <InputGroup label="Município">
             <TextInput
-              style={styles.input}
-              value={municipio}
-              onChangeText={setMunicipio}
+              value={formData.municipio}
+              onChangeText={(value) => updateFormData('municipio', value)}
               placeholder="Digite o município"
-              placeholderTextColor="#999"
             />
-          </View>
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Região:</Text>
+          <InputGroup label="Região">
             <TextInput
-              style={styles.input}
-              value={regiao}
-              onChangeText={setRegiao}
+              value={formData.regiao}
+              onChangeText={(value) => updateFormData('regiao', value)}
               placeholder="Digite a região"
-              placeholderTextColor="#999"
             />
-          </View>
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Bairro:</Text>
+          <InputGroup label="Bairro">
             <TextInput
-              style={styles.input}
-              value={bairro}
-              onChangeText={setBairro}
+              value={formData.bairro}
+              onChangeText={(value) => updateFormData('bairro', value)}
               placeholder="Digite o bairro"
-              placeholderTextColor="#999"
             />
-          </View>
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Tipo de logradouro:</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={tipoLogradouro}
-                onValueChange={setTipoLogradouro}
-                style={styles.picker}
-              >
-                <Picker.Item label="AVENIDA" value="AVENIDA" />
-                <Picker.Item label="RUA" value="RUA" />
-                <Picker.Item label="TRAVESSA" value="TRAVESSA" />
-                <Picker.Item label="ALAMEDA" value="ALAMEDA" />
-                <Picker.Item label="ESTRADA" value="ESTRADA" />
-              </Picker>
-            </View>
-          </View>
+          <InputGroup label="Tipo de Logradouro">
+            <PickerInput
+              selectedValue={formData.tipoLogradouro}
+              onValueChange={(value) => updateFormData('tipoLogradouro', value)}
+              items={TIPOS_LOGRADOURO}
+            />
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>AIS:</Text>
+          <InputGroup label="AIS">
             <TextInput
-              style={styles.input}
-              value={ais}
-              onChangeText={setAis}
+              value={formData.ais}
+              onChangeText={(value) => updateFormData('ais', value)}
               placeholder="Digite o AIS"
-              placeholderTextColor="#999"
               keyboardType="numeric"
             />
-          </View>
+          </InputGroup>
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Logradouro:</Text>
+          <InputGroup label="Logradouro">
             <TextInput
-              style={styles.input}
-              value={logradouro}
-              onChangeText={setLogradouro}
+              value={formData.logradouro}
+              onChangeText={(value) => updateFormData('logradouro', value)}
               placeholder="Digite o logradouro"
-              placeholderTextColor="#999"
             />
-          </View>
+          </InputGroup>
 
           <View style={styles.row}>
-            <View style={[styles.inputGroup, styles.flex1]}>
-              <Text style={styles.label}>Latitude:</Text>
+            <InputGroup label="Latitude" style={styles.flex1}>
               <TextInput
-                style={styles.input}
-                value={latitude}
-                onChangeText={setLatitude}
+                value={formData.latitude}
+                onChangeText={(value) => updateFormData('latitude', value)}
                 placeholder="Digite a latitude"
-                placeholderTextColor="#999"
                 keyboardType="numbers-and-punctuation"
               />
-            </View>
-            <View style={[styles.inputGroup, styles.flex1, styles.marginLeft]}>
-              <Text style={styles.label}>Longitude:</Text>
+            </InputGroup>
+            
+            <InputGroup label="Longitude" style={[styles.flex1, styles.marginLeft]}>
               <TextInput
-                style={styles.input}
-                value={longitude}
-                onChangeText={setLongitude}
+                value={formData.longitude}
+                onChangeText={(value) => updateFormData('longitude', value)}
                 placeholder="Digite a longitude"
-                placeholderTextColor="#999"
                 keyboardType="numbers-and-punctuation"
               />
-            </View>
+            </InputGroup>
           </View>
-        </View>
+        </Section>
 
-        {/* Botões de ação */}
+        {/* Botões de Ação */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={[styles.button, styles.clearButton]} onPress={handleClear}>
+          <TouchableOpacity 
+            style={[styles.button, styles.clearButton]} 
+            onPress={handleClear}
+          >
             <Text style={styles.buttonText}>Limpar</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSave}>
-            <Text style={styles.buttonText}>Salvar documento</Text>
+          
+          <TouchableOpacity 
+            style={[styles.button, styles.saveButton]} 
+            onPress={handleSave}
+          >
+            <Text style={styles.buttonText}>Salvar Ocorrência</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.confirmButton]}>
-            <Text style={styles.buttonText}>Confirmar</Text>
-          </TouchableOpacity>
+        </View>
+
+        <View style={styles.requiredNote}>
+          <Text style={styles.requiredText}>* Campos obrigatórios</Text>
         </View>
       </ScrollView>
     </View>
@@ -632,63 +527,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  section: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#333',
-  },
-  inputGroup: {
-    marginBottom: 12,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 4,
-    color: '#555',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 4,
-    padding: 10,
-    fontSize: 14,
-    backgroundColor: 'white',
-  },
-  textArea: {
-    height: 80,
-    textAlignVertical: 'top',
-  },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 4,
-    overflow: 'hidden',
-    backgroundColor: 'white',
-  },
-  picker: {
-    height: 50,
-  },
-  switchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  switchLabel: {
-    marginLeft: 8,
-    fontSize: 14,
-  },
   row: {
     flexDirection: 'row',
   },
@@ -698,45 +536,74 @@ const styles = StyleSheet.create({
   marginLeft: {
     marginLeft: 8,
   },
-  dateInput: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 4,
-    padding: 10,
-    backgroundColor: 'white',
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+    paddingVertical: 8,
   },
-  dateText: {
-    color: '#000',
+  label: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#555',
+    flex: 1,
   },
-  placeholderText: {
-    color: '#999',
+  switch: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    minWidth: 80,
+    alignItems: 'center',
+  },
+  switchOn: {
+    backgroundColor: '#4ECDC4',
+  },
+  switchOff: {
+    backgroundColor: '#CCCCCC',
+  },
+  switchText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  textArea: {
+    height: 80,
+    textAlignVertical: 'top',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 16,
-    marginBottom: 32,
+    marginTop: 20,
+    marginBottom: 10,
   },
   button: {
     flex: 1,
-    padding: 12,
-    borderRadius: 4,
+    padding: 15,
+    borderRadius: 8,
     alignItems: 'center',
-    marginHorizontal: 4,
+    marginHorizontal: 6,
   },
   clearButton: {
-    backgroundColor: '#ff6b6b',
+    backgroundColor: '#6c757d',
   },
   saveButton: {
-    backgroundColor: '#4ecdc4',
-  },
-  confirmButton: {
-    backgroundColor: '#1a936f',
+    backgroundColor: '#bc010c',
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 16,
+  },
+  requiredNote: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  requiredText: {
+    color: '#666',
+    fontSize: 12,
+    fontStyle: 'italic',
   },
 });
 
-export default OcorrenciaScreen;
+export default NovaOcorrenciaScreen;

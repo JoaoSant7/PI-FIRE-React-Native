@@ -2,81 +2,107 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { StatusBar } from 'react-native';
+
+// Import de Screens
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import UsuarioScreen from './screens/UsuarioScreen';
 import ConfiguracoesScreen from './screens/ConfiguracoesScreen';
 import DashboardScreen from './screens/DashboardScreen';
-import ListaOcorrenciasScreen from './screens/ListarOcorrenciasScreen'; // Corrigi o nome do arquivo
+import ListarOcorrenciasScreen from './screens/ListarOcorrenciasScreen';
 import NovaOcorrenciaScreen from './screens/NovaOcorrenciaScreen';
+
+// Configurações do tema
+const THEME_COLORS = {
+  primary: '#bc010c',
+  background: '#f5f5f5',
+  textLight: '#ffffff'
+};
+
+const headerOptions = {
+  headerStyle: {
+    backgroundColor: THEME_COLORS.primary,
+  },
+  headerTintColor: THEME_COLORS.textLight,
+  headerTitleStyle: {
+    fontWeight: 'bold',
+  },
+};
 
 const Stack = createStackNavigator();
 
+// Stack de Autenticação
+const AuthStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen 
+      name="Login" 
+      component={LoginScreen}
+      options={{ headerShown: false }}
+    />
+  </Stack.Navigator>
+);
+
+// Stack Principal da Aplicação
+const MainStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen 
+      name="Home" 
+      component={HomeScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen 
+      name="Usuario" 
+      component={UsuarioScreen}
+      options={{ 
+        ...headerOptions,
+        title: 'Perfil do Usuário'
+      }}
+    />
+    <Stack.Screen 
+      name="Configuracoes" 
+      component={ConfiguracoesScreen}
+      options={{ 
+        ...headerOptions,
+        title: 'Configurações'
+      }}
+    />
+    <Stack.Screen 
+      name="Dashboard" 
+      component={DashboardScreen}
+      options={{ 
+        ...headerOptions,
+        title: 'Dashboard'
+      }}
+    />
+    <Stack.Screen 
+      name="ListarOcorrencias" 
+      component={ListarOcorrenciasScreen}
+      options={{ 
+        ...headerOptions,
+        title: 'Lista de Ocorrências'
+      }}
+    />
+    <Stack.Screen 
+      name="NovaOcorrencia" 
+      component={NovaOcorrenciaScreen}
+      options={{ 
+        ...headerOptions,
+        title: 'Nova Ocorrência'
+      }}
+    />
+  </Stack.Navigator>
+);
+
+// Componente Principal
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen 
-          name="Login" 
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen 
-          name="Home" 
-          component={HomeScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen 
-          name="Usuario" 
-          component={UsuarioScreen}
-          options={{ 
-            headerShown: true, 
-            title: 'Perfil do Usuário',
-            headerStyle: { backgroundColor: '#bc010c' },
-            headerTintColor: '#fff',
-          }}
-        />
-        <Stack.Screen 
-          name="Configuracoes" 
-          component={ConfiguracoesScreen}
-          options={{ 
-            headerShown: true, 
-            title: 'Configurações',
-            headerStyle: { backgroundColor: '#bc010c' },
-            headerTintColor: '#fff',
-          }}
-        />
-        <Stack.Screen 
-          name="Dashboard" 
-          component={DashboardScreen}
-          options={{ 
-            headerShown: true, 
-            title: 'Dashboard',
-            headerStyle: { backgroundColor: '#bc010c' },
-            headerTintColor: '#fff',
-          }}
-        />
-        <Stack.Screen 
-          name="ListaOcorrencias" 
-          component={ListaOcorrenciasScreen}
-          options={{ 
-            headerShown: true, 
-            title: 'Lista de Ocorrências',
-            headerStyle: { backgroundColor: '#bc010c' },
-            headerTintColor: '#fff',
-          }}
-        />
-        <Stack.Screen 
-          name="NovaOcorrencia" 
-          component={NovaOcorrenciaScreen}
-          options={{ 
-            headerShown: true, 
-            title: 'Nova Ocorrência',
-            headerStyle: { backgroundColor: '#bc010c' },
-            headerTintColor: '#fff',
-          }}
-        />
-      </Stack.Navigator>
+      <StatusBar 
+        backgroundColor={THEME_COLORS.primary} 
+        barStyle="light-content" 
+      />
+      <MainStack />
     </NavigationContainer>
   );
 }
