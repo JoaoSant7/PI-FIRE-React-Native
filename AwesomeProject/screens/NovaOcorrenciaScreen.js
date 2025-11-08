@@ -13,6 +13,26 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+// Função de formatação de horário
+const formatTime = (text) => {
+  // Remove tudo que não é número
+  let cleaned = text.replace(/\D/g, '');
+  
+  // Limita a 6 caracteres (HHMMSS)
+  cleaned = cleaned.substring(0, 6);
+  
+  // Aplica a formatação
+  let formatted = '';
+  for (let i = 0; i < cleaned.length; i++) {
+    if (i === 2 || i === 4) {
+      formatted += ':';
+    }
+    formatted += cleaned[i];
+  }
+  
+  return formatted;
+};
+
 const OcorrenciaScreen = () => {
   // Estados para informações da vítima
   const [envolvida, setEnvolvida] = useState(true);
@@ -57,6 +77,7 @@ const OcorrenciaScreen = () => {
   const [ocorrenciaNaoAtendida, setOcorrenciaNaoAtendida] = useState(false);
   const [motivoNaoAtendida, setMotivoNaoAtendida] = useState('');
   const [vitimaSamu, setVitimaSamu] = useState(false);
+  
 
   const handleSave = () => {
     Alert.alert('Sucesso', 'Ocorrência salva com sucesso!');
@@ -148,7 +169,7 @@ const OcorrenciaScreen = () => {
           <TextInput
           style={styles.input}
           value={diretoria}
-          onChangeText={setDiretoria} // Isso permite que o usuário altere o valor
+          onChangeText={setDiretoria}
           placeholder="Digite a diretoria"
           placeholderTextColor="#999"
         />
@@ -169,7 +190,6 @@ const OcorrenciaScreen = () => {
       <Picker.Item label="GBMar" value="GBMar" />
       <Picker.Item label="GBI" value="GBI" />
       <Picker.Item label="GBS" value="GBS" />
-      {/* Adicione mais itens conforme necessário */}
     </Picker>
   </View>
 </View>
@@ -259,7 +279,6 @@ const OcorrenciaScreen = () => {
   </View>
 </View>
 
-
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Subgrupo da ocorrência:</Text>
             <View style={styles.pickerContainer}>
@@ -297,9 +316,11 @@ const OcorrenciaScreen = () => {
               <TextInput
                 style={styles.input}
                 value={horaSaidaQuartel}
-                onChangeText={setHoraSaidaQuartel}
+                onChangeText={(text) => setHoraSaidaQuartel(formatTime(text))}
                 placeholder="HH:MM:SS"
                 placeholderTextColor="#999"
+                keyboardType="numeric"
+                maxLength={8}
               />
             </View>
             <View style={[styles.inputGroup, styles.flex1, styles.marginLeft]}>
@@ -307,9 +328,11 @@ const OcorrenciaScreen = () => {
               <TextInput
                 style={styles.input}
                 value={horaLocal}
-                onChangeText={setHoraLocal}
+                onChangeText={(text) => setHoraLocal(formatTime(text))}
                 placeholder="HH:MM:SS"
                 placeholderTextColor="#999"
+                keyboardType="numeric"
+                maxLength={8}
               />
             </View>
           </View>
@@ -342,9 +365,11 @@ const OcorrenciaScreen = () => {
             <TextInput
               style={styles.input}
               value={horaSaidaLocal}
-              onChangeText={setHoraSaidaLocal}
+              onChangeText={(text) => setHoraSaidaLocal(formatTime(text))}
               placeholder="HH:MM:SS"
               placeholderTextColor="#999"
+              keyboardType="numeric"
+              maxLength={8}
             />
           </View>
         </View>
@@ -422,7 +447,7 @@ const OcorrenciaScreen = () => {
     </Picker>
   </View>
 </View>
-
+        </View>
 
         {/* Viatura e Forma de acionamento - QUARTO */}
         <View style={styles.section}>
@@ -465,7 +490,6 @@ const OcorrenciaScreen = () => {
     </Picker>
   </View>
 </View>
-
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Local do acionamento:</Text>
