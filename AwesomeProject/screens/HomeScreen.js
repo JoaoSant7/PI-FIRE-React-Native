@@ -7,7 +7,6 @@ export default function HomeScreen({ navigation }) {
   // Funções para os botões da barra inferior
   const handleConfiguracoes = () => {
     navigation.navigate('Configuracoes');
-    alert('Abrindo Configurações');
   };
 
   const handleInicio = () => {
@@ -17,23 +16,19 @@ export default function HomeScreen({ navigation }) {
 
   const handleUsuario = () => {
     navigation.navigate('Usuario',{ email: 'email_do_usuario@exemplo.com' });
-    alert('Abrindo Perfil do Usuário');
   };
 
   // Funções para os botões principais (se quiser adicionar depois)
   const handleDashboard = () => {
     navigation.navigate('Dashboard');
-    alert('Abrindo Dashboard');
   };
 
   const handleListarOcorrencias = () => {
     navigation.navigate('ListaOcorrencias');
-    alert('Abrindo Lista de Ocorrências');
   };
 
   const handleRegistrarOcorrencia = () => {
     navigation.navigate('NovaOcorrencia');
-    alert('Abrindo Registro de Nova Ocorrência');
   };
 
   return (
@@ -156,7 +151,7 @@ const styles = StyleSheet.create({
   menuButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#bc010c',
+    color: '#000000ff',
   },
   bottomNav: {
     flexDirection: 'row',
