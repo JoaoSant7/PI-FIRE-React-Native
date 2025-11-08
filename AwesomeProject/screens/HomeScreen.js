@@ -1,8 +1,9 @@
 // screens/HomeScreen.js
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import UserIcon from '../components/UserIcon'; // Importe o seu ícone SVG
+import UserIcon from '../components/UserIcon';
+import HomeIcon from '../components/HomeIcon';
+import SettingsIcon from '../components/SettingsIcon';
 
 export default function HomeScreen({ navigation }) {
   // Funções para os botões da barra inferior
@@ -68,13 +69,15 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      {/* Barra Inferior */}
+      {/* Barra Inferior - Atualizada com ícones consistentes */}
       <View style={styles.bottomNav}>
         <TouchableOpacity 
           style={styles.navItem} 
           onPress={handleConfiguracoes}
         >
-          <Icon name="settings" size={24} color="#f8f8f8" />
+          <View style={styles.iconWrapper}>
+            <SettingsIcon width={26} height={26} color="#f8f8f8" />
+          </View>
           <Text style={styles.navText}>Configurações</Text>
         </TouchableOpacity>
         
@@ -82,7 +85,9 @@ export default function HomeScreen({ navigation }) {
           style={styles.navItem} 
           onPress={handleInicio}
         >
-          <Icon name="home" size={24} color="#f8f8f8" />
+          <View style={styles.iconWrapper}>
+            <HomeIcon size={26} color="#f8f8f8" />
+          </View>
           <Text style={styles.navText}>Início</Text>
         </TouchableOpacity>
         
@@ -90,8 +95,9 @@ export default function HomeScreen({ navigation }) {
           style={styles.navItem} 
           onPress={handleUsuario}
         >
-          {/* Substituindo o ícone MaterialIcons pelo seu SVG */}
-          <UserIcon width={24} height={24} color="#f8f8f8" />
+          <View style={styles.iconWrapper}>
+            <UserIcon width={26} height={26} color="#f8f8f8" />
+          </View>
           <Text style={styles.navText}>Usuário</Text>
         </TouchableOpacity>
       </View>
@@ -118,13 +124,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
-  subtitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#fff',
-    textAlign: 'center',
-    marginTop: 5,
-  },
   content: {
     flex: 1,
     paddingHorizontal: 30,
@@ -148,7 +147,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: '100%',
     alignItems: 'center',
-    // Removida a sombra conforme solicitado
   },
   menuButtonText: {
     fontSize: 18,
@@ -174,6 +172,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#f8f8f8',
     fontWeight: '500',
-    marginTop: 5, // Adicionado espaçamento entre ícone e texto
+    marginTop: 5,
+  },
+  iconWrapper: {
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

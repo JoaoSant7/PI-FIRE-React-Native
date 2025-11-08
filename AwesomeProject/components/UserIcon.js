@@ -3,8 +3,8 @@ import Svg, { Path } from 'react-native-svg';
 
 const UserIcon = (props) => (
   <Svg
-    width={props.width || 24}
-    height={props.height || 24}
+    width={props.width || 26}
+    height={props.height || 26}
     viewBox="0 0 16 16"
     fill="none"
     {...props}
