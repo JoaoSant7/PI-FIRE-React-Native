@@ -22,79 +22,77 @@ const OcorrenciaScreen = () => {
   const [destino, setDestino] = useState('Entregue ao Hospital');
 
   // Estados para viatura
-  const [viatura, setViatura] = useState('AR');
-  const [numeroViatura, setNumeroViatura] = useState('973°');
+  const [viatura, setViatura] = useState('');
+  const [numeroViatura, setNumeroViatura] = useState('');
   const [acionamento, setAcionamento] = useState('PESSOALMENTE');
-  const [localAcionamento, setLocalAcionamento] = useState('PUNTO ZERO');
+  const [localAcionamento, setLocalAcionamento] = useState('');
 
   // Estados para endereço
-  const [municipio, setMunicipio] = useState('JABORATÃO DOS GUARARAPES');
-  const [regiao, setRegiao] = useState('RHR');
-  const [bairro, setBairro] = useState('CANDEIAS');
+  const [municipio, setMunicipio] = useState('');
+  const [regiao, setRegiao] = useState('');
+  const [bairro, setBairro] = useState('');
   const [tipoLogradouro, setTipoLogradouro] = useState('AVENIDA');
-  const [ais, setAis] = useState('06');
-  const [logradouro, setLogradouro] = useState('BEIRA-HAR');
-  const [latitude, setLatitude] = useState('-8192659');
-  const [longitude, setLongitude] = useState('-34918544');
+  const [ais, setAis] = useState('');
+  const [logradouro, setLogradouro] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
 
   // Estados para dados internos
-  const [dataHora, setDataHora] = useState(new Date('2025-01-01'));
+  const [dataHora, setDataHora] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [numeroAviso, setNumeroAviso] = useState('202412311566883131');
-  const [diretoria, setDiretoria] = useState('DIM');
-  const [grupamento, setGrupamento] = useState('GRAPH');
-  const [pontoBase, setPontoBase] = useState('CHan - 2° SBNar');
-  const [dataAcionamento, setDataAcionamento] = useState(new Date('2025-01-01'));
+  const [numeroAviso, setNumeroAviso] = useState('');
+  const [diretoria, setDiretoria] = useState('');
+  const [grupamento, setGrupamento] = useState('');
+  const [pontoBase, setPontoBase] = useState('');
+  const [dataAcionamento, setDataAcionamento] = useState(new Date());
 
   // Estados para ocorrência
   const [natureza, setNatureza] = useState('APH');
   const [grupoOcorrencia, setGrupoOcorrencia] = useState('Emergências Clínicas Diversas');
   const [subgrupoOcorrencia, setSubgrupoOcorrencia] = useState('Queda da Própria Altura');
   const [situacao, setSituacao] = useState('Atendida');
-  const [horaSaidaQuartel, setHoraSaidaQuartel] = useState('00:40:32');
-  const [horaLocal, setHoraLocal] = useState('00:53:51');
-  const [horaSaidaLocal, setHoraSaidaLocal] = useState('00:53:51');
+  const [horaSaidaQuartel, setHoraSaidaQuartel] = useState('');
+  const [horaLocal, setHoraLocal] = useState('');
+  const [horaSaidaLocal, setHoraSaidaLocal] = useState('');
   const [ocorrenciaNaoAtendida, setOcorrenciaNaoAtendida] = useState(false);
   const [motivoNaoAtendida, setMotivoNaoAtendida] = useState('');
   const [vitimaSamu, setVitimaSamu] = useState(false);
 
   const handleSave = () => {
-    // Aqui você implementaria a lógica para salvar os dados
     Alert.alert('Sucesso', 'Ocorrência salva com sucesso!');
   };
 
   const handleClear = () => {
-    // Limpar todos os campos
     setEnvolvida(true);
     setSexo('Masculino');
     setIdade('');
     setClassificacao('Vítima ilesa');
     setDestino('Entregue ao Hospital');
-    setViatura('AR');
-    setNumeroViatura('973°');
+    setViatura('');
+    setNumeroViatura('');
     setAcionamento('PESSOALMENTE');
-    setLocalAcionamento('PUNTO ZERO');
-    setMunicipio('JABORATÃO DOS GUARARAPES');
-    setRegiao('RHR');
-    setBairro('CANDEIAS');
+    setLocalAcionamento('');
+    setMunicipio('');
+    setRegiao('');
+    setBairro('');
     setTipoLogradouro('AVENIDA');
-    setAis('06');
-    setLogradouro('BEIRA-HAR');
-    setLatitude('-8192659');
-    setLongitude('-34918544');
-    setDataHora(new Date('2025-01-01'));
-    setNumeroAviso('202412311566883131');
-    setDiretoria('DIM');
-    setGrupamento('GRAPH');
-    setPontoBase('CHan - 2° SBNar');
-    setDataAcionamento(new Date('2025-01-01'));
+    setAis('');
+    setLogradouro('');
+    setLatitude('');
+    setLongitude('');
+    setDataHora(new Date());
+    setNumeroAviso('');
+    setDiretoria('');
+    setGrupamento('');
+    setPontoBase('');
+    setDataAcionamento(new Date());
     setNatureza('APH');
     setGrupoOcorrencia('Emergências Clínicas Diversas');
     setSubgrupoOcorrencia('Queda da Própria Altura');
     setSituacao('Atendida');
-    setHoraSaidaQuartel('00:40:32');
-    setHoraLocal('00:53:51');
-    setHoraSaidaLocal('00:53:51');
+    setHoraSaidaQuartel('');
+    setHoraLocal('');
+    setHoraSaidaLocal('');
     setOcorrenciaNaoAtendida(false);
     setMotivoNaoAtendida('');
     setVitimaSamu(false);
@@ -145,6 +143,7 @@ const OcorrenciaScreen = () => {
               value={idade}
               onChangeText={setIdade}
               placeholder="Digite a idade"
+              placeholderTextColor="#999"
               keyboardType="numeric"
             />
           </View>
@@ -191,6 +190,8 @@ const OcorrenciaScreen = () => {
               style={styles.input}
               value={viatura}
               onChangeText={setViatura}
+              placeholder="Digite a viatura empregada"
+              placeholderTextColor="#999"
             />
           </View>
 
@@ -200,6 +201,8 @@ const OcorrenciaScreen = () => {
               style={styles.input}
               value={numeroViatura}
               onChangeText={setNumeroViatura}
+              placeholder="Digite o número da viatura"
+              placeholderTextColor="#999"
             />
           </View>
 
@@ -225,6 +228,8 @@ const OcorrenciaScreen = () => {
               style={styles.input}
               value={localAcionamento}
               onChangeText={setLocalAcionamento}
+              placeholder="Digite o local do acionamento"
+              placeholderTextColor="#999"
             />
           </View>
         </View>
@@ -239,6 +244,8 @@ const OcorrenciaScreen = () => {
               style={styles.input}
               value={municipio}
               onChangeText={setMunicipio}
+              placeholder="Digite o município"
+              placeholderTextColor="#999"
             />
           </View>
 
@@ -248,6 +255,8 @@ const OcorrenciaScreen = () => {
               style={styles.input}
               value={regiao}
               onChangeText={setRegiao}
+              placeholder="Digite a região"
+              placeholderTextColor="#999"
             />
           </View>
 
@@ -257,6 +266,8 @@ const OcorrenciaScreen = () => {
               style={styles.input}
               value={bairro}
               onChangeText={setBairro}
+              placeholder="Digite o bairro"
+              placeholderTextColor="#999"
             />
           </View>
 
@@ -283,6 +294,8 @@ const OcorrenciaScreen = () => {
               style={styles.input}
               value={ais}
               onChangeText={setAis}
+              placeholder="Digite o AIS"
+              placeholderTextColor="#999"
               keyboardType="numeric"
             />
           </View>
@@ -293,6 +306,8 @@ const OcorrenciaScreen = () => {
               style={styles.input}
               value={logradouro}
               onChangeText={setLogradouro}
+              placeholder="Digite o logradouro"
+              placeholderTextColor="#999"
             />
           </View>
 
@@ -303,6 +318,8 @@ const OcorrenciaScreen = () => {
                 style={styles.input}
                 value={latitude}
                 onChangeText={setLatitude}
+                placeholder="Digite a latitude"
+                placeholderTextColor="#999"
                 keyboardType="numbers-and-punctuation"
               />
             </View>
@@ -312,6 +329,8 @@ const OcorrenciaScreen = () => {
                 style={styles.input}
                 value={longitude}
                 onChangeText={setLongitude}
+                placeholder="Digite a longitude"
+                placeholderTextColor="#999"
                 keyboardType="numbers-and-punctuation"
               />
             </View>
@@ -328,7 +347,9 @@ const OcorrenciaScreen = () => {
               style={styles.dateInput}
               onPress={() => setShowDatePicker(true)}
             >
-              <Text>{dataHora.toLocaleDateString('pt-BR')}</Text>
+              <Text style={dataHora ? styles.dateText : styles.placeholderText}>
+                {dataHora ? dataHora.toLocaleDateString('pt-BR') : 'Selecione a data e hora'}
+              </Text>
             </TouchableOpacity>
             {showDatePicker && (
               <DateTimePicker
@@ -346,6 +367,8 @@ const OcorrenciaScreen = () => {
               style={styles.input}
               value={numeroAviso}
               onChangeText={setNumeroAviso}
+              placeholder="Digite o número do aviso"
+              placeholderTextColor="#999"
             />
           </View>
 
@@ -355,6 +378,8 @@ const OcorrenciaScreen = () => {
               style={styles.input}
               value={diretoria}
               onChangeText={setDiretoria}
+              placeholder="Digite a diretoria"
+              placeholderTextColor="#999"
             />
           </View>
 
@@ -364,6 +389,8 @@ const OcorrenciaScreen = () => {
               style={styles.input}
               value={grupamento}
               onChangeText={setGrupamento}
+              placeholder="Digite o grupamento"
+              placeholderTextColor="#999"
             />
           </View>
 
@@ -373,16 +400,19 @@ const OcorrenciaScreen = () => {
               style={styles.input}
               value={pontoBase}
               onChangeText={setPontoBase}
+              placeholder="Digite o ponto base"
+              placeholderTextColor="#999"
             />
           </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Data do acionamento:</Text>
-            <TextInput
-              style={styles.input}
-              value={dataAcionamento.toLocaleDateString('pt-BR')}
-              editable={false}
-            />
+            <TouchableOpacity 
+              style={styles.dateInput}
+              onPress={() => {}}
+            >
+              <Text>{dataAcionamento.toLocaleDateString('pt-BR')}</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -461,6 +491,7 @@ const OcorrenciaScreen = () => {
                 value={horaSaidaQuartel}
                 onChangeText={setHoraSaidaQuartel}
                 placeholder="HH:MM:SS"
+                placeholderTextColor="#999"
               />
             </View>
             <View style={[styles.inputGroup, styles.flex1, styles.marginLeft]}>
@@ -470,6 +501,7 @@ const OcorrenciaScreen = () => {
                 value={horaLocal}
                 onChangeText={setHoraLocal}
                 placeholder="HH:MM:SS"
+                placeholderTextColor="#999"
               />
             </View>
           </View>
@@ -483,7 +515,8 @@ const OcorrenciaScreen = () => {
                 onChangeText={setMotivoNaoAtendida}
                 multiline
                 numberOfLines={3}
-                placeholder="Digite o motivo"
+                placeholder="Digite o motivo da ocorrência não atendida"
+                placeholderTextColor="#999"
               />
             </View>
           )}
@@ -503,6 +536,7 @@ const OcorrenciaScreen = () => {
               value={horaSaidaLocal}
               onChangeText={setHoraSaidaLocal}
               placeholder="HH:MM:SS"
+              placeholderTextColor="#999"
             />
           </View>
         </View>
@@ -605,6 +639,12 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 10,
     backgroundColor: 'white',
+  },
+  dateText: {
+    color: '#000',
+  },
+  placeholderText: {
+    color: '#999',
   },
   buttonContainer: {
     flexDirection: 'row',
