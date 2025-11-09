@@ -26,7 +26,7 @@ export default function HomeScreen({ navigation }) {
   };
 
   const handleListarOcorrencias = () => {
-    navigation.navigate('ListaOcorrencias');
+    navigation.navigate('ListarOcorrencias');
   };
 
   const handleRegistrarOcorrencia = () => {

@@ -32,14 +32,18 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 4,
-    padding: 10,
-    fontSize: 14,
+    borderRadius: 8, // Aumentado para melhor aparência
+    paddingHorizontal: 12, // Aumentado
+    paddingVertical: 14, // Aumentado significativamente
+    fontSize: 16, // Aumentado para melhor legibilidade
     backgroundColor: 'white',
+    minHeight: 50, // Altura mínima garantida
+    color: '#333', // Cor do texto mais escura
   },
   multiline: {
-    height: 80,
+    minHeight: 100, // Aumentado
     textAlignVertical: 'top',
+    paddingTop: 12, // Padding superior adicional para áreas de texto
   },
 });
 
