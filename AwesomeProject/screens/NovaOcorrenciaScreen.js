@@ -337,21 +337,21 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 </Section>
 
         {/* Seção: Informações da Vítima */}
-        <Section title="Informações da Vítima">
-          <View style={styles.switchContainer}>
-            <Text style={styles.label}>Vítima Envolvida</Text>
-            <TouchableOpacity
-              style={[
-                styles.switch,
-                formData.envolvida ? styles.switchOn : styles.switchOff
-              ]}
-              onPress={() => updateFormData('envolvida', !formData.envolvida)}
-            >
-              <Text style={styles.switchText}>
-                {formData.envolvida ? 'SIM' : 'NÃO'}
-              </Text>
-            </TouchableOpacity>
-          </View>
+<Section title="Informações da Vítima">
+  <View style={styles.switchContainer}>
+    <Text style={styles.label}>Vítima Envolvida</Text>
+    <View style={styles.switchWrapper}>
+      <Text style={styles.switchLabel}>NÃO</Text>
+      <Switch
+        value={formData.envolvida}
+        onValueChange={(value) => updateFormData('envolvida', value)}
+        trackColor={{ false: '#767577', true: '#40a02b' }}
+        thumbColor={formData.envolvida ? '#f4f3f4' : '#f4f3f4'}
+        ios_backgroundColor="#3e3e3e"
+      />
+      <Text style={styles.switchLabel}>SIM</Text>
+    </View>
+  </View>
 
           <InputGroup label="Sexo da Vítima">
             <PickerInput
