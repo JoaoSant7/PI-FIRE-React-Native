@@ -201,7 +201,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
         
         {/* Seção: Dados Internos */}
         <Section title="Dados Internos">
-          <InputGroup label="Data e Hora *">
+          <InputGroup label="Data e Hora">
             <DatePickerInput
               value={dataHora}
               onDateChange={onDateChange}
@@ -227,7 +227,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <InputGroup label="Grupamento *">
+          <InputGroup label="Grupamento">
             <PickerInput
               selectedValue={formData.grupamento}
               onValueChange={(value) => updateFormData('grupamento', value)}
@@ -247,7 +247,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
         {/* Seção: Ocorrência */}
         <Section title="Ocorrência">
-          <InputGroup label="Natureza da Ocorrência *">
+          <InputGroup label="Natureza da Ocorrência">
             <PickerInput
               selectedValue={formData.natureza}
               onValueChange={(value) => updateFormData('natureza', value)}
@@ -327,8 +327,8 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     <Switch
       value={formData.vitimaSamu}
       onValueChange={(value) => updateFormData('vitimaSamu', value)}
-      trackColor={{ false: '#767577', true: '#81b0ff' }}
-      thumbColor={formData.vitimaSamu ? '#f5dd4b' : '#f4f3f4'}
+      trackColor={{ false: '#767577', true: '#40a02b' }}
+      thumbColor={formData.vitimaSamu ? '#f4f3f4' : '#f4f3f4'}
       ios_backgroundColor="#3e3e3e"
     />
     <Text style={styles.switchLabel}>SIM</Text>
