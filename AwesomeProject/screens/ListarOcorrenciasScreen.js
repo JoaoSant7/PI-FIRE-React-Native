@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
-    marginBottom: 70, // Adicione esta margem para evitar que o conteúdo fique atrás da BottomNav
+    marginBottom: 10, // Adicione esta margem para evitar que o conteúdo fique atrás da BottomNav
   },
   placeholderSection: {
     alignItems: 'center',
