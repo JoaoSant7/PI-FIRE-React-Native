@@ -34,9 +34,9 @@ const lightColors = {
 
 const darkColors = {
   // Cores primárias (mantém o vermelho mas ajusta tons)
-  primary: '#F44336',
+  primary: '#BC010C',
   primaryDark: '#D32F2F',
-  primaryLight: '#FF8A80',
+  primaryLight: '#BC010C',
   
   // Cores de fundo
   background: '#121212',
