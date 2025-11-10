@@ -6,7 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
-  Alert
+  Alert,
+  Switch
 } from 'react-native';
 
 // Import dos componentes
@@ -319,21 +320,21 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <View style={styles.switchContainer}>
-            <Text style={styles.label}>Vítima socorrida pelo SAMU</Text>
-            <TouchableOpacity
-              style={[
-                styles.switch,
-                formData.vitimaSamu ? styles.switchOn : styles.switchOff
-              ]}
-              onPress={() => updateFormData('vitimaSamu', !formData.vitimaSamu)}
-            >
-              <Text style={styles.switchText}>
-                {formData.vitimaSamu ? 'SIM' : 'NÃO'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </Section>
+<View style={styles.switchContainer}>
+  <Text style={styles.label}>Vítima socorrida pelo SAMU</Text>
+  <View style={styles.switchWrapper}>
+    <Text style={styles.switchLabel}>NÃO</Text>
+    <Switch
+      value={formData.vitimaSamu}
+      onValueChange={(value) => updateFormData('vitimaSamu', value)}
+      trackColor={{ false: '#767577', true: '#81b0ff' }}
+      thumbColor={formData.vitimaSamu ? '#f5dd4b' : '#f4f3f4'}
+      ios_backgroundColor="#3e3e3e"
+    />
+    <Text style={styles.switchLabel}>SIM</Text>
+  </View>
+</View>
+</Section>
 
         {/* Seção: Informações da Vítima */}
         <Section title="Informações da Vítima">
@@ -536,14 +537,35 @@ const styles = StyleSheet.create({
   marginLeft: {
     marginLeft: 8,
   },
+  // Estilos para o switch SAMU (novo layout)
   switchContainer: {
+    marginVertical: 12,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#555',
+    marginBottom: 8,
+  },
+  switchWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  switchLabel: {
+    marginHorizontal: 8,
+    fontSize: 14,
+    color: '#333',
+  },
+  // Estilos para o switch antigo (TouchableOpacity) - manter se ainda usar
+  oldSwitchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 12,
     paddingVertical: 8,
   },
-  label: {
+  oldLabel: {
     fontSize: 14,
     fontWeight: '500',
     color: '#555',
