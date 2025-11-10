@@ -1,7 +1,7 @@
 // screens/DashboardScreen.js
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { MaterialIcons as Icon } from '@expo/vector-icons';
 
 export default function DashboardScreen({ navigation }) {
   return (
