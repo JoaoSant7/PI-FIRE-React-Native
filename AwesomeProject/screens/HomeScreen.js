@@ -1,9 +1,7 @@
 // screens/HomeScreen.js
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
-import UserIcon from '../components/UserIcon';
-import HomeIcon from '../components/HomeIcon';
-import SettingsIcon from '../components/SettingsIcon';
+import BottomNav from '../components/BottomNav'; // Importe o BottomNav
 
 export default function HomeScreen({ navigation }) {
   // Funções para os botões da barra inferior
@@ -17,10 +15,10 @@ export default function HomeScreen({ navigation }) {
   };
 
   const handleUsuario = () => {
-    navigation.navigate('Usuario',{ email: 'email_do_usuario@exemplo.com' });
+    navigation.navigate('Usuario', { email: 'email_do_usuario@exemplo.com' });
   };
 
-  // Funções para os botões principais (se quiser adicionar depois)
+  // Funções para os botões principais
   const handleDashboard = () => {
     navigation.navigate('Dashboard');
   };
@@ -69,38 +67,12 @@ export default function HomeScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      {/* Barra Inferior - Atualizada com ícones consistentes */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity 
-          style={styles.navItem} 
-          onPress={handleConfiguracoes}
-        >
-          <View style={styles.iconWrapper}>
-            <SettingsIcon width={26} height={26} color="#f8f8f8" />
-          </View>
-          <Text style={styles.navText}>Configurações</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.navItem} 
-          onPress={handleInicio}
-        >
-          <View style={styles.iconWrapper}>
-            <HomeIcon size={26} color="#f8f8f8" />
-          </View>
-          <Text style={styles.navText}>Início</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.navItem} 
-          onPress={handleUsuario}
-        >
-          <View style={styles.iconWrapper}>
-            <UserIcon width={26} height={26} color="#f8f8f8" />
-          </View>
-          <Text style={styles.navText}>Usuário</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Barra Inferior - Agora usando o componente BottomNav */}
+      <BottomNav
+        onConfigPress={handleConfiguracoes}
+        onHomePress={handleInicio}
+        onUserPress={handleUsuario}
+      />
     </View>
   );
 }
@@ -129,6 +101,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingTop: 50,
     alignItems: 'center',
+    marginBottom: 70, // Adicione esta margem para evitar que o conteúdo fique atrás da BottomNav
   },
   sectionTitle: {
     fontSize: 22,
@@ -152,32 +125,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#000000ff',
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#bc010c',
-    borderTopWidth: 1,
-    borderTopColor: '#e1e1e1',
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-  },
-  navItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  navText: {
-    fontSize: 12,
-    color: '#f8f8f8',
-    fontWeight: '500',
-    marginTop: 5,
-  },
-  iconWrapper: {
-    width: 30,
-    height: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
