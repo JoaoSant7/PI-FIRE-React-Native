@@ -286,24 +286,25 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
 
           {/* Horários */}
-          <View style={styles.row}>
-            <InputGroup label="Saída do Quartel" style={styles.flex1}>
-              <TimeInput
-                value={formData.horaSaidaQuartel}
-                onChangeText={(value) => updateFormData('horaSaidaQuartel', value)}
-                placeholder="HH:MM:SS"
-              />
-            </InputGroup>
+<View style={styles.row}>
+  <InputGroup label="Saída do Quartel" style={styles.flex1}>
+    <TimeInput
+      value={formData.horaSaidaQuartel}
+      onChangeText={(value) => updateFormData('horaSaidaQuartel', value)}
+      placeholder="HH:MM:SS"
+      showValidation={true}
+    />
+  </InputGroup>
             
-            <InputGroup label="Chegada no Local" style={[styles.flex1, styles.marginLeft]}>
-              <TimeInput
-                value={formData.horaLocal}
-                onChangeText={(value) => updateFormData('horaLocal', value)}
-                placeholder="HH:MM:SS"
-              />
-            </InputGroup>
-          </View>
-
+  <InputGroup label="Chegada no Local" style={[styles.flex1, styles.marginLeft]}>
+    <TimeInput
+      value={formData.horaLocal}
+      onChangeText={(value) => updateFormData('horaLocal', value)}
+      placeholder="HH:MM:SS"
+      showValidation={true}
+    />
+  </InputGroup>
+</View>
           {/* Motivo para ocorrência não atendida */}
           {formData.situacao === 'Não atendida' && (
             <InputGroup label="Motivo da Não Atendimento">
