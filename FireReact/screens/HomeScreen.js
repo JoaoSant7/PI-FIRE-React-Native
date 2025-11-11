@@ -43,13 +43,17 @@ export default function HomeScreen({ navigation }) {
       
       {/* Header Vermelho */}
       <View style={styles.header}>
-        <Text style={styles.fireTitle}>Início</Text>
-        <TouchableOpacity 
-          style={styles.settingsButton}
-          onPress={handleConfiguracoes}
-        >
-          <SettingsIcon width={24} height={24} color="#fff" />
-        </TouchableOpacity>
+        <View style={styles.headerContent}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.fireTitle}>Início</Text>
+          </View>
+          <TouchableOpacity 
+            style={styles.settingsButton}
+            onPress={handleConfiguracoes}
+          >
+            <SettingsIcon width={24} height={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Conteúdo Principal */}
@@ -98,11 +102,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#bc010c',
     paddingTop: 60,
     paddingBottom: 30,
-    paddingHorizontal: 20,
+  },
+  headerContent: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    position: 'relative', // Para posicionar o botão absolutamente
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    position: 'relative',
+    height: 50,
+  },
+  titleContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   fireTitle: {
     fontSize: 48,
@@ -113,7 +127,6 @@ const styles = StyleSheet.create({
   settingsButton: {
     position: 'absolute',
     right: 20,
-    top: 60,
     padding: 8,
   },
   content: {
