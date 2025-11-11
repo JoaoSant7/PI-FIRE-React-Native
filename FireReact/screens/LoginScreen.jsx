@@ -1,14 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useContext } from 'react';
-import { 
-  StyleSheet, 
-  Text, 
-  View, 
-  TextInput, 
-  TouchableOpacity, 
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  Image
 } from 'react-native';
 import { AuthContext } from '../App'; // Importe o AuthContext
 
@@ -21,7 +22,7 @@ export default function LoginScreen({ navigation }) {
     // Aqui você implementará a lógica de login
     console.log('Email:', email);
     console.log('Password:', password);
-    
+
     // Exemplo de validação simples: se email e senha não estão vazios, faz login
     if (email && password) {
       // Em vez de navigation.navigate, chame a função login do contexto
@@ -37,11 +38,17 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Image
+          source={require('../components/Fire.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+
         {/* Cabeçalho com o nome FIRE */}
         <Text style={styles.fireTitle}>FIRE</Text>
         <Text style={styles.subtitle}>Ferramenta Integrada de Resposta a Emergências</Text>
@@ -72,7 +79,7 @@ export default function LoginScreen({ navigation }) {
           />
 
           {/* Botão Esqueci minha senha */}
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.forgotPasswordButton}
             onPress={handleForgotPassword}
           >
@@ -80,11 +87,11 @@ export default function LoginScreen({ navigation }) {
           </TouchableOpacity>
 
           {/* Botão de Login */}
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[
               styles.loginButton,
               (!email || !password) && styles.loginButtonDisabled
-            ]} 
+            ]}
             onPress={handleLogin}
             disabled={!email || !password}
           >
@@ -118,10 +125,17 @@ const styles = StyleSheet.create({
   fireTitle: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#bc010c', 
+    color: '#bc010c',
     textAlign: 'center',
     marginBottom: 10,
   },
+  logo: {
+    width: 240,
+    height: 240,
+    alignSelf: 'center',
+    marginBottom: 8,
+  },
+
   subtitle: {
     fontSize: 16,
     color: '#666',
