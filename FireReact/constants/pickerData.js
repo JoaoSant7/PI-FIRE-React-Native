@@ -66,10 +66,8 @@ export const SUBGRUPOS_OCORRENCIA = [
 
 export const SITUACOES = [
   { label: 'Atendida', value: 'Atendida' },
-  { label: 'Cancelada', value: 'Cancelada' },
-  { label: 'Não atendida', value: 'Não atendida' },
+  { label: 'Não Atendida', value: 'Não Atendida' },
   { label: 'Sem Atuação', value: 'Sem Atuação' },
-
 ];
 
 export const SEXOS = [

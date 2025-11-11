@@ -34,15 +34,12 @@ import {
   TIPOS_LOGRADOURO
 } from '../constants/pickerData';
 
-// Adicionar constantes para os motivos de não atendimento
+// Constantes para os motivos de não atendimento/sem atuação
 const MOTIVOS_NAO_ATENDIMENTO = [
-  { label: 'Selecione o motivo', value: '' },
-  { label: 'Falso Alarme', value: 'Falso Alarme' },
-  { label: 'Ausência no Local', value: 'Ausência no Local' },
-  { label: 'Desistência', value: 'Desistência' },
-  { label: 'Atendido por Outra Unidade', value: 'Atendido por Outra Unidade' },
-  { label: 'Erro de Acionamento', value: 'Erro de Acionamento' },
-  { label: 'Impossibilidade de Acesso', value: 'Impossibilidade de Acesso' },
+  { label: 'Selecione o motivo de não atendimento', value: '' },
+  { label: 'Vítima Socorrida pelo Samu', value: 'Vítima Socorrida pelo Samu' },
+  { label: 'Vítima Socorrida pelos Populares', value: 'Vítima Socorrida pelos Populares' },
+  { label: 'Recusou Atendimento', value: 'Recusou Atendimento' },
   { label: 'Outro', value: 'Outro' },
 ];
 
@@ -64,6 +61,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     horaLocal: '',
     horaSaidaLocal: '',
     motivoNaoAtendida: '',
+    motivoOutro: '', // Novo campo para o motivo "Outro"
     vitimaSamu: false,
     
     // Vítima
@@ -204,6 +202,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               horaLocal: '',
               horaSaidaLocal: '',
               motivoNaoAtendida: '',
+              motivoOutro: '',
               vitimaSamu: false,
               envolvida: false,
               sexo: '',
@@ -229,6 +228,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
       ]
     );
   };
+
+  // Verifica se deve mostrar o campo de motivo
+  const shouldShowMotivo = formData.situacao === 'Não Atendida' || formData.situacao === 'Sem Atuação';
 
   return (
     <View style={styles.container}>
@@ -339,25 +341,50 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             </InputGroup>
           </View>
 
-          {/* Motivo para ocorrência não atendida - Agora como Picker */}
-          {formData.situacao === 'Não atendida' && (
-            <InputGroup label="Motivo do Não Atendimento">
-              <View style={styles.pickerContainer}>
-                <Picker
-                  selectedValue={formData.motivoNaoAtendida}
-                  onValueChange={(value) => updateFormData('motivoNaoAtendida', value)}
-                  style={styles.picker}
-                >
-                  {MOTIVOS_NAO_ATENDIMENTO.map((item) => (
-                    <Picker.Item 
-                      key={item.value} 
-                      label={item.label} 
-                      value={item.value} 
-                    />
-                  ))}
-                </Picker>
-              </View>
-            </InputGroup>
+          {/* Motivo para ocorrência não atendida ou sem atuação */}
+          {shouldShowMotivo && (
+            <>
+              <InputGroup label="Motivo do Não Atendimento">
+                <View style={styles.pickerContainer}>
+                  <Picker
+                    selectedValue={formData.motivoNaoAtendida}
+                    onValueChange={(value) => updateFormData('motivoNaoAtendida', value)}
+                    style={styles.picker}
+                  >
+                    {MOTIVOS_NAO_ATENDIMENTO.map((item) => (
+                      <Picker.Item 
+                        key={item.value} 
+                        label={item.label} 
+                        value={item.value} 
+                      />
+                    ))}
+                  </Picker>
+                </View>
+              </InputGroup>
+
+              {/* Campo para "Outro" motivo */}
+              {formData.motivoNaoAtendida === 'Outro' && (
+                <InputGroup label="Descreva o motivo (máx. 100 caracteres)">
+                  <TextInput
+                    value={formData.motivoOutro}
+                    onChangeText={(value) => {
+                      // Limita a 100 caracteres
+                      if (value.length <= 100) {
+                        updateFormData('motivoOutro', value);
+                      }
+                    }}
+                    placeholder="Digite o motivo..."
+                    multiline
+                    numberOfLines={3}
+                    style={styles.textArea}
+                    maxLength={100}
+                  />
+                  <Text style={styles.charCounter}>
+                    {formData.motivoOutro.length}/100 caracteres
+                  </Text>
+                </InputGroup>
+              )}
+            </>
           )}
 
           <InputGroup label="Saída do Local">
@@ -614,7 +641,6 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
   );
 };
 
-// Os estilos permanecem os mesmos...
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -702,6 +728,12 @@ const styles = StyleSheet.create({
     color: '#333',
     fontSize: 16,
     paddingHorizontal: 8,
+  },
+  charCounter: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'right',
+    marginTop: 4,
   },
 });
 
