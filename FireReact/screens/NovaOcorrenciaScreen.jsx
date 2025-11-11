@@ -94,28 +94,33 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     }
   };
 
-  // Validação do formulário
+  // Validação do formulário (apenas validações não-obrigatórias)
   const validateForm = () => {
-    const requiredFields = [
-      'natureza', 'grupoOcorrencia', 'subgrupoOcorrencia', 
-      'situacao', 'grupamento'
-    ];
-
-    const missingFields = requiredFields.filter(field => !formData[field]);
-
-    if (missingFields.length > 0) {
+    // Validação do formato de hora (mantida)
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/;
+    
+    if (formData.horaSaidaQuartel && !timeRegex.test(formData.horaSaidaQuartel)) {
       Alert.alert(
-        'Campos Obrigatórios',
-        'Preencha todos os campos obrigatórios antes de salvar.',
+        'Formato Inválido',
+        'O formato da hora de saída do quartel deve ser HH:MM:SS',
         [{ text: 'OK' }]
       );
       return false;
     }
 
-    if (formData.situacao === 'Não atendida' && !formData.motivoNaoAtendida) {
+    if (formData.horaLocal && !timeRegex.test(formData.horaLocal)) {
       Alert.alert(
-        'Motivo Obrigatório',
-        'Informe o motivo da ocorrência não atendida.',
+        'Formato Inválido',
+        'O formato da hora de chegada no local deve ser HH:MM:SS',
+        [{ text: 'OK' }]
+      );
+      return false;
+    }
+
+    if (formData.horaSaidaLocal && !timeRegex.test(formData.horaSaidaLocal)) {
+      Alert.alert(
+        'Formato Inválido',
+        'O formato da hora de saída do local deve ser HH:MM:SS',
         [{ text: 'OK' }]
       );
       return false;
@@ -128,20 +133,36 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
   const handleSave = () => {
     if (!validateForm()) return;
 
-    const ocorrenciaData = {
-      ...formData,
-      dataHora: dataHora.toISOString(),
-    };
-
-    console.log('Dados da ocorrência:', ocorrenciaData);
-    
+    // Pop-up de confirmação
     Alert.alert(
-      'Sucesso',
-      'Ocorrência salva com sucesso!',
+      'Confirmar Salvamento',
+      'Tem certeza que deseja salvar esta ocorrência?',
       [
         {
-          text: 'OK',
-          onPress: () => navigation.goBack()
+          text: 'Cancelar',
+          style: 'cancel'
+        },
+        {
+          text: 'Sim',
+          onPress: () => {
+            const ocorrenciaData = {
+              ...formData,
+              dataHora: dataHora.toISOString(),
+            };
+
+            console.log('Dados da ocorrência:', ocorrenciaData);
+            
+            Alert.alert(
+              'Sucesso',
+              'Ocorrência salva com sucesso!',
+              [
+                {
+                  text: 'OK',
+                  onPress: () => navigation.goBack()
+                }
+              ]
+            );
+          }
         }
       ]
     );
@@ -164,7 +185,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               grupamento: '',
               pontoBase: '',
               natureza: '',
-              grupoOcorrencia: 's',
+              grupoOcorrencia: '',
               subgrupoOcorrencia: '',
               situacao: '',
               horaSaidaQuartel: '',
@@ -286,25 +307,26 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </InputGroup>
 
           {/* Horários */}
-<View style={styles.row}>
-  <InputGroup label="Saída do Quartel" style={styles.flex1}>
-    <TimeInput
-      value={formData.horaSaidaQuartel}
-      onChangeText={(value) => updateFormData('horaSaidaQuartel', value)}
-      placeholder="HH:MM:SS"
-      showValidation={true}
-    />
-  </InputGroup>
+          <View style={styles.row}>
+            <InputGroup label="Saída do Quartel" style={styles.flex1}>
+              <TimeInput
+                value={formData.horaSaidaQuartel}
+                onChangeText={(value) => updateFormData('horaSaidaQuartel', value)}
+                placeholder="HH:MM:SS"
+                showValidation={true}
+              />
+            </InputGroup>
             
-  <InputGroup label="Chegada no Local" style={[styles.flex1, styles.marginLeft]}>
-    <TimeInput
-      value={formData.horaLocal}
-      onChangeText={(value) => updateFormData('horaLocal', value)}
-      placeholder="HH:MM:SS"
-      showValidation={true}
-    />
-  </InputGroup>
-</View>
+            <InputGroup label="Chegada no Local" style={[styles.flex1, styles.marginLeft]}>
+              <TimeInput
+                value={formData.horaLocal}
+                onChangeText={(value) => updateFormData('horaLocal', value)}
+                placeholder="HH:MM:SS"
+                showValidation={true}
+              />
+            </InputGroup>
+          </View>
+
           {/* Motivo para ocorrência não atendida */}
           {formData.situacao === 'Não atendida' && (
             <InputGroup label="Motivo da Não Atendimento">
@@ -324,41 +346,42 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               value={formData.horaSaidaLocal}
               onChangeText={(value) => updateFormData('horaSaidaLocal', value)}
               placeholder="HH:MM:SS"
+              showValidation={true}
             />
           </InputGroup>
 
-<View style={styles.switchContainer}>
-  <Text style={styles.label}>Vítima socorrida pelo SAMU</Text>
-  <View style={styles.switchWrapper}>
-    <Text style={styles.switchLabel}>NÃO</Text>
-    <Switch
-      value={formData.vitimaSamu}
-      onValueChange={(value) => updateFormData('vitimaSamu', value)}
-      trackColor={{ false: '#767577', true: '#40a02b' }}
-      thumbColor={formData.vitimaSamu ? '#f4f3f4' : '#f4f3f4'}
-      ios_backgroundColor="#3e3e3e"
-    />
-    <Text style={styles.switchLabel}>SIM</Text>
-  </View>
-</View>
-</Section>
+          <View style={styles.switchContainer}>
+            <Text style={styles.label}>Vítima socorrida pelo SAMU</Text>
+            <View style={styles.switchWrapper}>
+              <Text style={styles.switchLabel}>NÃO</Text>
+              <Switch
+                value={formData.vitimaSamu}
+                onValueChange={(value) => updateFormData('vitimaSamu', value)}
+                trackColor={{ false: '#767577', true: '#40a02b' }}
+                thumbColor={formData.vitimaSamu ? '#f4f3f4' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+              />
+              <Text style={styles.switchLabel}>SIM</Text>
+            </View>
+          </View>
+        </Section>
 
         {/* Seção: Informações da Vítima */}
-<Section title="Informações da Vítima">
-  <View style={styles.switchContainer}>
-    <Text style={styles.label}>Vítima Envolvida</Text>
-    <View style={styles.switchWrapper}>
-      <Text style={styles.switchLabel}>NÃO</Text>
-      <Switch
-        value={formData.envolvida}
-        onValueChange={(value) => updateFormData('envolvida', value)}
-        trackColor={{ false: '#767577', true: '#40a02b' }}
-        thumbColor={formData.envolvida ? '#f4f3f4' : '#f4f3f4'}
-        ios_backgroundColor="#3e3e3e"
-      />
-      <Text style={styles.switchLabel}>SIM</Text>
-    </View>
-  </View>
+        <Section title="Informações da Vítima">
+          <View style={styles.switchContainer}>
+            <Text style={styles.label}>Vítima Envolvida</Text>
+            <View style={styles.switchWrapper}>
+              <Text style={styles.switchLabel}>NÃO</Text>
+              <Switch
+                value={formData.envolvida}
+                onValueChange={(value) => updateFormData('envolvida', value)}
+                trackColor={{ false: '#767577', true: '#40a02b' }}
+                thumbColor={formData.envolvida ? '#f4f3f4' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+              />
+              <Text style={styles.switchLabel}>SIM</Text>
+            </View>
+          </View>
 
           <InputGroup label="Sexo da Vítima">
             <PickerInput
@@ -378,44 +401,44 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-<InputGroup label="Classificação da Vítima">
-  <View style={styles.pickerContainer}>
-    <Picker
-      selectedValue={formData.classificacao}
-      onValueChange={(value) => updateFormData('classificacao', value)}
-      style={styles.picker}
-    >
-      <Picker.Item label="Selecione a Classificação da Vítima" value="" />
-      {CLASSIFICACOES.map((item) => (
-        <Picker.Item 
-          key={item.value} 
-          label={item.label} 
-          value={item.value} 
-        />
-      ))}
-    </Picker>
-  </View>
-</InputGroup>
+          <InputGroup label="Classificação da Vítima">
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={formData.classificacao}
+                onValueChange={(value) => updateFormData('classificacao', value)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Selecione a Classificação da Vítima" value="" />
+                {CLASSIFICACOES.map((item) => (
+                  <Picker.Item 
+                    key={item.value} 
+                    label={item.label} 
+                    value={item.value} 
+                  />
+                ))}
+              </Picker>
+            </View>
+          </InputGroup>
 
-<InputGroup label="Destino da Vítima">
-  <View style={styles.pickerContainer}>
-    <Picker
-      selectedValue={formData.destino}
-      onValueChange={(value) => updateFormData('destino', value)}
-      style={styles.picker}
-    >
-      <Picker.Item label="Selecione o Destino da Vítima" value="" />
-      {DESTINOS.map((item) => (
-        <Picker.Item
-          key={item.value}
-          label={item.label}
-          value={item.value}
-        />
-      ))}
-    </Picker>
-  </View>
-</InputGroup>
-</Section>
+          <InputGroup label="Destino da Vítima">
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={formData.destino}
+                onValueChange={(value) => updateFormData('destino', value)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Selecione o Destino da Vítima" value="" />
+                {DESTINOS.map((item) => (
+                  <Picker.Item
+                    key={item.value}
+                    label={item.label}
+                    value={item.value}
+                  />
+                ))}
+              </Picker>
+            </View>
+          </InputGroup>
+        </Section>
 
         {/* Seção: Viatura e Acionamento */}
         <Section title="Viatura e Acionamento">
@@ -435,25 +458,24 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-<InputGroup label="Forma de Acionamento">
-  <View style={styles.pickerContainer}>
-    <Picker
-      selectedValue={formData.acionamento}
-      onValueChange={(value) => updateFormData('acionamento', value)}
-      style={styles.picker}
-    >
-      <Picker.Item label="Selecione a Forma de Acionamento" value="" />
-      {ACIONAMENTOS.map((item) => (
-        <Picker.Item 
-          key={item.value} 
-          label={item.label} 
-          value={item.value} 
-        />
-      ))}
-    </Picker>
-  </View>
-</InputGroup>
-
+          <InputGroup label="Forma de Acionamento">
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={formData.acionamento}
+                onValueChange={(value) => updateFormData('acionamento', value)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Selecione a Forma de Acionamento" value="" />
+                {ACIONAMENTOS.map((item) => (
+                  <Picker.Item 
+                    key={item.value} 
+                    label={item.label} 
+                    value={item.value} 
+                  />
+                ))}
+              </Picker>
+            </View>
+          </InputGroup>
 
           <InputGroup label="Local do Acionamento">
             <TextInput
@@ -474,24 +496,24 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-<InputGroup label="Região">
-  <View style={styles.pickerContainer}>
-    <Picker
-      selectedValue={formData.regiao}
-      onValueChange={(value) => updateFormData('regiao', value)}
-      style={styles.picker}
-    >
-      <Picker.Item label="Selecione a região" value="" />
-      {REGIOES.map((regiao) => (
-        <Picker.Item 
-          key={regiao.value} 
-          label={regiao.label} 
-          value={regiao.value} 
-        />
-      ))}
-    </Picker>
-  </View>
-</InputGroup>
+          <InputGroup label="Região">
+            <View style={styles.pickerContainer}>
+              <Picker
+                selectedValue={formData.regiao}
+                onValueChange={(value) => updateFormData('regiao', value)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Selecione a região" value="" />
+                {REGIOES.map((regiao) => (
+                  <Picker.Item 
+                    key={regiao.value} 
+                    label={regiao.label} 
+                    value={regiao.value} 
+                  />
+                ))}
+              </Picker>
+            </View>
+          </InputGroup>
 
           <InputGroup label="Bairro">
             <TextInput
@@ -501,15 +523,14 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-<InputGroup label="Tipo de Logradouro">
-  <PickerInput
-    selectedValue={formData.tipoLogradouro}
-    onValueChange={(value) => updateFormData('tipoLogradouro', value)}
-    items={TIPOS_LOGRADOURO}
-    placeholder="Selecione o Tipo de Logradouro"
-  />
-</InputGroup>
-
+          <InputGroup label="Tipo de Logradouro">
+            <PickerInput
+              selectedValue={formData.tipoLogradouro}
+              onValueChange={(value) => updateFormData('tipoLogradouro', value)}
+              items={TIPOS_LOGRADOURO}
+              placeholder="Selecione o Tipo de Logradouro"
+            />
+          </InputGroup>
 
           <InputGroup label="AIS">
             <TextInput
@@ -574,6 +595,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
   );
 };
 
+// Os estilos permanecem os mesmos...
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -592,7 +614,6 @@ const styles = StyleSheet.create({
   marginLeft: {
     marginLeft: 8,
   },
-  // Estilos para o switch SAMU (novo layout)
   switchContainer: {
     marginVertical: 12,
   },
@@ -611,38 +632,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     fontSize: 14,
     color: '#333',
-  },
-  // Estilos para o switch antigo (TouchableOpacity) - manter se ainda usar
-  oldSwitchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-    paddingVertical: 8,
-  },
-  oldLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#555',
-    flex: 1,
-  },
-  switch: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    minWidth: 80,
-    alignItems: 'center',
-  },
-  switchOn: {
-    backgroundColor: '#4ECDC4',
-  },
-  switchOff: {
-    backgroundColor: '#CCCCCC',
-  },
-  switchText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 12,
   },
   textArea: {
     height: 80,
@@ -681,8 +670,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontStyle: 'italic',
   },
-
-  // 🔹 Estilos adicionados para o Picker
   pickerContainer: {
     borderWidth: 1,
     borderColor: '#ccc',
@@ -698,6 +685,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
 });
-
 
 export default NovaOcorrenciaScreen;

@@ -68,6 +68,8 @@ export const SITUACOES = [
   { label: 'Atendida', value: 'Atendida' },
   { label: 'Cancelada', value: 'Cancelada' },
   { label: 'Não atendida', value: 'Não atendida' },
+  { label: 'Sem Atuação', value: 'Sem Atuação' },
+
 ];
 
 export const SEXOS = [
