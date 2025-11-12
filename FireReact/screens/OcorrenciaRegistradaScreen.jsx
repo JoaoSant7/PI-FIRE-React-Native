@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
@@ -6,25 +6,25 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
-  Alert
-} from 'react-native';
+  Alert,
+} from "react-native";
 
 const OcorrenciaRegistradaScreen = ({ navigation }) => {
   const handleInicio = () => {
-    navigation.navigate('Home');
+    navigation.navigate("Home");
   };
 
   const handleListarOcorrencias = () => {
-    navigation.navigate('ListarOcorrencias');
+    navigation.navigate("ListarOcorrencias");
   };
 
   const handleNovaOcorrencia = () => {
-    navigation.navigate('NovaOcorrencia');
+    navigation.navigate("NovaOcorrencia");
   };
 
   const handleExportarPDF = () => {
     // Lógica para exportar PDF
-    Alert.alert('PDF Exportado', 'Ocorrência exportada em PDF com sucesso!');
+    Alert.alert("PDF Exportado", "Ocorrência exportada em PDF com sucesso!");
   };
 
   return (
@@ -37,35 +37,37 @@ const OcorrenciaRegistradaScreen = ({ navigation }) => {
           </View>
 
           {/* Mensagem de sucesso */}
-          <Text style={styles.successTitle}>Ocorrência Registrada com Sucesso!</Text>
+          <Text style={styles.successTitle}>
+            Ocorrência Registrada com Sucesso!
+          </Text>
           <Text style={styles.successMessage}>
             A ocorrência foi salva no sistema e está disponível para consulta.
           </Text>
 
           {/* Botões de ação */}
           <View style={styles.buttonContainer}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.button, styles.primaryButton]}
               onPress={handleInicio}
             >
               <Text style={styles.buttonText}>Início</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.button, styles.secondaryButton]}
               onPress={handleListarOcorrencias}
             >
               <Text style={styles.buttonText}>Listar Ocorrências</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.button, styles.accentButton]}
               onPress={handleNovaOcorrencia}
             >
               <Text style={styles.buttonText}>Registrar Nova Ocorrência</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.button, styles.pdfButton]}
               onPress={handleExportarPDF}
             >
@@ -81,56 +83,56 @@ const OcorrenciaRegistradaScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 20,
   },
   content: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 40,
   },
   successIcon: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#28a745',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#28a745",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 20,
   },
   checkmark: {
-    color: 'white',
+    color: "white",
     fontSize: 40,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   successTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#28a745',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#28a745",
+    textAlign: "center",
     marginBottom: 10,
   },
   successMessage: {
     fontSize: 16,
-    color: '#6c757d',
-    textAlign: 'center',
+    color: "#6c757d",
+    textAlign: "center",
     marginBottom: 40,
     lineHeight: 22,
   },
   buttonContainer: {
-    width: '100%',
+    width: "100%",
     gap: 15,
   },
   button: {
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -140,21 +142,21 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   primaryButton: {
-    backgroundColor: '#dc3545', // Vermelho bombeiros
+    backgroundColor: "#6c757d", // Vermelho bombeiros
   },
   secondaryButton: {
-    backgroundColor: '#6c757d',
+    backgroundColor: "#E6A400",
   },
   accentButton: {
-    backgroundColor: '#fd7e14', // Laranja bombeiros
+    backgroundColor: "#BC010C", // Laranja bombeiros
   },
   pdfButton: {
-    backgroundColor: '#28a745',
+    backgroundColor: "#28a745",
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });
 
