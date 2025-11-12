@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fd7e14', // Laranja bombeiros
   },
   pdfButton: {
-    backgroundColor: '#20c997',
+    backgroundColor: '#28a745',
   },
   buttonText: {
     color: 'white',
