@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Switch, ScrollView } from 'react-native';
+import React, { useState } from "react";
+import { StyleSheet, Text, View, Switch, ScrollView } from "react-native";
 
 export default function ConfiguracoesScreen() {
   const [notificacoesGerais, setNotificacoesGerais] = useState(true);
   const [modoClaroEscuro, setModoClaroEscuro] = useState(false);
-  const [sincAutomatica, setSincAutomatica] = useState(true);
+  //const [sincAutomatica, setSincAutomatica] = useState(true);
   const [somNotificacoes, setSomNotificacoes] = useState(true);
   const [vibracaoAtiva, setVibracaoAtiva] = useState(true);
-  const [mostrarCoordenadas, setMostrarCoordenadas] = useState(false);
-  const [mostrarEstatisticas, setMostrarEstatisticas] = useState(true);
-  const [formatoHora, setFormatoHora] = useState(true);
-  const [layoutCompacto, setLayoutCompacto] = useState(false);
+  //const [mostrarCoordenadas, setMostrarCoordenadas] = useState(false);
+  //const [mostrarEstatisticas, setMostrarEstatisticas] = useState(true);
+  //const [formatoHora, setFormatoHora] = useState(true);
+  //const [layoutCompacto, setLayoutCompacto] = useState(false);
 
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
         <Text style={styles.title}>Configurações</Text>
-        
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Notificações</Text>
           <View style={styles.switchContainer}>
@@ -37,13 +37,6 @@ export default function ConfiguracoesScreen() {
               value={modoClaroEscuro}
             />
           </View>
-          <View style={styles.switchContainer}>
-            <Text style={styles.switchText}>Layout Compacto</Text>
-            <Switch
-              onValueChange={setLayoutCompacto}
-              value={layoutCompacto}
-            />
-          </View>
         </View>
 
         <View style={styles.section}>
@@ -57,46 +50,7 @@ export default function ConfiguracoesScreen() {
           </View>
           <View style={styles.switchContainer}>
             <Text style={styles.switchText}>Vibração</Text>
-            <Switch
-              onValueChange={setVibracaoAtiva}
-              value={vibracaoAtiva}
-            />
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Preferências de Visualização</Text>
-          <View style={styles.switchContainer}>
-            <Text style={styles.switchText}>Mostrar Coordenadas GPS</Text>
-            <Switch
-              onValueChange={setMostrarCoordenadas}
-              value={mostrarCoordenadas}
-            />
-          </View>
-          <View style={styles.switchContainer}>
-            <Text style={styles.switchText}>Mostrar Estatísticas</Text>
-            <Switch
-              onValueChange={setMostrarEstatisticas}
-              value={mostrarEstatisticas}
-            />
-          </View>
-          <View style={styles.switchContainer}>
-            <Text style={styles.switchText}>Formato 24 horas</Text>
-            <Switch
-              onValueChange={setFormatoHora}
-              value={formatoHora}
-            />
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Privacidade e Dados</Text>
-          <View style={styles.switchContainer}>
-            <Text style={styles.switchText}>Sincronização Automática</Text>
-            <Switch
-              onValueChange={setSincAutomatica}
-              value={sincAutomatica}
-            />
+            <Switch onValueChange={setVibracaoAtiva} value={vibracaoAtiva} />
           </View>
         </View>
       </View>
@@ -107,7 +61,7 @@ export default function ConfiguracoesScreen() {
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   container: {
     flex: 1,
@@ -115,35 +69,35 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#bc010c',
+    fontWeight: "bold",
+    color: "#bc010c",
     marginBottom: 30,
-    textAlign: 'center',
+    textAlign: "center",
   },
   section: {
     marginBottom: 25,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
     marginBottom: 15,
     paddingBottom: 5,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: "#eee",
   },
   switchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
     padding: 12,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
     borderRadius: 10,
     marginBottom: 10,
   },
   switchText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
 });

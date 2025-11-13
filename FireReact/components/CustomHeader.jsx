@@ -1,9 +1,12 @@
 import React from "react";
-import { StatusBar } from "react-native";
-import { Header } from "@rneui/themed";
+import { StatusBar, TouchableOpacity } from "react-native";
+import { Header, Icon } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native"; // Importe o hook
 
 export default function TopBar() {
+  const navigation = useNavigation(); // Use o hook
+
   return (
     <SafeAreaView edges={["top"]} style={{ backgroundColor: "#BC010C" }}>
       <StatusBar barStyle="light-content" backgroundColor="#BC010C" />
@@ -14,9 +17,15 @@ export default function TopBar() {
           text: "FIRE",
           style: { color: "#fff", fontWeight: "bold", fontSize: 20 },
         }}
-        rightComponent={{ icon: "settings", color: "#fff" }}
+        rightComponent={
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Configuracoes")} // Use navigation aqui
+            style={{ padding: 5 }}
+          >
+            <Icon name="settings" color="#fff" />
+          </TouchableOpacity>
+        }
         containerStyle={{
-          // Removido width: 410
           width: "100%",
           borderBottomWidth: 0,
         }}
