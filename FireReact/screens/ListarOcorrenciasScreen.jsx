@@ -1,39 +1,135 @@
-// screens/ListaOcorrenciasScreen.js
-import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
-import { MaterialIcons as Icon } from '@expo/vector-icons';
-import BottomNav from '../components/BottomNav'; // Importe o BottomNav
+// screens/ListarOcorrenciasScreen.js
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  StatusBar,
+  ScrollView,
+  TextInput,
+} from "react-native";
+import { MaterialIcons as Icon } from "@expo/vector-icons";
+import BottomNav from "../components/BottomNav";
+import { useOcorrencias } from "../contexts/OcorrenciasContext";
 
-export default function ListaOcorrenciasScreen({ navigation }) {
-  // Dados placeholder para ocorrências
-  const ocorrencias = [
-    { id: 1, tipo: 'Incêndio', local: 'Av. Principal, 123', status: 'Em Andamento', hora: '14:30' },
-    { id: 2, tipo: 'Acidente', local: 'Rua das Flores, 456', status: 'Finalizada', hora: '10:15' },
-    { id: 3, tipo: 'Resgate', local: 'Praça Central', status: 'Em Andamento', hora: '16:45' },
-    { id: 4, tipo: 'Incêndio', local: 'Condomínio Solar', status: 'Finalizada', hora: '08:20' },
-  ];
+export default function ListarOcorrenciasScreen({ navigation }) {
+  const { ocorrencias } = useOcorrencias();
+
+  // Filtro por data (formato: 'YYYY-MM-DD')
+  const [dataFiltro, setDataFiltro] = useState("");
+
+  // Função para filtrar por data
+  const ocorrenciasFiltradas = ocorrencias.filter((ocorrencia) => {
+    if (!dataFiltro) return true;
+
+    // Verifica se a ocorrência tem dataHora e filtra
+    if (ocorrencia.dataHora) {
+      return ocorrencia.dataHora.startsWith(dataFiltro);
+    }
+
+    // Se não tiver dataHora, usa dataRegistro como fallback
+    if (ocorrencia.dataRegistro) {
+      return ocorrencia.dataRegistro.startsWith(dataFiltro);
+    }
+
+    return false;
+  });
 
   // Funções para a barra inferior
   const handleConfiguracoes = () => {
-    navigation.navigate('Configuracoes');
+    navigation.navigate("Configuracoes");
   };
 
   const handleInicio = () => {
-    navigation.navigate('Home');
+    navigation.navigate("Home");
   };
 
   const handleUsuario = () => {
-    navigation.navigate('Usuario', { email: 'email_do_usuario@exemplo.com' });
+    navigation.navigate("Usuario", { email: "email_do_usuario@exemplo.com" });
   };
 
   const getStatusColor = (status) => {
-    return status === 'Em Andamento' ? '#FF9800' : '#4CAF50';
+    switch (status) {
+      case "Em Andamento":
+      case "aberta":
+        return "#FF9800";
+      case "Finalizada":
+      case "finalizada":
+        return "#4CAF50";
+      case "registrada":
+        return "#2196F3";
+      case "Não Atendida":
+      case "Sem Atuação":
+        return "#F44336";
+      default:
+        return "#757575";
+    }
+  };
+
+  // Função para formatar a data/hora para exibição
+  const formatarDataHora = (dataHoraString) => {
+    if (!dataHoraString) return "Data não informada";
+
+    try {
+      const data = new Date(dataHoraString);
+      return data.toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      return "Data inválida";
+    }
+  };
+
+  // Função para extrair apenas a hora
+  const extrairHora = (dataHoraString) => {
+    if (!dataHoraString) return "";
+
+    try {
+      const data = new Date(dataHoraString);
+      return data.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      return "";
+    }
+  };
+
+  // Função para obter texto do status
+  const getStatusText = (ocorrencia) => {
+    if (ocorrencia.status) return ocorrencia.status;
+    if (ocorrencia.situacao) return ocorrencia.situacao;
+    return "Registrada";
+  };
+
+  // Função para obter o tipo/natureza da ocorrência
+  const getTipoOcorrencia = (ocorrencia) => {
+    if (ocorrencia.natureza) return ocorrencia.natureza;
+    if (ocorrencia.grupoOcorrencia) return ocorrencia.grupoOcorrencia;
+    return "Ocorrência";
+  };
+
+  // Função para obter o local
+  const getLocalOcorrencia = (ocorrencia) => {
+    if (ocorrencia.logradouro) {
+      return `${ocorrencia.tipoLogradouro || ""} ${
+        ocorrencia.logradouro
+      }`.trim();
+    }
+    if (ocorrencia.bairro) return ocorrencia.bairro;
+    if (ocorrencia.municipio) return ocorrencia.municipio;
+    return "Local não informado";
   };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
-      
+
       <ScrollView style={styles.content}>
         <View style={styles.placeholderSection}>
           <Icon name="list" size={80} color="#bc010c" />
@@ -41,28 +137,130 @@ export default function ListaOcorrenciasScreen({ navigation }) {
           <Text style={styles.placeholderText}>
             Lista de todas as ocorrências registradas no sistema
           </Text>
+          <Text style={styles.contador}>
+            {ocorrenciasFiltradas.length} de {ocorrencias.length} ocorrências
+          </Text>
+        </View>
+
+        {/* Campo de filtro por data */}
+        <View style={styles.filtroContainer}>
+          <Icon name="calendar-today" size={20} color="#bc010c" />
+          <TextInput
+            style={styles.filtroInput}
+            placeholder="Filtrar por data (AAAA-MM-DD)"
+            value={dataFiltro}
+            onChangeText={setDataFiltro}
+            placeholderTextColor="#999"
+          />
+          {dataFiltro ? (
+            <TouchableOpacity
+              onPress={() => setDataFiltro("")}
+              style={styles.limparFiltro}
+            >
+              <Icon name="clear" size={20} color="#999" />
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         {/* Lista de ocorrências */}
-        {ocorrencias.map((ocorrencia) => (
-          <TouchableOpacity key={ocorrencia.id} style={styles.ocorrenciaCard}>
-            <View style={styles.ocorrenciaHeader}>
-              <Text style={styles.ocorrenciaTipo}>{ocorrencia.tipo}</Text>
-              <View style={[styles.statusBadge, { backgroundColor: getStatusColor(ocorrencia.status) }]}>
-                <Text style={styles.statusText}>{ocorrencia.status}</Text>
+        {ocorrenciasFiltradas.length === 0 ? (
+          <View style={styles.semResultados}>
+            <Icon name="search-off" size={60} color="#ccc" />
+            <Text style={styles.semResultadosText}>
+              {dataFiltro
+                ? `Nenhuma ocorrência encontrada para ${dataFiltro}`
+                : "Nenhuma ocorrência registrada"}
+            </Text>
+            {ocorrencias.length === 0 && (
+              <TouchableOpacity
+                style={styles.novaOcorrenciaButton}
+                onPress={() => navigation.navigate("NovaOcorrencia")}
+              >
+                <Text style={styles.novaOcorrenciaButtonText}>
+                  Registrar Primeira Ocorrência
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        ) : (
+          ocorrenciasFiltradas.map((ocorrencia, idx) => (
+            <TouchableOpacity
+              key={ocorrencia.id || `ocorrencia-${idx}`}
+              style={styles.ocorrenciaCard}
+              onPress={() => {
+                // Navegar para detalhes da ocorrência se necessário
+                console.log("Ocorrência selecionada:", ocorrencia);
+              }}
+            >
+              <View style={styles.ocorrenciaHeader}>
+                <Text style={styles.ocorrenciaTipo}>
+                  {getTipoOcorrencia(ocorrencia)}
+                </Text>
+                <View
+                  style={[
+                    styles.statusBadge,
+                    {
+                      backgroundColor: getStatusColor(
+                        getStatusText(ocorrencia)
+                      ),
+                    },
+                  ]}
+                >
+                  <Text style={styles.statusText}>
+                    {getStatusText(ocorrencia)}
+                  </Text>
+                </View>
               </View>
-            </View>
-            <View style={styles.ocorrenciaInfo}>
-              <Icon name="location-on" size={16} color="#666" />
-              <Text style={styles.ocorrenciaLocal}>{ocorrencia.local}</Text>
-            </View>
-            <View style={styles.ocorrenciaInfo}>
-              <Icon name="access-time" size={16} color="#666" />
-              <Text style={styles.ocorrenciaHora}>{ocorrencia.hora}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+
+              <View style={styles.ocorrenciaInfo}>
+                <Icon name="location-on" size={16} color="#666" />
+                <Text style={styles.ocorrenciaLocal}>
+                  {getLocalOcorrencia(ocorrencia)}
+                </Text>
+              </View>
+
+              <View style={styles.ocorrenciaInfo}>
+                <Icon name="access-time" size={16} color="#666" />
+                <Text style={styles.ocorrenciaHora}>
+                  {extrairHora(ocorrencia.dataHora || ocorrencia.dataRegistro)}
+                </Text>
+              </View>
+
+              {/* Informações adicionais */}
+              {(ocorrencia.numeroAviso || ocorrencia.grupamento) && (
+                <View style={styles.ocorrenciaInfo}>
+                  <Icon name="info" size={16} color="#666" />
+                  <Text style={styles.ocorrenciaDetalhes}>
+                    {[ocorrencia.numeroAviso, ocorrencia.grupamento]
+                      .filter(Boolean)
+                      .join(" • ")}
+                  </Text>
+                </View>
+              )}
+
+              {/* Data completa */}
+              <View style={styles.ocorrenciaInfo}>
+                <Icon name="date-range" size={16} color="#666" />
+                <Text style={styles.ocorrenciaData}>
+                  {formatarDataHora(
+                    ocorrencia.dataHora || ocorrencia.dataRegistro
+                  )}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))
+        )}
       </ScrollView>
+
+      {/* Botão flutuante para nova ocorrência */}
+      {ocorrencias.length > 0 && (
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={() => navigation.navigate("NovaOcorrencia")}
+        >
+          <Icon name="add" size={24} color="#fff" />
+        </TouchableOpacity>
+      )}
 
       {/* Barra Inferior */}
       <BottomNav
@@ -77,78 +275,158 @@ export default function ListaOcorrenciasScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  placeholder: {
-    width: 24,
+    backgroundColor: "#fff",
   },
   content: {
     flex: 1,
     padding: 20,
-    marginBottom: 10, // Adicione esta margem para evitar que o conteúdo fique atrás da BottomNav
+    marginBottom: 10,
   },
   placeholderSection: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 30,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: "#f8f8f8",
     borderRadius: 12,
     marginBottom: 20,
   },
   placeholderTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginTop: 15,
     marginBottom: 10,
   },
   placeholderText: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
     paddingHorizontal: 20,
   },
+  contador: {
+    fontSize: 14,
+    color: "#bc010c",
+    fontWeight: "600",
+    marginTop: 8,
+  },
+  filtroContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+    backgroundColor: "#f1f1f1",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  filtroInput: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 16,
+    color: "#333",
+  },
+  limparFiltro: {
+    padding: 4,
+  },
   ocorrenciaCard: {
-    backgroundColor: '#f8f8f8',
+    backgroundColor: "#f8f8f8",
     padding: 15,
     borderRadius: 12,
-    marginBottom: 10,
+    marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#e1e1e1',
+    borderColor: "#e1e1e1",
   },
   ocorrenciaHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 10,
   },
   ocorrenciaTipo: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
+    flex: 1,
+    marginRight: 10,
   },
   statusBadge: {
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 15,
+    minWidth: 80,
+    alignItems: "center",
   },
   statusText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   ocorrenciaInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 6,
   },
   ocorrenciaLocal: {
     fontSize: 14,
-    color: '#666',
-    marginLeft: 5,
+    color: "#666",
+    marginLeft: 6,
+    flex: 1,
   },
   ocorrenciaHora: {
     fontSize: 14,
-    color: '#666',
-    marginLeft: 5,
+    color: "#666",
+    marginLeft: 6,
+  },
+  ocorrenciaDetalhes: {
+    fontSize: 13,
+    color: "#888",
+    marginLeft: 6,
+    fontStyle: "italic",
+    flex: 1,
+  },
+  ocorrenciaData: {
+    fontSize: 12,
+    color: "#999",
+    marginLeft: 6,
+  },
+  semResultados: {
+    alignItems: "center",
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+  },
+  semResultadosText: {
+    fontSize: 16,
+    color: "#888",
+    textAlign: "center",
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  novaOcorrenciaButton: {
+    backgroundColor: "#bc010c",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  novaOcorrenciaButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  floatingButton: {
+    position: "absolute",
+    right: 20,
+    bottom: 80,
+    backgroundColor: "#bc010c",
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
 });

@@ -14,8 +14,9 @@ import ListarOcorrenciasScreen from './screens/ListarOcorrenciasScreen';
 import NovaOcorrenciaScreen from './screens/NovaOcorrenciaScreen';
 import OcorrenciaRegistradaScreen from './screens/OcorrenciaRegistradaScreen';
 
-// Import the AuthProvider
+// Import de Contexts
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
+import { OcorrenciasProvider } from './contexts/OcorrenciasContext'; // Ajuste o caminho se necessário
 
 // Configurações do tema
 const THEME_COLORS = {
@@ -135,7 +136,9 @@ const AppContent = () => {
 export default function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <OcorrenciasProvider>
+        <AppContent />
+      </OcorrenciasProvider>
     </AuthProvider>
   );
 }

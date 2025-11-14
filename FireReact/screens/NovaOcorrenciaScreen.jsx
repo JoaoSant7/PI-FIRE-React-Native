@@ -20,6 +20,9 @@ import DatePickerInput from "../components/DatePickerInput";
 import PickerInput from "../components/PickerInput";
 import TextInput from "../components/TextInput";
 
+// Import do contexto
+import { useOcorrencias } from "../contexts/OcorrenciasContext";
+
 // Import dos dados dos pickers
 import {
   GRUPAMENTOS,
@@ -47,6 +50,9 @@ const MOTIVOS_NAO_ATENDIMENTO = [
 ];
 
 const NovaOcorrenciaScreen = ({ navigation }) => {
+  // Hook do contexto
+  const { adicionarOcorrencia } = useOcorrencias();
+
   // Estado principal do formulário
   const [formData, setFormData] = useState({
     // Dados Internos
@@ -93,6 +99,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
   const [dataHora, setDataHora] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [enviando, setEnviando] = useState(false);
 
   // Função para atualizar o formData
   const updateFormData = (field, value) => {
@@ -145,9 +152,10 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     return true;
   };
 
-  // Função para salvar a ocorrência - CORRIGIDA
-  const handleSave = () => {
+  // Função para salvar a ocorrência - MODIFICADA
+  const handleSave = async () => {
     if (!validateForm()) return;
+    if (enviando) return;
 
     // Pop-up de confirmação
     Alert.alert(
@@ -160,16 +168,40 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
         },
         {
           text: "Sim",
-          onPress: () => {
-            const ocorrenciaData = {
-              ...formData,
-              dataHora: dataHora.toISOString(),
-            };
+          onPress: async () => {
+            try {
+              setEnviando(true);
 
-            console.log("Dados da ocorrência:", ocorrenciaData);
+              // Monta objeto completo da ocorrência
+              const ocorrenciaData = {
+                ...formData,
+                id: `ocorrencia_${Date.now()}`,
+                dataHora: dataHora.toISOString(),
+                dataRegistro: new Date().toISOString(),
+                status: "registrada",
+              };
 
-            // CORREÇÃO: Navega diretamente para a tela de confirmação
-            navigation.navigate("OcorrenciaRegistrada");
+              console.log("Dados da ocorrência:", ocorrenciaData);
+
+              // SALVA NO CONTEXTO
+              adicionarOcorrencia(ocorrenciaData);
+
+              // Feedback de sucesso
+              Alert.alert("Sucesso!", "Ocorrência registrada com sucesso", [
+                {
+                  text: "OK",
+                  onPress: () =>
+                    navigation.navigate("OcorrenciaRegistrada", {
+                      ocorrencia: ocorrenciaData,
+                    }),
+                },
+              ]);
+            } catch (error) {
+              console.error("Erro ao salvar ocorrência:", error);
+              Alert.alert("Erro", "Não foi possível salvar a ocorrência");
+            } finally {
+              setEnviando(false);
+            }
           },
         },
       ]
@@ -600,10 +632,17 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.button, styles.saveButton]}
+            style={[
+              styles.button,
+              styles.saveButton,
+              enviando && styles.disabledButton,
+            ]}
             onPress={handleSave}
+            disabled={enviando}
           >
-            <Text style={styles.buttonText}>Salvar Ocorrência</Text>
+            <Text style={styles.buttonText}>
+              {enviando ? "Salvando..." : "Salvar Ocorrência"}
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -674,6 +713,9 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: "#bc010c",
+  },
+  disabledButton: {
+    backgroundColor: "#cccccc",
   },
   buttonText: {
     color: "white",
