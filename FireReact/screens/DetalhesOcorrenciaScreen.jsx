@@ -1,10 +1,10 @@
+// screens/DetalhesOcorrenciaScreen.js
 import React from "react";
 import {
   StyleSheet,
   Text,
   View,
   ScrollView,
-  StatusBar,
   TouchableOpacity,
 } from "react-native";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
@@ -57,6 +57,19 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
     return "Registrada";
   };
 
+  // Função para formatar valores booleanos
+  const formatarBooleano = (valor) => {
+    return valor ? "SIM" : "NÃO";
+  };
+
+  // Função para verificar se deve mostrar informações de não atendimento
+  const mostrarMotivoNaoAtendimento = () => {
+    return (
+      ocorrencia.situacao === "Não Atendida" ||
+      ocorrencia.situacao === "Sem Atuação"
+    );
+  };
+
   // Funções para a barra inferior
   const handleConfiguracoes = () => {
     navigation.navigate("Configuracoes");
@@ -74,29 +87,128 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
     navigation.navigate("ListarOcorrencias");
   };
 
+  // Função auxiliar para renderizar informações condicionais
+  const renderInfo = (label, value, condition = true) => {
+    if (!condition || !value) return null;
+    return (
+      <View style={styles.infoRow}>
+        <Text style={styles.infoLabel}>{label}:</Text>
+        <Text style={styles.infoValue}>{value}</Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
-
       <ScrollView style={styles.content}>
-        {/* Cabeçalho */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Icon name="arrow-back" size={24} color="#fff" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Detalhes da Ocorrência</Text>
-        </View>
-
         {/* Card Principal */}
         <View style={styles.card}>
-          {/* Status e Tipo */}
+          {/* Seção: Dados Internos */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Icon name="business" size={20} color="#bc010c" />
+              <Text style={styles.sectionTitle}>Dados Internos</Text>
+            </View>
+
+            {renderInfo("Data e Hora", formatarDataHora(ocorrencia.dataHora))}
+            {renderInfo("Número do Aviso", ocorrencia.numeroAviso)}
+            {renderInfo("Diretoria", ocorrencia.diretoria)}
+            {renderInfo("Grupamento", ocorrencia.grupamento)}
+            {renderInfo("Ponto Base", ocorrencia.pontoBase)}
+          </View>
+
+          {/* Seção: Ocorrência */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Icon name="warning" size={20} color="#bc010c" />
+              <Text style={styles.sectionTitle}>Ocorrência</Text>
+            </View>
+
+            {renderInfo("Natureza", ocorrencia.natureza)}
+            {renderInfo("Grupo da Ocorrência", ocorrencia.grupoOcorrencia)}
+            {renderInfo(
+              "Subgrupo da Ocorrência",
+              ocorrencia.subgrupoOcorrencia
+            )}
+            {renderInfo("Situação", ocorrencia.situacao)}
+
+            {renderInfo("Hora Saída Quartel", ocorrencia.horaSaidaQuartel)}
+            {renderInfo("Hora Chegada Local", ocorrencia.horaLocal)}
+            {renderInfo("Hora Saída Local", ocorrencia.horaSaidaLocal)}
+
+            {/* Motivo de não atendimento */}
+            {mostrarMotivoNaoAtendimento() && (
+              <>
+                {renderInfo(
+                  "Motivo Não Atendimento",
+                  ocorrencia.motivoNaoAtendida
+                )}
+                {renderInfo(
+                  "Outro Motivo",
+                  ocorrencia.motivoOutro,
+                  ocorrencia.motivoNaoAtendida === "Outro"
+                )}
+              </>
+            )}
+
+            {renderInfo(
+              "Vítima Socorrida pelo SAMU",
+              formatarBooleano(ocorrencia.vitimaSamu)
+            )}
+          </View>
+
+          {/* Seção: Informações da Vítima */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Icon name="person" size={20} color="#bc010c" />
+              <Text style={styles.sectionTitle}>Informações da Vítima</Text>
+            </View>
+
+            {renderInfo(
+              "Vítima Envolvida",
+              formatarBooleano(ocorrencia.envolvida)
+            )}
+            {renderInfo("Sexo", ocorrencia.sexo)}
+            {renderInfo("Idade", ocorrencia.idade)}
+            {renderInfo("Classificação", ocorrencia.classificacao)}
+            {renderInfo("Destino", ocorrencia.destino)}
+          </View>
+
+          {/* Seção: Viatura e Acionamento */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Icon name="directions-car" size={20} color="#bc010c" />
+              <Text style={styles.sectionTitle}>Viatura e Acionamento</Text>
+            </View>
+
+            {renderInfo("Viatura Empregada", ocorrencia.viatura)}
+            {renderInfo("Número da Viatura", ocorrencia.numeroViatura)}
+            {renderInfo("Forma de Acionamento", ocorrencia.acionamento)}
+            {renderInfo("Local do Acionamento", ocorrencia.localAcionamento)}
+          </View>
+
+          {/* Seção: Endereço */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Icon name="place" size={20} color="#bc010c" />
+              <Text style={styles.sectionTitle}>Endereço da Ocorrência</Text>
+            </View>
+
+            {renderInfo("Município", ocorrencia.municipio)}
+            {renderInfo("Região", ocorrencia.regiao)}
+            {renderInfo("Bairro", ocorrencia.bairro)}
+            {renderInfo("Tipo de Logradouro", ocorrencia.tipoLogradouro)}
+            {renderInfo("AIS", ocorrencia.ais)}
+            {renderInfo("Logradouro", ocorrencia.logradouro)}
+            {renderInfo("Latitude", ocorrencia.latitude)}
+            {renderInfo("Longitude", ocorrencia.longitude)}
+          </View>
+
+          {/* Seção: Informações do Sistema */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Icon name="info" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Informações Gerais</Text>
+              <Text style={styles.sectionTitle}>Informações do Sistema</Text>
             </View>
 
             <View style={styles.infoRow}>
@@ -115,152 +227,12 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
               </View>
             </View>
 
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Tipo/Natureza:</Text>
-              <Text style={styles.infoValue}>
-                {ocorrencia.natureza ||
-                  ocorrencia.grupoOcorrencia ||
-                  "Não informado"}
-              </Text>
-            </View>
-
-            {ocorrencia.numeroAviso && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Número do Aviso:</Text>
-                <Text style={styles.infoValue}>{ocorrencia.numeroAviso}</Text>
-              </View>
+            {renderInfo("ID", ocorrencia.id)}
+            {renderInfo(
+              "Data de Registro",
+              formatarDataHora(ocorrencia.dataRegistro)
             )}
           </View>
-
-          {/* Localização */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Icon name="location-on" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Localização</Text>
-            </View>
-
-            {ocorrencia.tipoLogradouro && ocorrencia.logradouro && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Endereço:</Text>
-                <Text style={styles.infoValue}>
-                  {ocorrencia.tipoLogradouro} {ocorrencia.logradouro}
-                  {ocorrencia.numero ? `, ${ocorrencia.numero}` : ""}
-                </Text>
-              </View>
-            )}
-
-            {ocorrencia.bairro && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Bairro:</Text>
-                <Text style={styles.infoValue}>{ocorrencia.bairro}</Text>
-              </View>
-            )}
-
-            {ocorrencia.municipio && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Município:</Text>
-                <Text style={styles.infoValue}>{ocorrencia.municipio}</Text>
-              </View>
-            )}
-
-            {ocorrencia.referencia && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Referência:</Text>
-                <Text style={styles.infoValue}>{ocorrencia.referencia}</Text>
-              </View>
-            )}
-          </View>
-
-          {/* Datas e Horários */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Icon name="access-time" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Datas e Horários</Text>
-            </View>
-
-            {ocorrencia.dataHora && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Data/Hora da Ocorrência:</Text>
-                <Text style={styles.infoValue}>
-                  {formatarDataHora(ocorrencia.dataHora)}
-                </Text>
-              </View>
-            )}
-
-            {ocorrencia.dataRegistro && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Data/Hora do Registro:</Text>
-                <Text style={styles.infoValue}>
-                  {formatarDataHora(ocorrencia.dataRegistro)}
-                </Text>
-              </View>
-            )}
-          </View>
-
-          {/* Informações Adicionais */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Icon name="assignment" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Informações Adicionais</Text>
-            </View>
-
-            {ocorrencia.grupamento && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Grupamento:</Text>
-                <Text style={styles.infoValue}>{ocorrencia.grupamento}</Text>
-              </View>
-            )}
-
-            {ocorrencia.observacoes && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>Observações:</Text>
-                <Text style={[styles.infoValue, styles.observacoesText]}>
-                  {ocorrencia.observacoes}
-                </Text>
-              </View>
-            )}
-
-            {/* Adicione mais campos conforme necessário */}
-            {ocorrencia.id && (
-              <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>ID:</Text>
-                <Text style={styles.infoValue}>{ocorrencia.id}</Text>
-              </View>
-            )}
-          </View>
-
-          {/* Seção para dados específicos do seu sistema */}
-          {(ocorrencia.vitimas ||
-            ocorrencia.veiculos ||
-            ocorrencia.materiais) && (
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <Icon name="description" size={20} color="#bc010c" />
-                <Text style={styles.sectionTitle}>Recursos Utilizados</Text>
-              </View>
-
-              {ocorrencia.vitimas && (
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Vítimas:</Text>
-                  <Text style={styles.infoValue}>{ocorrencia.vitimas}</Text>
-                </View>
-              )}
-
-              {ocorrencia.veiculos && (
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Veículos:</Text>
-                  <Text style={styles.infoValue}>{ocorrencia.veiculos}</Text>
-                </View>
-              )}
-
-              {ocorrencia.materiais && (
-                <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>Materiais:</Text>
-                  <Text style={styles.infoValue}>{ocorrencia.materiais}</Text>
-                </View>
-              )}
-            </View>
-          )}
         </View>
       </ScrollView>
 
@@ -282,22 +254,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-  },
-  header: {
-    backgroundColor: "#bc010c",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 15,
-    paddingTop: StatusBar.currentHeight + 10 || 50,
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  headerTitle: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
+    paddingTop: 10,
   },
   card: {
     margin: 16,
@@ -308,18 +265,18 @@ const styles = StyleSheet.create({
     borderColor: "#e1e1e1",
   },
   section: {
-    marginBottom: 20,
+    marginBottom: 24,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e1e1e1",
   },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#e1e1e1",
-    paddingBottom: 8,
+    marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
     color: "#333",
     marginLeft: 8,
@@ -328,13 +285,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 10,
-    paddingHorizontal: 8,
+    marginBottom: 12,
+    paddingHorizontal: 4,
   },
   infoLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#666",
+    color: "#555",
     flex: 1,
   },
   infoValue: {
@@ -342,21 +299,18 @@ const styles = StyleSheet.create({
     color: "#333",
     flex: 1.5,
     textAlign: "right",
+    flexWrap: "wrap",
   },
   statusBadge: {
     paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingVertical: 6,
     borderRadius: 12,
-    minWidth: 80,
+    minWidth: 100,
   },
   statusText: {
     color: "#fff",
     fontSize: 12,
     fontWeight: "bold",
     textAlign: "center",
-  },
-  observacoesText: {
-    fontStyle: "italic",
-    lineHeight: 20,
   },
 });
