@@ -188,8 +188,8 @@ export default function ListarOcorrenciasScreen({ navigation }) {
               key={ocorrencia.id || `ocorrencia-${idx}`}
               style={styles.ocorrenciaCard}
               onPress={() => {
-                // Navegar para detalhes da ocorrência se necessário
-                console.log("Ocorrência selecionada:", ocorrencia);
+                // Navegar para a tela de detalhes da ocorrência
+                navigation.navigate("DetalhesOcorrencia", { ocorrencia });
               }}
             >
               <View style={styles.ocorrenciaHeader}>

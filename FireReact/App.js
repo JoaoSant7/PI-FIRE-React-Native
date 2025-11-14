@@ -13,6 +13,7 @@ import DashboardScreen from './screens/DashboardScreen';
 import ListarOcorrenciasScreen from './screens/ListarOcorrenciasScreen';
 import NovaOcorrenciaScreen from './screens/NovaOcorrenciaScreen';
 import OcorrenciaRegistradaScreen from './screens/OcorrenciaRegistradaScreen';
+import DetalhesOcorrenciaScreen from './screens/DetalhesOcorrenciaScreen'; // Nova tela
 
 // Import de Contexts
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
@@ -103,6 +104,14 @@ const MainStack = () => (
         ...headerOptions,
         title: 'Ocorrência Registrada',
         headerLeft: null
+      }}
+    />
+    <Stack.Screen 
+      name="DetalhesOcorrencia" 
+      component={DetalhesOcorrenciaScreen}
+      options={{ 
+        ...headerOptions,
+        title: 'Detalhes da Ocorrência'
       }}
     />
   </Stack.Navigator>
