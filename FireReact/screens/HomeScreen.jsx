@@ -1,11 +1,25 @@
 // screens/HomeScreen.jsx
-import React from "react";
+import React, { useLayoutEffect } from "react"; // Adicione o useLayoutEffect
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
 
 export default function HomeScreen({ navigation }) {
+  // Adicione este useLayoutEffect para configurar o header
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Configuracoes")}
+          style={{ marginRight: 15 }}
+        >
+          <MaterialCommunityIcons name="cog" size={24} color="#fff" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
   // Funções para os botões da barra inferior
   const handleInicio = () => {
     // Já está na tela inicial
