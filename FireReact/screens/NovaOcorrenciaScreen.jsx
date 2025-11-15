@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Text,
   Alert,
-  Switch,
   Keyboard,
   Image,
   PermissionsAndroid,
@@ -20,11 +19,14 @@ import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 // Import dos componentes
 import Section from "../components/Section";
 import InputGroup from "../components/InputGroup";
-import DateTimePickerInput from "../components/DateTimePickerInput"; // NOVO IMPORT
+import DateTimePickerInput from "../components/DateTimePickerInput";
 import DatePickerInput from "../components/DatePickerInput";
 import PickerInput from "../components/PickerInput";
 import TextInput from "../components/TextInput";
 import SearchablePicker from "../components/SearchablePicker";
+
+// Import do ícone de câmera SVG
+import CameraIcon from "../components/CameraIcon"; // ADICIONE ESTA LINHA
 
 // Import do contexto CORRIGIDO
 import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
@@ -924,38 +926,100 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             />
           </InputGroup>
 
-          <View style={styles.switchContainer}>
-            <Text style={styles.label}>Vítima socorrida pelo SAMU</Text>
-            <View style={styles.switchWrapper}>
-              <Text style={styles.switchLabel}>NÃO</Text>
-              <Switch
-                value={formData.vitimaSamu}
-                onValueChange={(value) => updateFormData("vitimaSamu", value)}
-                trackColor={{ false: "#767577", true: "#40a02b" }}
-                thumbColor={formData.vitimaSamu ? "#f4f3f4" : "#f4f3f4"}
-                ios_backgroundColor="#3e3e3e"
-              />
-              <Text style={styles.switchLabel}>SIM</Text>
+          {/* Vítima Socorrida pelo SAMU - BOTÕES SIM/NÃO */}
+          <InputGroup label="Vítima socorrida pelo SAMU">
+            <View style={styles.buttonGroup}>
+              <TouchableOpacity
+                style={[
+                  styles.optionButton,
+                  formData.vitimaSamu
+                    ? styles.optionButtonSelected
+                    : styles.optionButtonUnselected,
+                ]}
+                onPress={() => updateFormData("vitimaSamu", true)}
+              >
+                <Text
+                  style={[
+                    styles.optionButtonText,
+                    formData.vitimaSamu
+                      ? styles.optionButtonTextSelected
+                      : styles.optionButtonTextUnselected,
+                  ]}
+                >
+                  SIM
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.optionButton,
+                  !formData.vitimaSamu
+                    ? styles.optionButtonSelected
+                    : styles.optionButtonUnselected,
+                ]}
+                onPress={() => updateFormData("vitimaSamu", false)}
+              >
+                <Text
+                  style={[
+                    styles.optionButtonText,
+                    !formData.vitimaSamu
+                      ? styles.optionButtonTextSelected
+                      : styles.optionButtonTextUnselected,
+                  ]}
+                >
+                  NÃO
+                </Text>
+              </TouchableOpacity>
             </View>
-          </View>
+          </InputGroup>
         </Section>
 
         {/* Seção: Informações da Vítima */}
         <Section title="Informações da Vítima">
-          <View style={styles.switchContainer}>
-            <Text style={styles.label}>Vítima Envolvida</Text>
-            <View style={styles.switchWrapper}>
-              <Text style={styles.switchLabel}>NÃO</Text>
-              <Switch
-                value={formData.envolvida}
-                onValueChange={(value) => updateFormData("envolvida", value)}
-                trackColor={{ false: "#767577", true: "#40a02b" }}
-                thumbColor={formData.envolvida ? "#f4f3f4" : "#f4f3f4"}
-                ios_backgroundColor="#3e3e3e"
-              />
-              <Text style={styles.switchLabel}>SIM</Text>
+          {/* Vítima Envolvida - BOTÕES SIM/NÃO */}
+          <InputGroup label="Vítima Envolvida">
+            <View style={styles.buttonGroup}>
+              <TouchableOpacity
+                style={[
+                  styles.optionButton,
+                  formData.envolvida
+                    ? styles.optionButtonSelected
+                    : styles.optionButtonUnselected,
+                ]}
+                onPress={() => updateFormData("envolvida", true)}
+              >
+                <Text
+                  style={[
+                    styles.optionButtonText,
+                    formData.envolvida
+                      ? styles.optionButtonTextSelected
+                      : styles.optionButtonTextUnselected,
+                  ]}
+                >
+                  SIM
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.optionButton,
+                  !formData.envolvida
+                    ? styles.optionButtonSelected
+                    : styles.optionButtonUnselected,
+                ]}
+                onPress={() => updateFormData("envolvida", false)}
+              >
+                <Text
+                  style={[
+                    styles.optionButtonText,
+                    !formData.envolvida
+                      ? styles.optionButtonTextSelected
+                      : styles.optionButtonTextUnselected,
+                  ]}
+                >
+                  NÃO
+                </Text>
+              </TouchableOpacity>
             </View>
-          </View>
+          </InputGroup>
 
           <InputGroup label="Sexo da Vítima">
             <PickerInput
@@ -1153,7 +1217,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 activeOpacity={0.7}
               >
                 <View style={styles.cameraButtonContent}>
-                  <Text style={styles.cameraButtonIcon}>📷</Text>
+                  <CameraIcon width={40} height={40} color="#bc010c" />
                   <Text style={styles.cameraButtonText}>
                     Adicionar Foto da Ocorrência
                   </Text>
@@ -1220,25 +1284,39 @@ const styles = StyleSheet.create({
   marginLeft: {
     marginLeft: 8,
   },
-  switchContainer: {
-    marginVertical: 12,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#555",
-    marginBottom: 8,
-  },
-  switchWrapper: {
+  // NOVOS ESTILOS PARA BOTÕES SIM/NÃO
+  buttonGroup: {
     flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 8,
+  },
+  optionButton: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 8,
     alignItems: "center",
-    justifyContent: "flex-start",
+    marginHorizontal: 4,
+    borderWidth: 2,
   },
-  switchLabel: {
-    marginHorizontal: 8,
-    fontSize: 14,
-    color: "#333",
+  optionButtonSelected: {
+    backgroundColor: "#bc010c",
+    borderColor: "#bc010c",
   },
+  optionButtonUnselected: {
+    backgroundColor: "#f8f8f8",
+    borderColor: "#ccc",
+  },
+  optionButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  optionButtonTextSelected: {
+    color: "white",
+  },
+  optionButtonTextUnselected: {
+    color: "#666",
+  },
+  // FIM DOS NOVOS ESTILOS
   textArea: {
     height: 80,
     textAlignVertical: "top",
