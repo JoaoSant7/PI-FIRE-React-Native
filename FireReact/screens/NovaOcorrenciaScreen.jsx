@@ -477,7 +477,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               onDateChange={onDateChange}
               showPicker={showDatePicker}
               setShowPicker={setShowDatePicker}
-              placeholder="Selecione a data e hora*"
+              placeholder="Selecione a data e hora"
             />
           </InputGroup>
 
@@ -498,7 +498,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             <TextInput
               value={formData.diretoria}
               onChangeText={(value) => updateFormData("diretoria", value)}
-              placeholder="Digite a diretoria*"
+              placeholder="Digite a diretoria"
             />
           </InputGroup>
 
@@ -507,7 +507,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               selectedValue={formData.grupamento}
               onValueChange={(value) => updateFormData("grupamento", value)}
               items={GRUPAMENTOS}
-              placeholder="Selecione o grupamento*"
+              placeholder="Selecione o grupamento"
             />
           </InputGroup>
 
@@ -515,7 +515,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             <TextInput
               value={formData.pontoBase}
               onChangeText={(value) => updateFormData("pontoBase", value)}
-              placeholder="Digite o ponto base*"
+              placeholder="Digite o ponto base"
             />
           </InputGroup>
         </Section>
@@ -527,7 +527,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               selectedValue={formData.natureza}
               onValueChange={(value) => updateFormData("natureza", value)}
               items={NATUREZAS}
-              placeholder="Selecione a Natureza da Ocorrência*"
+              placeholder="Selecione a Natureza da Ocorrência"
             />
           </InputGroup>
 
@@ -538,7 +538,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 updateFormData("grupoOcorrencia", value)
               }
               items={GRUPOS_OCORRENCIA}
-              placeholder="Selecione o Grupo de Ocorrência*"
+              placeholder="Selecione o Grupo de Ocorrência"
             />
           </InputGroup>
 
@@ -549,7 +549,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 updateFormData("subgrupoOcorrencia", value)
               }
               items={SUBGRUPOS_OCORRENCIA}
-              placeholder="Selecione o Subgrupo da Ocorrência*"
+              placeholder="Selecione o Subgrupo da Ocorrência"
             />
           </InputGroup>
 
@@ -558,7 +558,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               selectedValue={formData.situacao}
               onValueChange={(value) => updateFormData("situacao", value)}
               items={SITUACOES}
-              placeholder="Selecione a Situação da Ocorrência*"
+              placeholder="Selecione a Situação da Ocorrência"
             />
           </InputGroup>
 
@@ -570,7 +570,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 onChangeText={(value) =>
                   updateFormData("horaSaidaQuartel", value)
                 }
-                placeholder="HH:MM:SS*"
+                placeholder="HH:MM:SS"
                 showValidation={true}
               />
             </InputGroup>
@@ -583,7 +583,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               <TimeInput
                 value={formData.horaLocal}
                 onChangeText={(value) => updateFormData("horaLocal", value)}
-                placeholder="HH:MM:SS*"
+                placeholder="HH:MM:SS"
                 showValidation={true}
               />
             </InputGroup>
@@ -641,7 +641,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             <TimeInput
               value={formData.horaSaidaLocal}
               onChangeText={(value) => updateFormData("horaSaidaLocal", value)}
-              placeholder="HH:MM:SS*"
+              placeholder="HH:MM:SS"
               showValidation={true}
             />
           </InputGroup>
@@ -760,7 +760,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             <TextInput
               value={formData.municipio}
               onChangeText={(value) => updateFormData("municipio", value)}
-              placeholder="Digite o município*"
+              placeholder="Digite o município"
             />
           </InputGroup>
 
@@ -769,7 +769,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               selectedValue={formData.regiao}
               onValueChange={(value) => updateFormData("regiao", value)}
               items={REGIOES}
-              placeholder="Selecione a região*"
+              placeholder="Selecione a região"
             />
           </InputGroup>
 
@@ -786,7 +786,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               selectedValue={formData.tipoLogradouro}
               onValueChange={(value) => updateFormData("tipoLogradouro", value)}
               items={TIPOS_LOGRADOURO}
-              placeholder="Selecione o Tipo de Logradouro*"
+              placeholder="Selecione o Tipo de Logradouro"
             />
           </InputGroup>
 
@@ -803,7 +803,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             <TextInput
               value={formData.logradouro}
               onChangeText={(value) => updateFormData("logradouro", value)}
-              placeholder="Digite o logradouro*"
+              placeholder="Digite o logradouro"
             />
           </InputGroup>
 
