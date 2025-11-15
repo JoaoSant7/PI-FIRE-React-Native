@@ -34,7 +34,10 @@
     "react-native-svg": "15.12.1",
     "react-native-vector-icons": "^10.3.0",
     "react-native-vision-camera": "^4.7.3",
-    "react-native-web": "^0.21.0"
+    "react-native-web": "^0.21.0",
+    "expo-file-system": "~19.0.17",
+    "expo-sharing": "~14.0.7",
+    "expo-print": "~15.0.7"
   },
   "private": true
 }

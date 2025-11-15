@@ -1,5 +1,5 @@
 // screens/ListarOcorrenciasScreen.js
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,10 +9,14 @@ import {
   ScrollView,
   TextInput,
   RefreshControl,
+  Modal,
+  Alert,
+  Vibration,
 } from "react-native";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
 import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
+import { exportToCSV, exportToPDF } from "../services/exportService";
 
 export default function ListarOcorrenciasScreen({ navigation }) {
   const { ocorrencias, loading, refreshing, atualizarDados } =
@@ -20,6 +24,22 @@ export default function ListarOcorrenciasScreen({ navigation }) {
 
   // Filtro por data (formato: 'YYYY-MM-DD')
   const [dataFiltro, setDataFiltro] = useState("");
+  const [selectedOccurrences, setSelectedOccurrences] = useState([]);
+  const [exportModalVisible, setExportModalVisible] = useState(false);
+
+  // Adicionar botão de exportação no header
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => setExportModalVisible(true)}
+          style={{ marginRight: 15 }}
+        >
+          <Icon name="file-download" size={24} color="#fff" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
 
   // Função para filtrar por data
   const ocorrenciasFiltradas = ocorrencias.filter((ocorrencia) => {
@@ -53,6 +73,167 @@ export default function ListarOcorrenciasScreen({ navigation }) {
 
   const handleDashboard = () => {
     navigation.navigate("Dashboard");
+  };
+
+  // Funções de seleção para exportação (apenas toque longo)
+  const handleLongPress = (id) => {
+    Vibration.vibrate(50); // Feedback tátil
+    toggleOccurrenceSelection(id);
+  };
+
+  const toggleOccurrenceSelection = (id) => {
+    setSelectedOccurrences((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedOccurrences.length === ocorrenciasFiltradas.length) {
+      setSelectedOccurrences([]);
+    } else {
+      setSelectedOccurrences(
+        ocorrenciasFiltradas.map(
+          (occ) => occ.id || `ocorrencia-${ocorrenciasFiltradas.indexOf(occ)}`
+        )
+      );
+    }
+  };
+
+  // Funções de exportação
+  const handleExportCSV = async () => {
+    const selectedData =
+      selectedOccurrences.length > 0
+        ? ocorrenciasFiltradas.filter((occ) =>
+            selectedOccurrences.includes(
+              occ.id || `ocorrencia-${ocorrenciasFiltradas.indexOf(occ)}`
+            )
+          )
+        : ocorrenciasFiltradas;
+
+    if (selectedData.length === 0) {
+      Alert.alert("Aviso", "Não há ocorrências para exportar");
+      return;
+    }
+
+    try {
+      // Usar TODOS os dados detalhados da ocorrência para exportação
+      const formattedData = selectedData.map((occ) => ({
+        // Informações básicas
+        id: occ.id || `ocorrencia-${ocorrenciasFiltradas.indexOf(occ)}`,
+        data: occ.dataHora
+          ? occ.dataHora.split("T")[0]
+          : occ.dataCriacao
+          ? occ.dataCriacao.split("T")[0]
+          : "N/A",
+        hora: occ.dataHora
+          ? occ.dataHora.split("T")[1]?.substring(0, 5)
+          : occ.dataCriacao
+          ? occ.dataCriacao.split("T")[1]?.substring(0, 5)
+          : "N/A",
+        tipo: getTipoOcorrencia(occ),
+        endereco: getLocalOcorrencia(occ),
+        status: getStatusText(occ),
+        prioridade: getPrioridade(occ),
+
+        // Descrição detalhada
+        descricao: occ.descricao || "Sem descrição",
+
+        // Localização completa
+        logradouro: occ.logradouro || "",
+        tipoLogradouro: occ.tipoLogradouro || "",
+        numero: occ.numero || "",
+        bairro: occ.bairro || "",
+        municipio: occ.municipio || "",
+        regiao: occ.regiao || "",
+
+        // Informações operacionais
+        numeroAviso: occ.numeroAviso || "",
+        grupamento: occ.grupamento || "",
+        situacao: occ.situacao || "",
+        natureza: occ.natureza || "",
+        grupoOcorrencia: occ.grupoOcorrencia || "",
+
+        // Metadados
+        dataCriacao: occ.dataCriacao || "",
+        dataAtualizacao: occ.dataAtualizacao || "",
+      }));
+
+      await exportToCSV(formattedData);
+      setExportModalVisible(false);
+      setSelectedOccurrences([]);
+      Alert.alert("Sucesso", "CSV exportado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao exportar CSV:", error);
+      Alert.alert("Erro", "Falha ao exportar CSV");
+    }
+  };
+
+  const handleExportPDF = async () => {
+    const selectedData =
+      selectedOccurrences.length > 0
+        ? ocorrenciasFiltradas.filter((occ) =>
+            selectedOccurrences.includes(
+              occ.id || `ocorrencia-${ocorrenciasFiltradas.indexOf(occ)}`
+            )
+          )
+        : ocorrenciasFiltradas;
+
+    if (selectedData.length === 0) {
+      Alert.alert("Aviso", "Não há ocorrências para exportar");
+      return;
+    }
+
+    try {
+      // Usar TODOS os dados detalhados da ocorrência para exportação
+      const formattedData = selectedData.map((occ) => ({
+        // Informações básicas
+        id: occ.id || `ocorrencia-${ocorrenciasFiltradas.indexOf(occ)}`,
+        data: occ.dataHora
+          ? occ.dataHora.split("T")[0]
+          : occ.dataCriacao
+          ? occ.dataCriacao.split("T")[0]
+          : "N/A",
+        hora: occ.dataHora
+          ? occ.dataHora.split("T")[1]?.substring(0, 5)
+          : occ.dataCriacao
+          ? occ.dataCriacao.split("T")[1]?.substring(0, 5)
+          : "N/A",
+        tipo: getTipoOcorrencia(occ),
+        endereco: getLocalOcorrencia(occ),
+        status: getStatusText(occ),
+        prioridade: getPrioridade(occ),
+
+        // Descrição detalhada
+        descricao: occ.descricao || "Sem descrição",
+
+        // Localização completa
+        logradouro: occ.logradouro || "",
+        tipoLogradouro: occ.tipoLogradouro || "",
+        numero: occ.numero || "",
+        bairro: occ.bairro || "",
+        municipio: occ.municipio || "",
+        regiao: occ.regiao || "",
+
+        // Informações operacionais
+        numeroAviso: occ.numeroAviso || "",
+        grupamento: occ.grupamento || "",
+        situacao: occ.situacao || "",
+        natureza: occ.natureza || "",
+        grupoOcorrencia: occ.grupoOcorrencia || "",
+
+        // Metadados
+        dataCriacao: occ.dataCriacao || "",
+        dataAtualizacao: occ.dataAtualizacao || "",
+      }));
+
+      await exportToPDF(formattedData);
+      setExportModalVisible(false);
+      setSelectedOccurrences([]);
+      Alert.alert("Sucesso", "PDF exportado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao exportar PDF:", error);
+      Alert.alert("Erro", "Falha ao exportar PDF");
+    }
   };
 
   const getStatusColor = (status) => {
@@ -130,8 +311,8 @@ export default function ListarOcorrenciasScreen({ navigation }) {
   const getLocalOcorrencia = (ocorrencia) => {
     if (ocorrencia.localizacao) return ocorrencia.localizacao;
     if (ocorrencia.logradouro) {
-      return `${ocorrencia.tipoLogradouro || ""} ${
-        ocorrencia.logradouro
+      return `${ocorrencia.tipoLogradouro || ""} ${ocorrencia.logradouro}${
+        ocorrencia.numero ? `, ${ocorrencia.numero}` : ""
       }`.trim();
     }
     if (ocorrencia.bairro) return ocorrencia.bairro;
@@ -148,6 +329,34 @@ export default function ListarOcorrenciasScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
+
+      {/* Header de seleção - Só aparece quando há ocorrências selecionadas */}
+      {selectedOccurrences.length > 0 && (
+        <View style={styles.selectionHeader}>
+          <Text style={styles.selectionText}>
+            {selectedOccurrences.length} ocorrência(s) selecionada(s) para
+            exportação
+          </Text>
+          <View style={styles.selectionActions}>
+            <TouchableOpacity
+              onPress={toggleSelectAll}
+              style={styles.selectionButton}
+            >
+              <Text style={styles.selectAllText}>
+                {selectedOccurrences.length === ocorrenciasFiltradas.length
+                  ? "Desmarcar todas"
+                  : "Selecionar todas"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setSelectedOccurrences([])}
+              style={styles.selectionButton}
+            >
+              <Text style={styles.cancelSelectionText}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
       <ScrollView
         style={styles.content}
@@ -167,7 +376,16 @@ export default function ListarOcorrenciasScreen({ navigation }) {
           </Text>
           <Text style={styles.contador}>
             {ocorrenciasFiltradas.length} de {ocorrencias.length} ocorrências
+            {selectedOccurrences.length > 0 &&
+              ` • ${selectedOccurrences.length} selecionadas`}
           </Text>
+
+          {/* Instrução para exportação */}
+          {selectedOccurrences.length === 0 && (
+            <Text style={styles.exportHint}>
+              Toque longo em uma ocorrência para selecionar para exportação
+            </Text>
+          )}
         </View>
 
         {/* Campo de filtro por data */}
@@ -220,105 +438,178 @@ export default function ListarOcorrenciasScreen({ navigation }) {
             )}
           </View>
         ) : (
-          ocorrenciasFiltradas.map((ocorrencia, idx) => (
-            <TouchableOpacity
-              key={ocorrencia.id || `ocorrencia-${idx}`}
-              style={styles.ocorrenciaCard}
-              onPress={() => {
-                // Navegar para a tela de detalhes da ocorrência
-                navigation.navigate("DetalhesOcorrencia", { ocorrencia });
-              }}
-            >
-              <View style={styles.ocorrenciaHeader}>
-                <View style={styles.ocorrenciaTipoContainer}>
-                  <Text style={styles.ocorrenciaTipo}>
-                    {getTipoOcorrencia(ocorrencia)}
-                  </Text>
-                  <View
-                    style={[
-                      styles.prioridadeBadge,
-                      {
-                        backgroundColor:
-                          getPrioridade(ocorrencia) === "alta"
-                            ? "#ff4444"
-                            : getPrioridade(ocorrencia) === "media"
-                            ? "#ffaa00"
-                            : "#44ff44",
-                      },
-                    ]}
-                  >
-                    <Text style={styles.prioridadeText}>
-                      {getPrioridade(ocorrencia).toUpperCase()}
+          ocorrenciasFiltradas.map((ocorrencia, idx) => {
+            const occurrenceId = ocorrencia.id || `ocorrencia-${idx}`;
+            const isSelected = selectedOccurrences.includes(occurrenceId);
+
+            return (
+              <TouchableOpacity
+                key={occurrenceId}
+                style={[
+                  styles.ocorrenciaCard,
+                  isSelected && styles.selectedOccurrenceCard,
+                ]}
+                onPress={() => {
+                  // Toque simples: navega para detalhes (comportamento original)
+                  navigation.navigate("DetalhesOcorrencia", { ocorrencia });
+                }}
+                onLongPress={() => {
+                  // Toque longo: seleciona para exportação
+                  handleLongPress(occurrenceId);
+                }}
+                delayLongPress={500} // Delay de 500ms para toque longo
+              >
+                {/* Indicador de seleção (apenas visual) */}
+                {isSelected && (
+                  <View style={styles.selectionIndicator}>
+                    <Icon name="check-circle" size={20} color="#bc010c" />
+                  </View>
+                )}
+
+                <View style={styles.ocorrenciaContent}>
+                  <View style={styles.ocorrenciaHeader}>
+                    <View style={styles.ocorrenciaTipoContainer}>
+                      <Text style={styles.ocorrenciaTipo}>
+                        {getTipoOcorrencia(ocorrencia)}
+                      </Text>
+                      <View
+                        style={[
+                          styles.prioridadeBadge,
+                          {
+                            backgroundColor:
+                              getPrioridade(ocorrencia) === "alta"
+                                ? "#ff4444"
+                                : getPrioridade(ocorrencia) === "media"
+                                ? "#ffaa00"
+                                : "#44ff44",
+                          },
+                        ]}
+                      >
+                        <Text style={styles.prioridadeText}>
+                          {getPrioridade(ocorrencia).toUpperCase()}
+                        </Text>
+                      </View>
+                    </View>
+                    <View
+                      style={[
+                        styles.statusBadge,
+                        {
+                          backgroundColor: getStatusColor(
+                            getStatusText(ocorrencia)
+                          ),
+                        },
+                      ]}
+                    >
+                      <Text style={styles.statusText}>
+                        {getStatusText(ocorrencia)}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {ocorrencia.descricao && (
+                    <Text style={styles.ocorrenciaDescricao} numberOfLines={2}>
+                      {ocorrencia.descricao}
+                    </Text>
+                  )}
+
+                  <View style={styles.ocorrenciaInfo}>
+                    <Icon name="location-on" size={16} color="#666" />
+                    <Text style={styles.ocorrenciaLocal}>
+                      {getLocalOcorrencia(ocorrencia)}
+                    </Text>
+                  </View>
+
+                  <View style={styles.ocorrenciaInfo}>
+                    <Icon name="access-time" size={16} color="#666" />
+                    <Text style={styles.ocorrenciaHora}>
+                      {extrairHora(
+                        ocorrencia.dataHora || ocorrencia.dataCriacao
+                      )}
+                    </Text>
+                  </View>
+
+                  {/* Informações adicionais */}
+                  {(ocorrencia.regiao ||
+                    ocorrencia.numeroAviso ||
+                    ocorrencia.grupamento) && (
+                    <View style={styles.ocorrenciaInfo}>
+                      <Icon name="info" size={16} color="#666" />
+                      <Text style={styles.ocorrenciaDetalhes}>
+                        {[
+                          ocorrencia.regiao,
+                          ocorrencia.numeroAviso,
+                          ocorrencia.grupamento,
+                        ]
+                          .filter(Boolean)
+                          .join(" • ")}
+                      </Text>
+                    </View>
+                  )}
+
+                  {/* Data completa */}
+                  <View style={styles.ocorrenciaInfo}>
+                    <Icon name="date-range" size={16} color="#666" />
+                    <Text style={styles.ocorrenciaData}>
+                      {formatarDataHora(
+                        ocorrencia.dataHora || ocorrencia.dataCriacao
+                      )}
                     </Text>
                   </View>
                 </View>
-                <View
-                  style={[
-                    styles.statusBadge,
-                    {
-                      backgroundColor: getStatusColor(
-                        getStatusText(ocorrencia)
-                      ),
-                    },
-                  ]}
-                >
-                  <Text style={styles.statusText}>
-                    {getStatusText(ocorrencia)}
-                  </Text>
-                </View>
-              </View>
-
-              {ocorrencia.descricao && (
-                <Text style={styles.ocorrenciaDescricao} numberOfLines={2}>
-                  {ocorrencia.descricao}
-                </Text>
-              )}
-
-              <View style={styles.ocorrenciaInfo}>
-                <Icon name="location-on" size={16} color="#666" />
-                <Text style={styles.ocorrenciaLocal}>
-                  {getLocalOcorrencia(ocorrencia)}
-                </Text>
-              </View>
-
-              <View style={styles.ocorrenciaInfo}>
-                <Icon name="access-time" size={16} color="#666" />
-                <Text style={styles.ocorrenciaHora}>
-                  {extrairHora(ocorrencia.dataHora || ocorrencia.dataCriacao)}
-                </Text>
-              </View>
-
-              {/* Informações adicionais */}
-              {(ocorrencia.regiao ||
-                ocorrencia.numeroAviso ||
-                ocorrencia.grupamento) && (
-                <View style={styles.ocorrenciaInfo}>
-                  <Icon name="info" size={16} color="#666" />
-                  <Text style={styles.ocorrenciaDetalhes}>
-                    {[
-                      ocorrencia.regiao,
-                      ocorrencia.numeroAviso,
-                      ocorrencia.grupamento,
-                    ]
-                      .filter(Boolean)
-                      .join(" • ")}
-                  </Text>
-                </View>
-              )}
-
-              {/* Data completa */}
-              <View style={styles.ocorrenciaInfo}>
-                <Icon name="date-range" size={16} color="#666" />
-                <Text style={styles.ocorrenciaData}>
-                  {formatarDataHora(
-                    ocorrencia.dataHora || ocorrencia.dataCriacao
-                  )}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))
+              </TouchableOpacity>
+            );
+          })
         )}
       </ScrollView>
+
+      {/* Modal de Exportação */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={exportModalVisible}
+        onRequestClose={() => setExportModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Exportar Ocorrências</Text>
+
+            <Text style={styles.modalSubtitle}>
+              {selectedOccurrences.length > 0
+                ? `Exportar ${selectedOccurrences.length} ocorrência(s) selecionada(s)`
+                : "Exportar todas as ocorrências visíveis"}
+            </Text>
+
+            <Text style={styles.modalInfo}>
+              A exportação incluirá todos os dados detalhados das ocorrências
+            </Text>
+
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.csvButton]}
+                onPress={handleExportCSV}
+              >
+                <Icon name="table-chart" size={24} color="#fff" />
+                <Text style={styles.modalButtonText}>Exportar CSV</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.modalButton, styles.pdfButton]}
+                onPress={handleExportPDF}
+              >
+                <Icon name="picture-as-pdf" size={24} color="#fff" />
+                <Text style={styles.modalButtonText}>Exportar PDF</Text>
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setExportModalVisible(false)}
+            >
+              <Text style={styles.cancelButtonText}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* Barra Inferior */}
       <BottomNav
@@ -339,6 +630,36 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     marginBottom: 10,
+  },
+  selectionHeader: {
+    backgroundColor: "#e3f2fd",
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#2196f3",
+    flexDirection: "column",
+  },
+  selectionText: {
+    fontSize: 14,
+    color: "#1976d2",
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  selectionActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  selectionButton: {
+    padding: 4,
+  },
+  selectAllText: {
+    color: "#1976d2",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  cancelSelectionText: {
+    color: "#f44336",
+    fontWeight: "bold",
+    fontSize: 14,
   },
   placeholderSection: {
     alignItems: "center",
@@ -365,6 +686,13 @@ const styles = StyleSheet.create({
     color: "#bc010c",
     fontWeight: "600",
     marginTop: 8,
+  },
+  exportHint: {
+    fontSize: 12,
+    color: "#666",
+    fontStyle: "italic",
+    marginTop: 8,
+    textAlign: "center",
   },
   filtroContainer: {
     flexDirection: "row",
@@ -408,6 +736,21 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: "#e1e1e1",
+    position: "relative", // Para o indicador de seleção
+  },
+  selectedOccurrenceCard: {
+    backgroundColor: "#e3f2fd",
+    borderColor: "#2196f3",
+    borderWidth: 2,
+  },
+  selectionIndicator: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    zIndex: 1,
+  },
+  ocorrenciaContent: {
+    flex: 1,
   },
   ocorrenciaHeader: {
     flexDirection: "row",
@@ -505,5 +848,71 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  // Estilos do Modal
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 16,
+    padding: 24,
+    width: "80%",
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 8,
+    color: "#333",
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  modalInfo: {
+    fontSize: 12,
+    color: "#888",
+    marginBottom: 24,
+    textAlign: "center",
+    fontStyle: "italic",
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 16,
+  },
+  modalButton: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+    borderRadius: 8,
+    marginHorizontal: 5,
+  },
+  csvButton: {
+    backgroundColor: "#4CAF50",
+  },
+  pdfButton: {
+    backgroundColor: "#f44336",
+  },
+  modalButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    marginLeft: 8,
+  },
+  cancelButton: {
+    padding: 12,
+  },
+  cancelButtonText: {
+    color: "#666",
+    fontSize: 16,
   },
 });
