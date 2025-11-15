@@ -18,6 +18,7 @@ import DetalhesOcorrenciaScreen from './screens/DetalhesOcorrenciaScreen.jsx';
 // Import de Contexts
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { OcorrenciasProvider } from './contexts/OcorrenciasContext';
+import { SettingsProvider } from './contexts/SettingsContext';
 
 // Configurações do tema
 const THEME_COLORS = {
@@ -42,8 +43,8 @@ const Stack = createStackNavigator();
 // Stack de Autenticação
 const AuthStack = () => (
   <Stack.Navigator>
-    <Stack.Screen 
-      name="Login" 
+    <Stack.Screen
+      name="Login"
       component={LoginScreen}
       options={{ headerShown: false }}
     />
@@ -55,60 +56,60 @@ const MainStack = () => (
   <Stack.Navigator
     screenOptions={headerOptions}
   >
-    <Stack.Screen 
-      name="Home" 
+    <Stack.Screen
+      name="Home"
       component={HomeScreen}
-      options={{ 
+      options={{
         title: 'INÍCIO'
       }}
     />
-    <Stack.Screen 
-      name="Usuario" 
+    <Stack.Screen
+      name="Usuario"
       component={UsuarioScreen}
-      options={{ 
+      options={{
         title: 'PERFIL DO USUÁRIO'
       }}
     />
-    <Stack.Screen 
-      name="Configuracoes" 
+    <Stack.Screen
+      name="Configuracoes"
       component={ConfiguracoesScreen}
-      options={{ 
+      options={{
         title: 'CONFIGURAÇÕES'
       }}
     />
-    <Stack.Screen 
-      name="Dashboard" 
+    <Stack.Screen
+      name="Dashboard"
       component={DashboardScreen}
-      options={{ 
+      options={{
         title: 'DASHBOARD OPERACIONAL'
       }}
     />
-    <Stack.Screen 
-      name="ListarOcorrencias" 
+    <Stack.Screen
+      name="ListarOcorrencias"
       component={ListarOcorrenciasScreen}
-      options={{ 
+      options={{
         title: 'LISTA DE OCORRÊNCIAS'
       }}
     />
-    <Stack.Screen 
-      name="NovaOcorrencia" 
+    <Stack.Screen
+      name="NovaOcorrencia"
       component={NovaOcorrenciaScreen}
-      options={{ 
+      options={{
         title: 'NOVA OCORRÊNCIA'
       }}
     />
-    <Stack.Screen 
-      name="OcorrenciaRegistrada" 
+    <Stack.Screen
+      name="OcorrenciaRegistrada"
       component={OcorrenciaRegistradaScreen}
-      options={{ 
+      options={{
         title: 'OCORRÊNCIA REGISTRADA',
         headerLeft: null
       }}
     />
-    <Stack.Screen 
-      name="DetalhesOcorrencia" 
+    <Stack.Screen
+      name="DetalhesOcorrencia"
       component={DetalhesOcorrenciaScreen}
-      options={{ 
+      options={{
         title: 'DETALHES DA OCORRÊNCIA'
       }}
     />
@@ -130,9 +131,9 @@ const AppContent = () => {
 
   return (
     <NavigationContainer>
-      <StatusBar 
-        backgroundColor={THEME_COLORS.primary} 
-        barStyle="light-content" 
+      <StatusBar
+        backgroundColor={THEME_COLORS.primary}
+        barStyle="light-content"
       />
       {isAuthenticated ? <MainStack /> : <AuthStack />}
     </NavigationContainer>
@@ -142,10 +143,12 @@ const AppContent = () => {
 // Componente Principal
 export default function App() {
   return (
-    <AuthProvider>
-      <OcorrenciasProvider>
-        <AppContent />
-      </OcorrenciasProvider>
-    </AuthProvider>
+    <SettingsProvider>
+      <AuthProvider>
+        <OcorrenciasProvider>
+          <AppContent />
+        </OcorrenciasProvider>
+      </AuthProvider>
+    </SettingsProvider>
   );
-}
+} 
