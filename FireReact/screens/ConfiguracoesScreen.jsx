@@ -1,16 +1,18 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, Switch, ScrollView } from "react-native";
+// screens/ConfiguracoesScreen.jsx
+import React from "react";
+import { StyleSheet, Text, View, Switch, ScrollView, ActivityIndicator } from "react-native";
+import { useSettings } from "../contexts/SettingsContext";
 
 export default function ConfiguracoesScreen() {
-  const [notificacoesGerais, setNotificacoesGerais] = useState(true);
-  const [modoClaroEscuro, setModoClaroEscuro] = useState(false);
-  //const [sincAutomatica, setSincAutomatica] = useState(true);
-  const [somNotificacoes, setSomNotificacoes] = useState(true);
-  const [vibracaoAtiva, setVibracaoAtiva] = useState(true);
-  //const [mostrarCoordenadas, setMostrarCoordenadas] = useState(false);
-  //const [mostrarEstatisticas, setMostrarEstatisticas] = useState(true);
-  //const [formatoHora, setFormatoHora] = useState(true);
-  //const [layoutCompacto, setLayoutCompacto] = useState(false);
+  const { settings, updateSetting, loading } = useSettings();
+
+  if (loading || !settings) {
+    return (
+      <View style={{ flex:1, justifyContent:'center', alignItems:'center' }}>
+        <ActivityIndicator size="large" color="#bc010c" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -22,8 +24,8 @@ export default function ConfiguracoesScreen() {
           <View style={styles.switchContainer}>
             <Text style={styles.switchText}>Notificações Gerais</Text>
             <Switch
-              onValueChange={setNotificacoesGerais}
-              value={notificacoesGerais}
+              onValueChange={v => updateSetting('notifications', v)}
+              value={settings.notifications}
             />
           </View>
         </View>
@@ -33,8 +35,8 @@ export default function ConfiguracoesScreen() {
           <View style={styles.switchContainer}>
             <Text style={styles.switchText}>Modo Escuro</Text>
             <Switch
-              onValueChange={setModoClaroEscuro}
-              value={modoClaroEscuro}
+              onValueChange={v => updateSetting('darkMode', v)}
+              value={settings.darkMode}
             />
           </View>
         </View>
@@ -44,13 +46,16 @@ export default function ConfiguracoesScreen() {
           <View style={styles.switchContainer}>
             <Text style={styles.switchText}>Som de Notificações</Text>
             <Switch
-              onValueChange={setSomNotificacoes}
-              value={somNotificacoes}
+              onValueChange={v => updateSetting('sound', v)}
+              value={settings.sound}
             />
           </View>
           <View style={styles.switchContainer}>
             <Text style={styles.switchText}>Vibração</Text>
-            <Switch onValueChange={setVibracaoAtiva} value={vibracaoAtiva} />
+            <Switch
+              onValueChange={v => updateSetting('vibration', v)}
+              value={settings.vibration}
+            />
           </View>
         </View>
       </View>
@@ -59,14 +64,8 @@ export default function ConfiguracoesScreen() {
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  container: {
-    flex: 1,
-    padding: 20,
-  },
+  scrollView: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1, padding: 20 },
   title: {
     fontSize: 24,
     fontWeight: "bold",
@@ -74,9 +73,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     textAlign: "center",
   },
-  section: {
-    marginBottom: 25,
-  },
+  section: { marginBottom: 25 },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
@@ -96,8 +93,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
   },
-  switchText: {
-    fontSize: 16,
-    color: "#333",
-  },
+  switchText: { fontSize: 16, color: "#333" },
 });
