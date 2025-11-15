@@ -53,4 +53,6 @@
 </plist>
 
 <key>NSCameraUsageDescription</key>
-<string>Precisamos acessar sua câmera para registrar imagens de ocorrências</string>
+<string>Este app precisa acessar a câmera para registrar fotos das ocorrências</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Este app precisa acessar a galeria para selecionar fotos das ocorrências</string>

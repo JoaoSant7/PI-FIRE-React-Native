@@ -10,8 +10,12 @@ import {
   Alert,
   Switch,
   Keyboard,
+  Image,
+  PermissionsAndroid,
+  Platform,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 
 // Import dos componentes
 import Section from "../components/Section";
@@ -20,7 +24,7 @@ import TimeInput from "../components/TimeInput";
 import DatePickerInput from "../components/DatePickerInput";
 import PickerInput from "../components/PickerInput";
 import TextInput from "../components/TextInput";
-import SearchablePicker from "../components/SearchablePicker"; // Import do SearchablePicker
+import SearchablePicker from "../components/SearchablePicker";
 
 // Import do contexto CORRIGIDO
 import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
@@ -203,6 +207,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
   const [dataHora, setDataHora] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [enviando, setEnviando] = useState(false);
+  const [fotoOcorrencia, setFotoOcorrencia] = useState(null);
 
   // Efeito para atualizar o número do aviso quando a data/hora mudar
   useEffect(() => {
@@ -216,6 +221,197 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
   // Função para atualizar o formData
   const updateFormData = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Função para solicitar permissão da câmera
+  const requestCameraPermission = async () => {
+    if (Platform.OS === "android") {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: "Permissão da Câmera",
+            message:
+              "Este app precisa acessar sua câmera para tirar fotos das ocorrências",
+            buttonNeutral: "Perguntar depois",
+            buttonNegative: "Cancelar",
+            buttonPositive: "OK",
+          }
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // Função para solicitar permissão da galeria
+  const requestGalleryPermission = async () => {
+    if (Platform.OS === "android") {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+          {
+            title: "Permissão da Galeria",
+            message:
+              "Este app precisa acessar sua galeria para selecionar fotos",
+            buttonNeutral: "Perguntar depois",
+            buttonNegative: "Cancelar",
+            buttonPositive: "OK",
+          }
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // Função para abrir a câmera
+  const abrirCamera = async () => {
+    console.log("Abrindo câmera...");
+
+    const hasPermission = await requestCameraPermission();
+
+    if (!hasPermission) {
+      Alert.alert(
+        "Permissão Negada",
+        "Não é possível acessar a câmera sem permissão."
+      );
+      return;
+    }
+
+    const options = {
+      mediaType: "photo",
+      includeBase64: false,
+      maxHeight: 2000,
+      maxWidth: 2000,
+      quality: 0.8,
+      cameraType: "back",
+      saveToPhotos: true,
+    };
+
+    launchCamera(options, (response) => {
+      console.log("Resposta da câmera:", response);
+
+      if (response.didCancel) {
+        console.log("Usuário cancelou a câmera");
+      } else if (response.error) {
+        console.log("Erro da câmera: ", response.error);
+        Alert.alert(
+          "Erro",
+          `Não foi possível abrir a câmera: ${response.error}`
+        );
+      } else if (response.assets && response.assets.length > 0) {
+        // Foto tirada com sucesso
+        const photo = response.assets[0];
+        console.log("Foto capturada:", photo);
+        setFotoOcorrencia(photo);
+      } else {
+        console.log("Resposta inesperada:", response);
+        Alert.alert("Erro", "Não foi possível capturar a foto");
+      }
+    });
+  };
+
+  // Função para abrir a galeria
+  const abrirGaleria = async () => {
+    console.log("Abrindo galeria...");
+
+    const hasPermission = await requestGalleryPermission();
+
+    if (!hasPermission) {
+      Alert.alert(
+        "Permissão Negada",
+        "Não é possível acessar a galeria sem permissão."
+      );
+      return;
+    }
+
+    const options = {
+      mediaType: "photo",
+      includeBase64: false,
+      maxHeight: 2000,
+      maxWidth: 2000,
+      quality: 0.8,
+    };
+
+    launchImageLibrary(options, (response) => {
+      console.log("Resposta da galeria:", response);
+
+      if (response.didCancel) {
+        console.log("Usuário cancelou a seleção");
+      } else if (response.error) {
+        console.log("Erro da galeria: ", response.error);
+        Alert.alert(
+          "Erro",
+          `Não foi possível acessar a galeria: ${response.error}`
+        );
+      } else if (response.assets && response.assets.length > 0) {
+        const photo = response.assets[0];
+        console.log("Foto selecionada:", photo);
+        setFotoOcorrencia(photo);
+      } else {
+        console.log("Resposta inesperada:", response);
+        Alert.alert("Erro", "Não foi possível selecionar a foto");
+      }
+    });
+  };
+
+  // Função para mostrar opções de foto
+  const mostrarOpcoesFoto = () => {
+    console.log("Mostrando opções de foto...");
+
+    // Verifica se as funções estão disponíveis
+    if (
+      typeof launchCamera === "undefined" ||
+      typeof launchImageLibrary === "undefined"
+    ) {
+      Alert.alert(
+        "Funcionalidade Não Disponível",
+        "A funcionalidade de câmera não está disponível no momento. Verifique se o react-native-image-picker foi instalado corretamente.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
+    Alert.alert("Adicionar Foto", "Como deseja adicionar a foto?", [
+      {
+        text: "Tirar Foto",
+        onPress: () => {
+          console.log("Usuário escolheu tirar foto");
+          abrirCamera();
+        },
+      },
+      {
+        text: "Escolher da Galeria",
+        onPress: () => {
+          console.log("Usuário escolheu galeria");
+          abrirGaleria();
+        },
+      },
+      {
+        text: "Cancelar",
+        style: "cancel",
+        onPress: () => console.log("Usuário cancelou"),
+      },
+    ]);
+  };
+
+  // Função para remover a foto
+  const removerFoto = () => {
+    Alert.alert("Remover Foto", "Tem certeza que deseja remover a foto?", [
+      { text: "Cancelar", style: "cancel" },
+      {
+        text: "Remover",
+        style: "destructive",
+        onPress: () => setFotoOcorrencia(null),
+      },
+    ]);
   };
 
   // Função para lidar com mudança de data
@@ -346,7 +542,9 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     // Pop-up de confirmação
     Alert.alert(
       "Confirmar Salvamento",
-      "Tem certeza que deseja salvar esta ocorrência?",
+      `Tem certeza que deseja salvar esta ocorrência?${
+        fotoOcorrencia ? "\n\n✅ Uma foto será incluída no registro." : ""
+      }`,
       [
         {
           text: "Cancelar",
@@ -428,6 +626,16 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 dataCriacao: new Date().toISOString(),
                 tempoResposta: Math.round(tempoResposta),
 
+                // Adiciona a foto ao registro
+                foto: fotoOcorrencia
+                  ? {
+                      uri: fotoOcorrencia.uri,
+                      type: fotoOcorrencia.type,
+                      fileName: fotoOcorrencia.fileName,
+                      fileSize: fotoOcorrencia.fileSize,
+                    }
+                  : null,
+
                 // Mantém todos os dados originais para detalhes
                 ...formData,
                 ais: aisToSave, // Usa o AIS formatado
@@ -447,15 +655,21 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               await adicionarOcorrencia(ocorrenciaData);
 
               // Feedback de sucesso
-              Alert.alert("Sucesso!", "Ocorrência registrada com sucesso", [
-                {
-                  text: "OK",
-                  onPress: () =>
-                    navigation.navigate("OcorrenciaRegistrada", {
-                      ocorrencia: ocorrenciaData,
-                    }),
-                },
-              ]);
+              Alert.alert(
+                "Sucesso!",
+                `Ocorrência registrada com sucesso${
+                  fotoOcorrencia ? " incluindo a foto" : ""
+                }`,
+                [
+                  {
+                    text: "OK",
+                    onPress: () =>
+                      navigation.navigate("OcorrenciaRegistrada", {
+                        ocorrencia: ocorrenciaData,
+                      }),
+                  },
+                ]
+              );
             } catch (error) {
               console.error("Erro ao salvar ocorrência:", error);
               Alert.alert(
@@ -516,6 +730,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               longitude: "",
             });
             setDataHora(new Date());
+            setFotoOcorrencia(null);
           },
         },
       ]
@@ -913,6 +1128,57 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           </View>
         </Section>
 
+        {/* Nova Seção: Registro Fotográfico */}
+        <Section title="Registro Fotográfico">
+          <View style={styles.photoSection}>
+            {fotoOcorrencia ? (
+              <View style={styles.photoPreviewContainer}>
+                <Image
+                  source={{ uri: fotoOcorrencia.uri }}
+                  style={styles.photoPreview}
+                  resizeMode="cover"
+                  onError={(error) =>
+                    console.log("Erro ao carregar imagem:", error)
+                  }
+                />
+                <Text style={styles.photoInfo}>
+                  Foto: {fotoOcorrencia.fileName || "sem nome"}
+                </Text>
+                <View style={styles.photoActions}>
+                  <TouchableOpacity
+                    style={[styles.photoButton, styles.retakeButton]}
+                    onPress={mostrarOpcoesFoto}
+                  >
+                    <Text style={styles.photoButtonText}>🔄 Alterar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.photoButton, styles.removeButton]}
+                    onPress={removerFoto}
+                  >
+                    <Text style={styles.photoButtonText}>🗑️ Remover</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.cameraButton}
+                onPress={mostrarOpcoesFoto}
+                activeOpacity={0.7}
+              >
+                <View style={styles.cameraButtonContent}>
+                  <Text style={styles.cameraButtonIcon}>📷</Text>
+                  <Text style={styles.cameraButtonText}>
+                    Adicionar Foto da Ocorrência
+                  </Text>
+                  <Text style={styles.cameraButtonSubtext}>
+                    Toque para tirar uma foto ou escolher da galeria
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
+        </Section>
+
         {/* Botões de Ação */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
@@ -1060,6 +1326,82 @@ const styles = StyleSheet.create({
     color: "#666",
     fontStyle: "italic",
     marginTop: 4,
+  },
+  // Novos estilos para a seção de foto
+  photoSection: {
+    marginVertical: 10,
+  },
+  cameraButton: {
+    borderWidth: 2,
+    borderColor: "#bc010c",
+    borderStyle: "dashed",
+    borderRadius: 12,
+    backgroundColor: "#f9f9f9",
+    padding: 20,
+  },
+  cameraButtonContent: {
+    alignItems: "center",
+  },
+  cameraButtonIcon: {
+    fontSize: 40,
+    marginBottom: 10,
+  },
+  cameraButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#bc010c",
+    textAlign: "center",
+    marginBottom: 5,
+  },
+  cameraButtonSubtext: {
+    fontSize: 12,
+    color: "#666",
+    textAlign: "center",
+  },
+  photoPreviewContainer: {
+    alignItems: "center",
+    backgroundColor: "#f8f8f8",
+    borderRadius: 12,
+    padding: 15,
+  },
+  photoPreview: {
+    width: "100%",
+    height: 250,
+    borderRadius: 8,
+    marginBottom: 10,
+    backgroundColor: "#e0e0e0",
+  },
+  photoInfo: {
+    fontSize: 12,
+    color: "#666",
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  photoActions: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+  },
+  photoButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    minWidth: 120,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  retakeButton: {
+    backgroundColor: "#bc010c",
+  },
+  removeButton: {
+    backgroundColor: "#6c757d",
+  },
+  photoButtonText: {
+    color: "white",
+    fontWeight: "600",
+    fontSize: 14,
+    marginLeft: 5,
   },
 });
 
