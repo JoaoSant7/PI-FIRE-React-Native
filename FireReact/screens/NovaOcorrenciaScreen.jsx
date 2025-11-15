@@ -222,6 +222,65 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     }
   };
 
+  // Função para validar e formatar a idade
+  const handleIdadeChange = (value) => {
+    // Remove caracteres não numéricos
+    const numericValue = value.replace(/[^0-9]/g, "");
+
+    // Se estiver vazio, atualiza normalmente
+    if (numericValue === "") {
+      updateFormData("idade", "");
+      return;
+    }
+
+    // Converte para número e limita a 125
+    let idade = parseInt(numericValue, 10);
+    if (idade > 125) {
+      idade = 125;
+    }
+
+    // Atualiza o valor formatado
+    updateFormData("idade", idade.toString());
+  };
+
+  // Função para validar e formatar o AIS - CORRIGIDA
+  const handleAISChange = (value) => {
+    // Remove caracteres não numéricos
+    const numericValue = value.replace(/[^0-9]/g, "");
+
+    // Permite que o usuário apague completamente
+    if (numericValue === "") {
+      updateFormData("ais", "");
+      return;
+    }
+
+    // Converte para número
+    let ais = parseInt(numericValue, 10);
+
+    // Valida o intervalo 1-10
+    if (ais < 1) {
+      ais = 1;
+    } else if (ais > 10) {
+      ais = 10;
+    }
+
+    // Atualiza o valor (sem formatação automática para permitir edição)
+    updateFormData("ais", ais.toString());
+  };
+
+  // Função para formatar o AIS quando o campo perde o foco
+  const handleAISBlur = () => {
+    if (formData.ais && formData.ais !== "") {
+      const aisNumber = parseInt(formData.ais, 10);
+      if (!isNaN(aisNumber) && aisNumber >= 1 && aisNumber <= 10) {
+        // Formata com 2 dígitos apenas no blur
+        const formattedAIS =
+          aisNumber < 10 ? `0${aisNumber}` : aisNumber.toString();
+        updateFormData("ais", formattedAIS);
+      }
+    }
+  };
+
   // Validação do formulário - ATUALIZADA
   const validateForm = () => {
     // Validação do formato de hora
@@ -328,6 +387,16 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 }
               };
 
+              // Formatar AIS antes de salvar (se necessário)
+              let aisToSave = formData.ais;
+              if (aisToSave && aisToSave !== "") {
+                const aisNumber = parseInt(aisToSave, 10);
+                if (!isNaN(aisNumber) && aisNumber >= 1 && aisNumber <= 10) {
+                  aisToSave =
+                    aisNumber < 10 ? `0${aisNumber}` : aisNumber.toString();
+                }
+              }
+
               // Monta objeto completo da ocorrência para o Dashboard
               const ocorrenciaData = {
                 // Dados básicos para Dashboard
@@ -357,6 +426,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
                 // Mantém todos os dados originais para detalhes
                 ...formData,
+                ais: aisToSave, // Usa o AIS formatado
 
                 // Campos adicionais para compatibilidade
                 numeroAviso: formData.numeroAviso,
@@ -691,10 +761,12 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="Idade da Vítima">
             <TextInput
               value={formData.idade}
-              onChangeText={(value) => updateFormData("idade", value)}
-              placeholder="Digite a idade"
+              onChangeText={handleIdadeChange}
+              placeholder="Digite a idade (0-125)"
               keyboardType="numeric"
+              maxLength={3}
             />
+            <Text style={styles.helperText}>Idade limitada a 125 anos</Text>
           </InputGroup>
 
           <InputGroup label="Classificação da Vítima">
@@ -793,10 +865,13 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
           <InputGroup label="AIS">
             <TextInput
               value={formData.ais}
-              onChangeText={(value) => updateFormData("ais", value)}
-              placeholder="AIS 01 - 10"
+              onChangeText={handleAISChange}
+              onBlur={handleAISBlur}
+              placeholder="AIS 1-10"
               keyboardType="numeric"
+              maxLength={2}
             />
+            <Text style={styles.helperText}>AIS deve ser entre 1 e 10</Text>
           </InputGroup>
 
           <InputGroup label="Logradouro" required>
