@@ -110,13 +110,13 @@ export default function LoginScreen({ navigation }) {
           <TouchableOpacity
             style={[
               styles.loginButton,
-              { backgroundColor: colors.primary, shadowColor: colors.primary },
-              (!email || !password) && styles.loginButtonDisabled,
+              { backgroundColor: colors.primary, shadowColor: colors.shadowColor, borderColor: colors.border },
+              (!email || !password) && { backgroundColor: colors.divider, shadowColor: colors.shadowColor, borderColor: colors.border },
             ]}
             onPress={handleLogin}
             disabled={!email || !password}
           >
-            <Text style={styles.loginButtonText}>ENTRAR</Text>
+            <Text style={[styles.loginButtonText, { color: colors.textOnPrimary }]}>ENTRAR</Text>
           </TouchableOpacity>
         </View>
 
@@ -205,13 +205,7 @@ const styles = StyleSheet.create({
     elevation: 8,
     borderWidth: 1,
   },
-  loginButtonDisabled: {
-    backgroundColor: "#cccccc",
-    shadowColor: "#cccccc",
-    borderColor: "#bbbbbb",
-  },
   loginButtonText: {
-    color: "white",
     fontSize: 16,
     fontWeight: "bold",
     textTransform: "uppercase",

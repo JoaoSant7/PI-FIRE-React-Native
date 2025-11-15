@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 import {
   View,
   TextInput,
@@ -31,6 +32,7 @@ import {
 } from './constants/pickerData';
 
 const OcorrenciaScreen = () => {
+  const { colors } = useTheme();
   // Estados principais
   const [formData, setFormData] = useState({
     // Vítima
@@ -130,7 +132,7 @@ const OcorrenciaScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.surface }]}>
       <ScrollView style={styles.scrollView}>
         
         {/* Dados Internos */}
@@ -146,21 +148,21 @@ const OcorrenciaScreen = () => {
 
           <InputGroup label="N° do aviso (I-NETOISPATCHER):">
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: colors.inputBackground, borderColor: colors.border, color: colors.inputText }]}
               value={formData.numeroAviso}
               onChangeText={(value) => updateFormData('numeroAviso', value)}
               placeholder="Digite o número do aviso"
-              placeholderTextColor="#999"
+              placeholderTextColor={colors.inputPlaceholder}
             />
           </InputGroup>
 
           <InputGroup label="Diretoria:">
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: colors.inputBackground, borderColor: colors.border, color: colors.inputText }]}
               value={formData.diretoria}
               onChangeText={(value) => updateFormData('diretoria', value)}
               placeholder="Digite a diretoria"
-              placeholderTextColor="#999"
+              placeholderTextColor={colors.inputPlaceholder}
             />
           </InputGroup>
 
@@ -175,11 +177,11 @@ const OcorrenciaScreen = () => {
 
           <InputGroup label="Ponto base:">
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: colors.inputBackground, borderColor: colors.border, color: colors.inputText }]}
               value={formData.pontoBase}
               onChangeText={(value) => updateFormData('pontoBase', value)}
               placeholder="Digite o ponto base"
-              placeholderTextColor="#999"
+              placeholderTextColor={colors.inputPlaceholder}
             />
           </InputGroup>
         </Section>
@@ -239,14 +241,14 @@ const OcorrenciaScreen = () => {
           {formData.situacao === 'Não atendida' && (
             <InputGroup label="Ocorrência não atendida - Motivo:">
               <TextInput
-                style={[styles.input, styles.textArea]}
-                value={formData.motivoNaoAtendida}
-                onChangeText={(value) => updateFormData('motivoNaoAtendida', value)}
-                multiline
-                numberOfLines={3}
-                placeholder="Digite o motivo"
-                placeholderTextColor="#999"
-              />
+                  style={[styles.input, styles.textArea, { backgroundColor: colors.inputBackground, borderColor: colors.border, color: colors.inputText }]}
+                  value={formData.motivoNaoAtendida}
+                  onChangeText={(value) => updateFormData('motivoNaoAtendida', value)}
+                  multiline
+                  numberOfLines={3}
+                  placeholder="Digite o motivo"
+                  placeholderTextColor={colors.inputPlaceholder}
+                />
             </InputGroup>
           )}
 
@@ -290,13 +292,13 @@ const OcorrenciaScreen = () => {
 
           <InputGroup label="Idade da vítima:">
             <TextInput
-              style={styles.input}
-              value={formData.idade}
-              onChangeText={(value) => updateFormData('idade', value)}
-              placeholder="Digite a idade"
-              placeholderTextColor="#999"
-              keyboardType="numeric"
-            />
+                style={[styles.input, { backgroundColor: colors.inputBackground, borderColor: colors.border, color: colors.inputText }]}
+                value={formData.idade}
+                onChangeText={(value) => updateFormData('idade', value)}
+                placeholder="Digite a idade"
+                placeholderTextColor={colors.inputPlaceholder}
+                keyboardType="numeric"
+              />
           </InputGroup>
 
           <InputGroup label="Classificação da vítima:">
@@ -318,11 +320,11 @@ const OcorrenciaScreen = () => {
 
         {/* Botões */}
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={[styles.button, styles.clearButton]} onPress={handleClear}>
-            <Text style={styles.buttonText}>Limpar</Text>
+          <TouchableOpacity style={[styles.button, styles.clearButton, { backgroundColor: colors.error }]} onPress={handleClear}>
+            <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Limpar</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSave}>
-            <Text style={styles.buttonText}>Salvar</Text>
+          <TouchableOpacity style={[styles.button, styles.saveButton, { backgroundColor: colors.success }]} onPress={handleSave}>
+            <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Salvar</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -333,7 +335,6 @@ const OcorrenciaScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   scrollView: {
     flex: 1,
@@ -341,11 +342,9 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 4,
     padding: 10,
     fontSize: 14,
-    backgroundColor: 'white',
   },
   textArea: {
     height: 80,
@@ -383,13 +382,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   clearButton: {
-    backgroundColor: '#ff6b6b',
   },
   saveButton: {
-    backgroundColor: '#4ecdc4',
   },
   buttonText: {
-    color: 'white',
     fontWeight: 'bold',
   },
 });

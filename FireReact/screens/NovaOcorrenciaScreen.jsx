@@ -30,6 +30,7 @@ import CameraIcon from "../components/CameraIcon"; // ADICIONE ESTA LINHA
 
 // Import do contexto CORRIGIDO
 import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 // Import dos dados dos pickers
 import {
@@ -167,6 +168,7 @@ const validateRequiredFields = (
 const NovaOcorrenciaScreen = ({ navigation }) => {
   // Hook do contexto CORRIGIDO
   const { adicionarOcorrencia } = useOcorrenciasContext();
+  const { colors } = useTheme();
 
   // Estado principal do formulário - REMOVIDOS OS CAMPOS DE HORÁRIO DO formData
   const [formData, setFormData] = useState({
@@ -1217,7 +1219,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 activeOpacity={0.7}
               >
                 <View style={styles.cameraButtonContent}>
-                  <CameraIcon width={40} height={40} color="#bc010c" />
+                  <CameraIconWithTheme />
                   <Text style={styles.cameraButtonText}>
                     Adicionar Foto da Ocorrência
                   </Text>
@@ -1469,5 +1471,11 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
 });
+
+// Wrapper para CameraIcon com tema
+const CameraIconWithTheme = () => {
+  const { colors } = useTheme();
+  return <CameraIcon width={40} height={40} color={colors.primary} />;
+};
 
 export default NovaOcorrenciaScreen;

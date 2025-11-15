@@ -66,13 +66,13 @@ export default function HomeScreen({ navigation }) {
 
     return (
       <TouchableOpacity
-        style={getButtonStyle()}
+        style={[...getButtonStyle(), { shadowColor: colors.shadowColor }]}
         onPress={onPress}
         activeOpacity={0.8}
       >
         <View style={styles.buttonContent}>
-          <MaterialCommunityIcons name={iconName} size={32} color="#fff" />
-          <Text style={styles.buttonText}>{title}</Text>
+          <MaterialCommunityIcons name={iconName} size={32} color={colors.textOnPrimary} />
+          <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>{title}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 16,
     elevation: 6,
-    shadowColor: "#000",
+    shadowColor: colors.shadowColor,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
     shadowRadius: 6,

@@ -36,7 +36,7 @@ const OcorrenciaRegistradaScreen = ({ navigation }) => {
         <View style={styles.content}>
           {/* Ícone de sucesso */}
           <View style={[styles.successIcon, { backgroundColor: colors.success }]}>
-            <Text style={styles.checkmark}>✓</Text>
+            <Text style={[styles.checkmark, { color: colors.textOnPrimary }]}>✓</Text>
           </View>
 
           {/* Mensagem de sucesso */}
@@ -53,28 +53,28 @@ const OcorrenciaRegistradaScreen = ({ navigation }) => {
               style={[styles.button, styles.primaryButton, { backgroundColor: colors.textSecondary }]}
               onPress={handleInicio}
             >
-              <Text style={styles.buttonText}>Início</Text>
+              <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Início</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.button, styles.secondaryButton, { backgroundColor: colors.warning }]}
               onPress={handleListarOcorrencias}
             >
-              <Text style={styles.buttonText}>Listar Ocorrências</Text>
+              <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Listar Ocorrências</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.button, styles.accentButton, { backgroundColor: colors.primary }]}
               onPress={handleNovaOcorrencia}
             >
-              <Text style={styles.buttonText}>Registrar Nova Ocorrência</Text>
+              <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Registrar Nova Ocorrência</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.button, styles.pdfButton, { backgroundColor: colors.success }]}
               onPress={handleExportarPDF}
             >
-              <Text style={styles.buttonText}>Exportar Ocorrência em PDF</Text>
+              <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Exportar Ocorrência em PDF</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
+    shadowColor: colors.shadowColor,
     shadowOffset: {
       width: 0,
       height: 2,

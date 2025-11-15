@@ -7,8 +7,10 @@ import {
   SafeAreaView,
   Dimensions,
 } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
 
 const DashboardOperacional = () => {
+  const { colors } = useTheme();
   // Dados mockados - você pode substituir por dados reais
   const dashboardData = {
     totalOcorrencias: '1.247',
@@ -20,48 +22,48 @@ const DashboardOperacional = () => {
   const ScreenWidth = Dimensions.get('window').width;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.surface }]}>
       <ScrollView style={styles.scrollView}>
         {/* Cabeçalho */}
-        <View style={styles.header}>
-          <Text style={styles.title}>Dashboard Operacional</Text>
+        <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+          <Text style={[styles.title, { color: colors.text }]}>Dashboard Operacional</Text>
         </View>
 
         {/* Visão Geral */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Visão Geral (Mês)</Text>
+        <View style={[styles.section, { backgroundColor: colors.card, shadowColor: colors.shadowColor }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Visão Geral (Mês)</Text>
           <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{dashboardData.totalOcorrencias}</Text>
-              <Text style={styles.statLabel}>Total de Ocorrências</Text>
+            <View style={[styles.statItem, { backgroundColor: colors.surface }]}>
+              <Text style={[styles.statValue, { color: colors.text }]}>{dashboardData.totalOcorrencias}</Text>
+              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Total de Ocorrências</Text>
             </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{dashboardData.emAndamento}</Text>
-              <Text style={styles.statLabel}>Em Andamento</Text>
+            <View style={[styles.statItem, { backgroundColor: colors.surface }]}>
+              <Text style={[styles.statValue, { color: colors.text }]}>{dashboardData.emAndamento}</Text>
+              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Em Andamento</Text>
             </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{dashboardData.ocorrenciasAtendidas}</Text>
-              <Text style={styles.statLabel}>Ocorrências Atendidas</Text>
+            <View style={[styles.statItem, { backgroundColor: colors.surface }]}>
+              <Text style={[styles.statValue, { color: colors.text }]}>{dashboardData.ocorrenciasAtendidas}</Text>
+              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Ocorrências Atendidas</Text>
             </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{dashboardData.tempoMedioResposta}</Text>
-              <Text style={styles.statLabel}>Tempo Médio Resposta</Text>
+            <View style={[styles.statItem, { backgroundColor: colors.surface }]}>
+              <Text style={[styles.statValue, { color: colors.text }]}>{dashboardData.tempoMedioResposta}</Text>
+              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Tempo Médio Resposta</Text>
             </View>
           </View>
         </View>
 
         {/* Divisor */}
-        <View style={styles.divider} />
+        <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
         {/* Análise de Natureza */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Análise de Natureza</Text>
+        <View style={[styles.section, { backgroundColor: colors.card, shadowColor: colors.shadowColor }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Análise de Natureza</Text>
           
           {/* Ocorrências por Natureza */}
           <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>Ocorrências por Natureza</Text>
-            <View style={[styles.chartPlaceholder, {width: ScreenWidth - 40}]}>
-              <Text style={styles.placeholderText}>
+            <Text style={[styles.chartTitle, { color: colors.text }]}>Ocorrências por Natureza</Text>
+            <View style={[styles.chartPlaceholder, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
                 *Espaço para Gráfico de Pizza/Barra*
               </Text>
             </View>
@@ -69,9 +71,9 @@ const DashboardOperacional = () => {
 
           {/* Ocorrências Semanais */}
           <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>Ocorrências Semanais</Text>
-            <View style={[styles.chartPlaceholder, {width: ScreenWidth - 40}]}>
-              <Text style={styles.placeholderText}>
+            <Text style={[styles.chartTitle, { color: colors.text }]}>Ocorrências Semanais</Text>
+            <View style={[styles.chartPlaceholder, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <Text style={[styles.placeholderText, { color: colors.textSecondary }]}>
                 *Espaço para Gráfico de Linha*
               </Text>
             </View>
@@ -85,30 +87,24 @@ const DashboardOperacional = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   scrollView: {
     flex: 1,
   },
   header: {
-    backgroundColor: '#fff',
     paddingVertical: 20,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
     textAlign: 'center',
   },
   section: {
-    backgroundColor: '#fff',
     margin: 16,
     borderRadius: 8,
     padding: 16,
-    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -120,7 +116,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 16,
   },
   statsContainer: {
@@ -133,23 +128,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
     padding: 12,
-    backgroundColor: '#f8f9fa',
     borderRadius: 6,
   },
   statValue: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2c3e50',
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: '#666',
     textAlign: 'center',
   },
   divider: {
     height: 1,
-    backgroundColor: '#e0e0e0',
     marginHorizontal: 16,
   },
   chartSection: {
@@ -158,22 +149,18 @@ const styles = StyleSheet.create({
   chartTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 12,
   },
   chartPlaceholder: {
     height: 200,
-    backgroundColor: '#f8f9fa',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
     borderStyle: 'dashed',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
   },
   placeholderText: {
-    color: '#999',
     fontSize: 14,
     textAlign: 'center',
     fontStyle: 'italic',

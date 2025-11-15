@@ -12,7 +12,7 @@ import {
 import { useTheme } from '../contexts/ThemeContext';
 
 export default function UsuarioScreen({ navigation, route }) {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   
   // Dados do usuário (em uma aplicação real, viriam do contexto ou API)
   const userData = {
@@ -52,7 +52,7 @@ export default function UsuarioScreen({ navigation, route }) {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar barStyle={colors.text === '#FFFFFF' ? "light-content" : "dark-content"} backgroundColor={colors.primary} />
+      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor={colors.primary} />
       
       <ScrollView style={styles.scrollContent}>
         {/* Nome e Função do Usuário */}
@@ -94,7 +94,7 @@ export default function UsuarioScreen({ navigation, route }) {
             style={[styles.logoutButton, { backgroundColor: colors.primary }]}
             onPress={handleLogout}
           >
-            <Text style={styles.logoutButtonText}>Sair</Text>
+            <Text style={[styles.logoutButtonText, { color: colors.textOnPrimary }]}>Sair</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoutButtonText: {
-    color: '#fff',
+    color: colors.textOnPrimary,
     fontSize: 16,
     fontWeight: 'bold',
   },
