@@ -91,7 +91,7 @@ export default function UsuarioScreen({ navigation, route }) {
         {/* Botão Sair */}
         <View style={styles.logoutSection}>
           <TouchableOpacity 
-            style={[styles.logoutButton, { backgroundColor: colors.primary }]}
+            style={[styles.logoutButton, { backgroundColor: colors.primary, shadowColor: colors.shadowColor }]}
             onPress={handleLogout}
           >
             <Text style={[styles.logoutButtonText, { color: colors.textOnPrimary }]}>Sair</Text>
@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoutButtonText: {
-    color: colors.textOnPrimary,
     fontSize: 16,
     fontWeight: 'bold',
   },

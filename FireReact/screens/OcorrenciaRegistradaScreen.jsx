@@ -50,28 +50,28 @@ const OcorrenciaRegistradaScreen = ({ navigation }) => {
           {/* Botões de ação */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button, styles.primaryButton, { backgroundColor: colors.textSecondary }]}
+              style={[styles.button, styles.primaryButton, { backgroundColor: colors.textSecondary, shadowColor: colors.shadowColor }]}
               onPress={handleInicio}
             >
               <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Início</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.button, styles.secondaryButton, { backgroundColor: colors.warning }]}
+              style={[styles.button, styles.secondaryButton, { backgroundColor: colors.warning, shadowColor: colors.shadowColor }]}
               onPress={handleListarOcorrencias}
             >
               <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Listar Ocorrências</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.button, styles.accentButton, { backgroundColor: colors.primary }]}
+              style={[styles.button, styles.accentButton, { backgroundColor: colors.primary, shadowColor: colors.shadowColor }]}
               onPress={handleNovaOcorrencia}
             >
               <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Registrar Nova Ocorrência</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.button, styles.pdfButton, { backgroundColor: colors.success }]}
+              style={[styles.button, styles.pdfButton, { backgroundColor: colors.success, shadowColor: colors.shadowColor }]}
               onPress={handleExportarPDF}
             >
               <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>Exportar Ocorrência em PDF</Text>
@@ -131,7 +131,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: colors.shadowColor,
     shadowOffset: {
       width: 0,
       height: 2,

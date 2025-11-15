@@ -269,7 +269,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   sectionHeader: {
     flexDirection: "row",
