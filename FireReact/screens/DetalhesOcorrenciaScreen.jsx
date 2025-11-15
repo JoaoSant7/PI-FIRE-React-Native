@@ -9,26 +9,32 @@ import {
 } from "react-native";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function DetalhesOcorrenciaScreen({ route, navigation }) {
   const { ocorrencia } = route.params;
+  const { colors } = useTheme();
 
   // Função para obter a cor do status
   const getStatusColor = (status) => {
-    switch (status) {
-      case "Em Andamento":
+    switch ((status || '').toLowerCase()) {
+      case "em andamento":
       case "aberta":
-        return "#FF9800";
-      case "Finalizada":
+      case "em_andamento":
+        return colors.warning;
       case "finalizada":
-        return "#4CAF50";
+      case "atendida":
+      case "concluída":
+        return colors.success;
       case "registrada":
-        return "#2196F3";
-      case "Não Atendida":
-      case "Sem Atuação":
-        return "#F44336";
+      case "nova":
+        return colors.info;
+      case "não atendida":
+      case "sem atuação":
+      case "cancelada":
+        return colors.error;
       default:
-        return "#757575";
+        return colors.textSecondary;
     }
   };
 
@@ -99,15 +105,15 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView style={styles.content}>
         {/* Card Principal */}
-        <View style={styles.card}>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           {/* Seção: Dados Internos */}
-          <View style={styles.section}>
+          <View style={[styles.section, { borderBottomColor: colors.border }] }>
             <View style={styles.sectionHeader}>
-              <Icon name="business" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Dados Internos</Text>
+              <Icon name="business" size={20} color={colors.primary} />
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Dados Internos</Text>
             </View>
 
             {renderInfo("Data e Hora", formatarDataHora(ocorrencia.dataHora))}
@@ -118,10 +124,10 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
           </View>
 
           {/* Seção: Ocorrência */}
-          <View style={styles.section}>
+          <View style={[styles.section, { borderBottomColor: colors.border }] }>
             <View style={styles.sectionHeader}>
-              <Icon name="warning" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Ocorrência</Text>
+              <Icon name="warning" size={20} color={colors.primary} />
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Ocorrência</Text>
             </View>
 
             {renderInfo("Natureza", ocorrencia.natureza)}
@@ -158,10 +164,10 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
           </View>
 
           {/* Seção: Informações da Vítima */}
-          <View style={styles.section}>
+          <View style={[styles.section, { borderBottomColor: colors.border }] }>
             <View style={styles.sectionHeader}>
-              <Icon name="person" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Informações da Vítima</Text>
+              <Icon name="person" size={20} color={colors.primary} />
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Informações da Vítima</Text>
             </View>
 
             {renderInfo(
@@ -175,10 +181,10 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
           </View>
 
           {/* Seção: Viatura e Acionamento */}
-          <View style={styles.section}>
+          <View style={[styles.section, { borderBottomColor: colors.border }] }>
             <View style={styles.sectionHeader}>
-              <Icon name="directions-car" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Viatura e Acionamento</Text>
+              <Icon name="directions-car" size={20} color={colors.primary} />
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Viatura e Acionamento</Text>
             </View>
 
             {renderInfo("Viatura Empregada", ocorrencia.viatura)}
@@ -188,10 +194,10 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
           </View>
 
           {/* Seção: Endereço */}
-          <View style={styles.section}>
+          <View style={[styles.section, { borderBottomColor: colors.border }] }>
             <View style={styles.sectionHeader}>
-              <Icon name="place" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Endereço da Ocorrência</Text>
+              <Icon name="place" size={20} color={colors.primary} />
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Endereço da Ocorrência</Text>
             </View>
 
             {renderInfo("Município", ocorrencia.municipio)}
@@ -205,14 +211,14 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
           </View>
 
           {/* Seção: Informações do Sistema */}
-          <View style={styles.section}>
+          <View style={[styles.section, { borderBottomColor: colors.border }] }>
             <View style={styles.sectionHeader}>
-              <Icon name="info" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Informações do Sistema</Text>
+              <Icon name="info" size={20} color={colors.primary} />
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Informações do Sistema</Text>
             </View>
 
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Status:</Text>
+              <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Status:</Text>
               <View
                 style={[
                   styles.statusBadge,
@@ -221,9 +227,7 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
                   },
                 ]}
               >
-                <Text style={styles.statusText}>
-                  {getStatusText(ocorrencia)}
-                </Text>
+                <Text style={[styles.statusText, { color: colors.textOnPrimary }]}>{getStatusText(ocorrencia)}</Text>
               </View>
             </View>
 
@@ -250,7 +254,6 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   content: {
     flex: 1,
@@ -258,17 +261,14 @@ const styles = StyleSheet.create({
   },
   card: {
     margin: 16,
-    backgroundColor: "#f8f8f8",
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: "#e1e1e1",
   },
   section: {
     marginBottom: 24,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#e1e1e1",
   },
   sectionHeader: {
     flexDirection: "row",
@@ -278,7 +278,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
     marginLeft: 8,
   },
   infoRow: {
@@ -291,12 +290,10 @@ const styles = StyleSheet.create({
   infoLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#555",
     flex: 1,
   },
   infoValue: {
     fontSize: 14,
-    color: "#333",
     flex: 1.5,
     textAlign: "right",
     flexWrap: "wrap",
@@ -308,7 +305,6 @@ const styles = StyleSheet.create({
     minWidth: 100,
   },
   statusText: {
-    color: "#fff",
     fontSize: 12,
     fontWeight: "bold",
     textAlign: "center",

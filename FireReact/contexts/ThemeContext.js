@@ -1,11 +1,10 @@
 // contexts/ThemeContext.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useColorScheme } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSettings } from './SettingsContext';
 
 // Cores específicas para aplicativo de emergência
 const lightColors = {
-  // Cores primárias (vermelho dos bombeiros)
+  // Cores principais
   primary: '#D32F2F',
   primaryDark: '#B71C1C',
   primaryLight: '#FF6659',
@@ -20,20 +19,33 @@ const lightColors = {
   textSecondary: '#757575',
   textOnPrimary: '#FFFFFF',
   
-  // Cores de estado
+  // Cores de status
   success: '#4CAF50',
   warning: '#FF9800',
   error: '#F44336',
   info: '#2196F3',
   
-  // Cores de elementos UI
+  // Cores de UI
   border: '#E0E0E0',
   divider: '#EEEEEE',
   backdrop: 'rgba(0,0,0,0.5)',
+  
+  // Cores de input e componentes
+  inputBackground: '#FFFFFF',
+  inputBorder: '#DDDDDD',
+  inputText: '#333333',
+  inputPlaceholder: '#999999',
+  
+  // Cores de switch
+  switchTrackInactive: '#767577',
+  switchThumbInactive: '#F4F3F4',
+  
+  // Sombra
+  shadowColor: '#000000',
 };
 
 const darkColors = {
-  // Cores primárias (mantém o vermelho mas ajusta tons)
+  // Cores principais
   primary: '#BC010C',
   primaryDark: '#D32F2F',
   primaryLight: '#BC010C',
@@ -48,62 +60,55 @@ const darkColors = {
   textSecondary: '#B0B0B0',
   textOnPrimary: '#FFFFFF',
   
-  // Cores de estado
+  // Cores de status
   success: '#66BB6A',
   warning: '#FFB74D',
   error: '#EF5350',
   info: '#64B5F6',
   
-  // Cores de elementos UI
+  // Cores de UI
   border: '#333333',
   divider: '#383838',
   backdrop: 'rgba(255,255,255,0.1)',
+  
+  // Cores de input e componentes
+  inputBackground: '#1E1E1E',
+  inputBorder: '#404040',
+  inputText: '#FFFFFF',
+  inputPlaceholder: '#888888',
+  
+  // Cores de switch
+  switchTrackInactive: '#404040',
+  switchThumbInactive: '#F4F3F4',
+  
+  // Sombra
+  shadowColor: '#000000',
 };
 
 const ThemeContext = createContext(undefined);
 
 export const ThemeProvider = ({ children }) => {
-  const systemTheme = useColorScheme();
-  const [isDark, setIsDark] = useState(systemTheme === 'dark');
+  const { settings, updateSetting } = useSettings();
   const [isLoaded, setIsLoaded] = useState(false);
 
+  // Aguarda settings carregar
   useEffect(() => {
-    loadStoredTheme();
-  }, []);
+    if (settings) setIsLoaded(true);
+  }, [settings]);
 
-  const loadStoredTheme = async () => {
-    try {
-      const stored = await AsyncStorage.getItem('bombeiros_theme');
-      if (stored !== null) {
-        setIsDark(stored === 'dark');
-      } else {
-        // Seguir o tema do sistema por padrão
-        setIsDark(systemTheme === 'dark');
-      }
-    } catch (error) {
-      console.error('Erro ao carregar tema:', error);
-    } finally {
-      setIsLoaded(true);
-    }
-  };
+  // O valor da configuração controla o tema
+  const isDark = settings?.darkMode === true;
 
+  // Para alterar o tema via ThemeContext (opcional)
   const setTheme = async (dark) => {
-    setIsDark(dark);
-    try {
-      await AsyncStorage.setItem('bombeiros_theme', dark ? 'dark' : 'light');
-    } catch (error) {
-      console.error('Erro ao salvar tema:', error);
-    }
+    updateSetting('darkMode', dark);
   };
 
-  const toggleTheme = () => setTheme(!isDark);
+  const toggleTheme = () => {
+    setTheme(!isDark);
+  };
 
   const colors = isDark ? darkColors : lightColors;
-
-  // Evita renderizar até o tema estar carregado
-  if (!isLoaded) {
-    return null;
-  }
 
   return (
     <ThemeContext.Provider value={{ colors, isDark, setTheme, toggleTheme }}>

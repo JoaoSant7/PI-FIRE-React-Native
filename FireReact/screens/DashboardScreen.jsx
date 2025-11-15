@@ -14,6 +14,7 @@ import {
 import { PieChart, BarChart, LineChart } from "react-native-chart-kit";
 import { Ionicons } from "@expo/vector-icons";
 import { useOcorrencias } from "../hooks/useOcorrencias";
+import { useTheme } from "../contexts/ThemeContext";
 
 const DashboardScreen = () => {
   const ScreenWidth = Dimensions.get("window").width;
@@ -26,6 +27,7 @@ const DashboardScreen = () => {
     atualizarDados,
     recarregarDados,
   } = useOcorrencias();
+  const { colors } = useTheme();
 
   // Processar dados para os gráficos baseado nas ocorrências reais
   const processarDadosDashboard = () => {
@@ -73,8 +75,8 @@ const DashboardScreen = () => {
         {
           name: "Sem dados",
           population: 1,
-          color: "#CCCCCC",
-          legendFontColor: "#7F7F7F",
+          color: colors.divider,
+          legendFontColor: colors.textSecondary,
         },
       ];
     }
@@ -86,19 +88,19 @@ const DashboardScreen = () => {
     });
 
     const cores = [
-      "#FF6384",
-      "#36A2EB",
-      "#FFCE56",
-      "#4BC0C0",
-      "#9966FF",
-      "#FF9F40",
+      colors.primary,
+      colors.info,
+      colors.warning,
+      colors.success,
+      colors.primaryLight,
+      colors.error,
     ];
 
     return Object.entries(tiposCount).map(([name, population], index) => ({
       name: name.length > 15 ? name.substring(0, 12) + "..." : name,
       population,
       color: cores[index % cores.length],
-      legendFontColor: "#7F7F7F",
+      legendFontColor: colors.textSecondary,
     }));
   };
 
@@ -159,7 +161,7 @@ const DashboardScreen = () => {
       datasets: [
         {
           data: contagemPorDia,
-          color: (opacity = 1) => `rgba(54, 162, 235, ${opacity})`,
+          color: (opacity = 1) => colors.info,
         },
       ],
     };
@@ -204,12 +206,13 @@ const DashboardScreen = () => {
   const turnoData = processarDadosTurnos();
 
   const chartConfig = {
-    backgroundGradientFrom: "#fff",
-    backgroundGradientTo: "#fff",
-    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    backgroundGradientFrom: colors.card,
+    backgroundGradientTo: colors.card,
+    color: (opacity = 1) => colors.text,
     strokeWidth: 2,
     barPercentage: 0.6,
     decimalPlaces: 0,
+    legendFontColor: colors.textSecondary,
     propsForLabels: {
       fontSize: 10,
     },
@@ -222,100 +225,98 @@ const DashboardScreen = () => {
 
   if (loading && !refreshing) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#36A2EB" />
-          <Text style={styles.loadingText}>Carregando dados...</Text>
+          <ActivityIndicator size="large" color={colors.info} />
+          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Carregando dados...</Text>
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
         style={styles.scrollView}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={atualizarDados}
-            colors={["#36A2EB"]}
-            tintColor="#36A2EB"
+            colors={[colors.info]}
+            tintColor={colors.info}
           />
         }
       >
         {/* Cabeçalho com Status */}
-        <View style={styles.header}>
+        <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.divider }]}> 
           <View style={styles.headerRow}>
-            <Text style={styles.title}>Dashboard Operacional</Text>
+            <Text style={[styles.title, { color: colors.text }]}>Dashboard Operacional</Text>
             <TouchableOpacity
               onPress={recarregarDados}
               style={styles.syncButton}
             >
-              <Ionicons name="refresh" size={24} color="#36A2EB" />
+              <Ionicons name="refresh" size={24} color={colors.info} />
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.subtitle}>
+          <Text style={[styles.subtitle, { color: colors.textSecondary }] }>
             {ocorrencias?.length || 0} ocorrências registradas
           </Text>
 
           {error && (
-            <View style={styles.errorBanner}>
-              <Ionicons name="warning" size={16} color="#fff" />
-              <Text style={styles.errorText}>{error}</Text>
+            <View style={[styles.errorBanner, { backgroundColor: colors.error }] }>
+              <Ionicons name="warning" size={16} color={colors.textOnPrimary} />
+              <Text style={[styles.errorText, { color: colors.textOnPrimary }]}>{error}</Text>
             </View>
           )}
 
           <View style={styles.syncInfo}>
-            <Ionicons name="time" size={12} color="#666" />
-            <Text style={styles.syncText}>
-              Última sincronização: {formatarData(lastSync)}
-            </Text>
+            <Ionicons name="time" size={12} color={colors.textSecondary} />
+            <Text style={[styles.syncText, { color: colors.textSecondary }]}>Última sincronização: {formatarData(lastSync)}</Text>
           </View>
         </View>
 
         {/* Visão Geral */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Visão Geral</Text>
+        <View style={[styles.section, { backgroundColor: colors.card, shadowColor: colors.shadowColor }] }>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Visão Geral</Text>
           <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>
+            <View style={[styles.statItem, { backgroundColor: colors.surface, borderColor: colors.border }] }>
+              <Text style={[styles.statValue, { color: colors.text }]}>
                 {dashboardData.totalOcorrencias}
               </Text>
-              <Text style={styles.statLabel}>Total de Ocorrências</Text>
+              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Total de Ocorrências</Text>
             </View>
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, styles.emphasis]}>
+            <View style={[styles.statItem, { backgroundColor: colors.surface, borderColor: colors.border }] }>
+              <Text style={[styles.statValue, { color: colors.warning }]}>
                 {dashboardData.emAndamento}
               </Text>
-              <Text style={styles.statLabel}>Em Andamento</Text>
+              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Em Andamento</Text>
             </View>
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, styles.success]}>
+            <View style={[styles.statItem, { backgroundColor: colors.surface, borderColor: colors.border }] }>
+              <Text style={[styles.statValue, { color: colors.success }]}>
                 {dashboardData.ocorrenciasAtendidas}
               </Text>
-              <Text style={styles.statLabel}>Ocorrências Atendidas</Text>
+              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Ocorrências Atendidas</Text>
             </View>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>
+            <View style={[styles.statItem, { backgroundColor: colors.surface, borderColor: colors.border }] }>
+              <Text style={[styles.statValue, { color: colors.text }]}>
                 {dashboardData.tempoMedioResposta}
               </Text>
-              <Text style={styles.statLabel}>Tempo Médio Resposta</Text>
+              <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Tempo Médio Resposta</Text>
             </View>
           </View>
         </View>
 
         {/* Divisor */}
-        <View style={styles.divider} />
+        <View style={[styles.divider, { backgroundColor: colors.border }]} />
 
         {/* Análise de Dados */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Análise de Dados</Text>
+        <View style={[styles.section, { backgroundColor: colors.card, shadowColor: colors.shadowColor }]}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Análise de Dados</Text>
 
           {/* Gráfico de Pizza - Ocorrências por Natureza */}
           <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>Ocorrências por Natureza</Text>
+            <Text style={[styles.chartTitle, { color: colors.text }]}>Ocorrências por Natureza</Text>
             <PieChart
               data={pieData}
               width={ScreenWidth - 40}
@@ -330,7 +331,7 @@ const DashboardScreen = () => {
 
           {/* Gráfico de Barras - Ocorrências por Região */}
           <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>Ocorrências por Região</Text>
+            <Text style={[styles.chartTitle, { color: colors.text }]}>Ocorrências por Região</Text>
             <BarChart
               data={barData}
               width={ScreenWidth - 40}
@@ -344,7 +345,7 @@ const DashboardScreen = () => {
 
           {/* Gráfico de Linha - Ocorrências Semanais */}
           <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>Ocorrências Semanais</Text>
+            <Text style={[styles.chartTitle, { color: colors.text }]}>Ocorrências Semanais</Text>
             <LineChart
               data={lineData}
               width={ScreenWidth - 40}
@@ -358,7 +359,7 @@ const DashboardScreen = () => {
 
           {/* Gráfico de Barras - Ocorrências por Turno */}
           <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>Ocorrências por Turno</Text>
+            <Text style={[styles.chartTitle, { color: colors.text }]}>Ocorrências por Turno</Text>
             <BarChart
               data={turnoData}
               width={ScreenWidth - 40}
@@ -372,11 +373,8 @@ const DashboardScreen = () => {
         </View>
 
         {/* Informações Adicionais */}
-        <View style={styles.infoSection}>
-          <Text style={styles.infoText}>
-            💡 Os dados são atualizados automaticamente. Arraste para baixo para
-            atualizar.
-          </Text>
+        <View style={[styles.infoSection, { backgroundColor: colors.surface }] }>
+          <Text style={[styles.infoText, { color: colors.info }]}>💡 Os dados são atualizados automaticamente. Arraste para baixo para atualizar.</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -386,17 +384,14 @@ const DashboardScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
   },
   scrollView: {
     flex: 1,
   },
   header: {
-    backgroundColor: "#fff",
     paddingVertical: 20,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
   },
   headerRow: {
     flexDirection: "row",
@@ -407,7 +402,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
     flex: 1,
     textAlign: "center",
   },
@@ -418,20 +412,17 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: "#666",
     textAlign: "center",
     marginBottom: 8,
   },
   errorBanner: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#e74c3c",
     padding: 8,
     borderRadius: 4,
     marginBottom: 8,
   },
   errorText: {
-    color: "#fff",
     marginLeft: 8,
     fontSize: 12,
     flex: 1,
@@ -443,15 +434,12 @@ const styles = StyleSheet.create({
   },
   syncText: {
     fontSize: 12,
-    color: "#666",
     marginLeft: 4,
   },
   section: {
-    backgroundColor: "#fff",
     margin: 16,
     borderRadius: 8,
     padding: 16,
-    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -463,7 +451,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#333",
     marginBottom: 16,
   },
   statsContainer: {
@@ -476,29 +463,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
     padding: 12,
-    backgroundColor: "#f8f9fa",
     borderRadius: 6,
   },
   statValue: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#2c3e50",
     marginBottom: 4,
-  },
-  emphasis: {
-    color: "#e74c3c",
-  },
-  success: {
-    color: "#27ae60",
   },
   statLabel: {
     fontSize: 12,
-    color: "#666",
     textAlign: "center",
   },
   divider: {
     height: 1,
-    backgroundColor: "#e0e0e0",
     marginHorizontal: 16,
   },
   chartSection: {
@@ -507,29 +484,24 @@ const styles = StyleSheet.create({
   chartTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#333",
     marginBottom: 12,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
   },
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-    color: "#666",
   },
   infoSection: {
-    backgroundColor: "#e3f2fd",
     margin: 16,
     borderRadius: 8,
     padding: 12,
   },
   infoText: {
     fontSize: 12,
-    color: "#1976d2",
     textAlign: "center",
   },
 });

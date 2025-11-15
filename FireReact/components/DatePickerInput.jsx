@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform
 } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
 
 const DatePickerInput = ({
   value,
@@ -19,6 +20,7 @@ const DatePickerInput = ({
   placeholder = "Selecione a data e hora",
   mode = 'datetime'
 }) => {
+  const { colors } = useTheme();
   const currentDate = value || new Date();
   const [tempDate, setTempDate] = useState({
     day: currentDate.getDate(),
@@ -161,9 +163,16 @@ const DatePickerInput = ({
 
   const renderNumberInput = (label, field, maxLength = 2) => (
     <View style={styles.inputContainer}>
-      <Text style={styles.inputLabel}>{label}</Text>
+      <Text style={[styles.inputLabel, { color: colors.textSecondary }]}>{label}</Text>
       <TextInput
-        style={styles.numberInput}
+        style={[
+          styles.numberInput,
+          {
+            borderColor: colors.inputBorder,
+            backgroundColor: colors.surface,
+            color: colors.inputText,
+          }
+        ]}
         value={inputValues[field]}
         onChangeText={(text) => updateField(field, text)}
         onBlur={() => handleBlur(field)}
@@ -177,10 +186,16 @@ const DatePickerInput = ({
   return (
     <View style={styles.container}>
       <TouchableOpacity 
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            borderColor: colors.inputBorder,
+            backgroundColor: colors.inputBackground,
+          }
+        ]}
         onPress={() => setShowPicker(true)}
       >
-        <Text style={value ? styles.text : styles.placeholder}>
+        <Text style={[value ? styles.text : styles.placeholder, { color: value ? colors.inputText : colors.inputPlaceholder }]}>
           {value ? formatDate(value) : placeholder}
         </Text>
       </TouchableOpacity>
@@ -192,14 +207,14 @@ const DatePickerInput = ({
         onRequestClose={handleCancel}
       >
         <KeyboardAvoidingView 
-          style={styles.modalOverlay}
+          style={[styles.modalOverlay, { backgroundColor: colors.backdrop }]}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Selecionar Data e Hora</Text>
+          <View style={[styles.modalContent, { backgroundColor: colors.card }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Selecionar Data e Hora</Text>
             
             <View style={styles.dateSection}>
-              <Text style={styles.sectionTitle}>Data</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Data</Text>
               <View style={styles.row}>
                 {renderNumberInput('Dia', 'day')}
                 {renderNumberInput('Mês', 'month')}
@@ -209,7 +224,7 @@ const DatePickerInput = ({
 
             {(mode === 'datetime' || mode === 'time') && (
               <View style={styles.timeSection}>
-                <Text style={styles.sectionTitle}>Hora</Text>
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>Hora</Text>
                 <View style={styles.row}>
                   {renderNumberInput('Hora', 'hour')}
                   {renderNumberInput('Minuto', 'minute')}
@@ -217,8 +232,8 @@ const DatePickerInput = ({
               </View>
             )}
 
-            <View style={styles.preview}>
-              <Text style={styles.previewText}>
+            <View style={[styles.preview, { backgroundColor: colors.surface }]}>
+              <Text style={[styles.previewText, { color: colors.text }]}>
                 {formatDate(new Date(
                   tempDate.year,
                   tempDate.month - 1,
@@ -231,13 +246,13 @@ const DatePickerInput = ({
 
             <View style={styles.buttonContainer}>
               <TouchableOpacity 
-                style={[styles.button, styles.cancelButton]} 
+                style={[styles.button, styles.cancelButton, { backgroundColor: colors.textSecondary }]} 
                 onPress={handleCancel}
               >
                 <Text style={styles.buttonText}>Cancelar</Text>
               </TouchableOpacity>
               <TouchableOpacity 
-                style={[styles.button, styles.confirmButton]} 
+                style={[styles.button, styles.confirmButton, { backgroundColor: colors.info }]} 
                 onPress={handleConfirm}
               >
                 <Text style={styles.buttonText}>Confirmar</Text>
@@ -256,30 +271,24 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 4,
     padding: 12,
-    backgroundColor: '#fff',
     minHeight: 50,
     justifyContent: 'center',
   },
   text: {
     fontSize: 16,
-    color: '#000',
   },
   placeholder: {
     fontSize: 16,
-    color: '#888',
   },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     padding: 20,
   },
   modalContent: {
-    backgroundColor: 'white',
     borderRadius: 12,
     padding: 20,
     width: '100%',
@@ -290,13 +299,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
-    color: '#333',
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 10,
-    color: '#555',
   },
   dateSection: {
     marginBottom: 20,
@@ -315,20 +322,16 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 14,
     marginBottom: 5,
-    color: '#666',
     textAlign: 'center',
   },
   numberInput: {
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 6,
     padding: 10,
     textAlign: 'center',
     fontSize: 16,
-    backgroundColor: '#f9f9f9',
   },
   preview: {
-    backgroundColor: '#f0f0f0',
     padding: 15,
     borderRadius: 8,
     marginVertical: 10,
@@ -337,7 +340,6 @@ const styles = StyleSheet.create({
   previewText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -351,12 +353,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 5,
   },
-  cancelButton: {
-    backgroundColor: '#6c757d',
-  },
-  confirmButton: {
-    backgroundColor: '#007AFF',
-  },
+  cancelButton: {},
+  confirmButton: {},
   buttonText: {
     color: 'white',
     fontWeight: 'bold',

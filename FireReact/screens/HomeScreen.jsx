@@ -4,8 +4,11 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function HomeScreen({ navigation }) {
+  const { colors } = useTheme();
+
   // Adicione este useLayoutEffect para configurar o header
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -14,11 +17,11 @@ export default function HomeScreen({ navigation }) {
           onPress={() => navigation.navigate("Configuracoes")}
           style={{ marginRight: 15 }}
         >
-          <MaterialCommunityIcons name="cog" size={24} color="#fff" />
+          <MaterialCommunityIcons name="cog" size={24} color={colors.textOnPrimary} />
         </TouchableOpacity>
       ),
     });
-  }, [navigation]);
+  }, [navigation, colors]);
 
   // Funções para os botões da barra inferior
   const handleInicio = () => {
@@ -51,35 +54,35 @@ export default function HomeScreen({ navigation }) {
     const getButtonStyle = () => {
       switch (type) {
         case "dashboard":
-          return [styles.button, styles.dashboard];
+          return [styles.button, styles.dashboard, { backgroundColor: colors.info }];
         case "listar":
-          return [styles.button, styles.listar];
+          return [styles.button, styles.listar, { backgroundColor: colors.warning }];
         case "registrar":
-          return [styles.button, styles.registrar];
+          return [styles.button, styles.registrar, { backgroundColor: colors.primary }];
         default:
-          return [styles.button, styles.dashboard];
+          return [styles.button, styles.dashboard, { backgroundColor: colors.info }];
       }
     };
 
     return (
       <TouchableOpacity
-        style={getButtonStyle()}
+        style={[...getButtonStyle(), { shadowColor: colors.shadowColor }]}
         onPress={onPress}
         activeOpacity={0.8}
       >
         <View style={styles.buttonContent}>
-          <MaterialCommunityIcons name={iconName} size={32} color="#fff" />
-          <Text style={styles.buttonText}>{title}</Text>
+          <MaterialCommunityIcons name={iconName} size={32} color={colors.textOnPrimary} />
+          <Text style={[styles.buttonText, { color: colors.textOnPrimary }]}>{title}</Text>
         </View>
       </TouchableOpacity>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Conteúdo Principal */}
       <View style={styles.content}>
-        <Text style={styles.sectionTitle}>O que você deseja acessar?</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>O que você deseja acessar?</Text>
 
         <View style={styles.buttonsContainer}>
           {/* Botões de Acesso */}
@@ -119,7 +122,6 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   content: {
     flex: 1,
@@ -130,7 +132,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontWeight: "600",
-    color: "#333",
     marginBottom: 40,
     textAlign: "center",
   },
@@ -147,7 +148,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 16,
     elevation: 6,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
     shadowRadius: 6,
@@ -158,15 +158,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 10,
   },
-  dashboard: {
-    backgroundColor: "#3E4095",
-  },
-  listar: {
-    backgroundColor: "#E6A400",
-  },
-  registrar: {
-    backgroundColor: "#BC010C",
-  },
+  dashboard: {},
+  listar: {},
+  registrar: {},
   buttonText: {
     color: "white",
     fontSize: 14,

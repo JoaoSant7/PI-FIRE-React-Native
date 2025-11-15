@@ -45,8 +45,8 @@ const ThemeToggle = () => {
       <Switch
         value={isDark}
         onValueChange={toggleTheme}
-        trackColor={{ false: '#767577', true: colors.primaryLight }}
-        thumbColor={isDark ? colors.primary : '#f4f3f4'}
+        trackColor={{ false: colors.switchTrackInactive, true: colors.primaryLight }}
+        thumbColor={isDark ? colors.primary : colors.switchThumbInactive}
       />
     </View>
   );

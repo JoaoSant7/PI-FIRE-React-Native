@@ -2,6 +2,7 @@
 import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import { useTheme } from "../contexts/ThemeContext";
 
 const PickerInput = ({
   selectedValue,
@@ -9,33 +10,35 @@ const PickerInput = ({
   items,
   placeholder,
   style,
-}) => (
-  <View style={[styles.pickerContainer, style]}>
-    <Picker
-      selectedValue={selectedValue}
-      onValueChange={onValueChange}
-      style={styles.picker}
-      mode={Platform.OS === "android" ? "dialog" : "dropdown"}
-      dropdownIconColor="#000"
-      itemStyle={styles.pickerItem}
-      accessibilityLabel={placeholder || "Selecione uma opção"}
-    >
-      {placeholder && (
-        <Picker.Item label={placeholder} value="" enabled={false} />
-      )}
-      {items.map((item) => (
-        <Picker.Item key={item.value} label={item.label} value={item.value} />
-      ))}
-    </Picker>
-  </View>
-);
+}) => {
+  const { colors } = useTheme();
+  
+  return (
+    <View style={[styles.pickerContainer, style, { borderColor: colors.inputBorder, backgroundColor: colors.inputBackground }]}>
+      <Picker
+        selectedValue={selectedValue}
+        onValueChange={onValueChange}
+        style={[styles.picker, { color: colors.inputText }]}
+        mode={Platform.OS === "android" ? "dialog" : "dropdown"}
+        dropdownIconColor={colors.inputText}
+        itemStyle={[styles.pickerItem, { color: colors.inputText }]}
+        accessibilityLabel={placeholder || "Selecione uma opção"}
+      >
+        {placeholder && (
+          <Picker.Item label={placeholder} value="" enabled={false} />
+        )}
+        {items.map((item) => (
+          <Picker.Item key={item.value} label={item.label} value={item.value} />
+        ))}
+      </Picker>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   pickerContainer: {
     borderWidth: 1,
-    borderColor: "#ddd",
     borderRadius: 8,
-    backgroundColor: "white",
     width: "100%",
     ...Platform.select({
       ios: { height: 48, justifyContent: "center" },
@@ -45,7 +48,6 @@ const styles = StyleSheet.create({
   picker: {
     flex: 1,
     width: "100%",
-    color: "#000",
     ...Platform.select({
       ios: { fontSize: 16, height: 48 },
       android: {

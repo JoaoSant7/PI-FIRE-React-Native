@@ -9,8 +9,11 @@ import {
   ScrollView,
   Alert
 } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
 
 export default function UsuarioScreen({ navigation, route }) {
+  const { colors, isDark } = useTheme();
+  
   // Dados do usuário (em uma aplicação real, viriam do contexto ou API)
   const userData = {
     nome: 'Carlos Silva',
@@ -48,50 +51,50 @@ export default function UsuarioScreen({ navigation, route }) {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor={colors.primary} />
       
       <ScrollView style={styles.scrollContent}>
         {/* Nome e Função do Usuário */}
-        <View style={styles.userInfoHeader}>
-          <Text style={styles.userName}>{userData.nome}</Text>
-          <Text style={styles.userRank}>{userData.funcao}</Text>
+        <View style={[styles.userInfoHeader, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.userName, { color: colors.text }]}>{userData.nome}</Text>
+          <Text style={[styles.userRank, { color: colors.textSecondary }]}>{userData.funcao}</Text>
         </View>
 
         {/* Informações Pessoais */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Informações Pessoais</Text>
+        <View style={[styles.section, { borderBottomColor: colors.divider }]}>
+          <Text style={[styles.sectionTitle, { color: colors.primary }]}>Informações Pessoais</Text>
           
-          <InfoRow label="Nome Completo" value={userData.nome} />
-          <InfoRow label="Idade" value={`${userData.idade} anos`} />
-          <InfoRow label="Ano de Nascimento" value={userData.anoNascimento.toString()} />
-          <InfoRow label="Tipo Sanguíneo" value={userData.tipoSanguineo} />
-          <InfoRow label="Matrícula" value={userData.matricula} />
+          <InfoRow label="Nome Completo" value={userData.nome} colors={colors} />
+          <InfoRow label="Idade" value={`${userData.idade} anos`} colors={colors} />
+          <InfoRow label="Ano de Nascimento" value={userData.anoNascimento.toString()} colors={colors} />
+          <InfoRow label="Tipo Sanguíneo" value={userData.tipoSanguineo} colors={colors} />
+          <InfoRow label="Matrícula" value={userData.matricula} colors={colors} />
         </View>
 
         {/* Informações Profissionais */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Informações Profissionais</Text>
+        <View style={[styles.section, { borderBottomColor: colors.divider }]}>
+          <Text style={[styles.sectionTitle, { color: colors.primary }]}>Informações Profissionais</Text>
           
-          <InfoRow label="Batalhão" value={userData.batalhao} />
-          <InfoRow label="Função" value={userData.funcao} />
+          <InfoRow label="Batalhão" value={userData.batalhao} colors={colors} />
+          <InfoRow label="Função" value={userData.funcao} colors={colors} />
         </View>
 
         {/* Contato */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Contato</Text>
+        <View style={[styles.section, { borderBottomColor: colors.divider }]}>
+          <Text style={[styles.sectionTitle, { color: colors.primary }]}>Contato</Text>
           
-          <InfoRow label="E-mail" value={userData.email} />
-          <InfoRow label="Telefone" value={userData.telefone} />
+          <InfoRow label="E-mail" value={userData.email} colors={colors} />
+          <InfoRow label="Telefone" value={userData.telefone} colors={colors} />
         </View>
 
         {/* Botão Sair */}
         <View style={styles.logoutSection}>
           <TouchableOpacity 
-            style={styles.logoutButton}
+            style={[styles.logoutButton, { backgroundColor: colors.primary, shadowColor: colors.shadowColor }]}
             onPress={handleLogout}
           >
-            <Text style={styles.logoutButtonText}>Sair</Text>
+            <Text style={[styles.logoutButtonText, { color: colors.textOnPrimary }]}>Sair</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -100,17 +103,16 @@ export default function UsuarioScreen({ navigation, route }) {
 }
 
 // Componente reutilizável para as linhas de informação (sem ícones)
-const InfoRow = ({ label, value }) => (
-  <View style={styles.infoRow}>
-    <Text style={styles.infoLabel}>{label}</Text>
-    <Text style={styles.infoValue}>{value}</Text>
+const InfoRow = ({ label, value, colors }) => (
+  <View style={[styles.infoRow, { borderBottomColor: colors.surface }]}>
+    <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>{label}</Text>
+    <Text style={[styles.infoValue, { color: colors.text }]}>{value}</Text>
   </View>
 );
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   scrollContent: {
     flex: 1,
@@ -118,29 +120,24 @@ const styles = StyleSheet.create({
   userInfoHeader: {
     alignItems: 'center',
     paddingVertical: 30,
-    backgroundColor: '#f8f8f8',
     marginTop: 60,
   },
   userName: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 5,
   },
   userRank: {
     fontSize: 16,
-    color: '#666',
     fontWeight: '500',
   },
   section: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#bc010c',
     marginBottom: 15,
   },
   infoRow: {
@@ -149,16 +146,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f8f8f8',
   },
   infoLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666',
   },
   infoValue: {
     fontSize: 14,
-    color: '#333',
     fontWeight: '500',
     textAlign: 'right',
   },
@@ -167,13 +161,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   logoutButton: {
-    backgroundColor: '#bc010c',
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: 'center',
   },
   logoutButtonText: {
-    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },

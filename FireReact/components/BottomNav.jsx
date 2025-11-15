@@ -4,23 +4,26 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import HomeIcon from './HomeIcon';
 import UserIcon from './UserIcon';
 import PlusIcon from './PlusIcon';
+import { useTheme } from '../contexts/ThemeContext';
 
 const BottomNav = ({ 
   onHomePress, 
   onUserPress,
   onNewOccurrencePress 
 }) => {
+  const { colors } = useTheme();
+
   return (
-    <View style={styles.bottomNav}>
+    <View style={[styles.bottomNav, { backgroundColor: colors.primary, borderTopColor: colors.primaryDark }]}>
       {/* Botão Home - Lado Esquerdo */}
       <TouchableOpacity 
         style={styles.navItem} 
         onPress={onHomePress}
       >
         <View style={styles.iconWrapper}>
-          <HomeIcon size={24} color="#f8f8f8" />
+          <HomeIcon size={24} color={colors.textOnPrimary} />
         </View>
-        <Text style={styles.navText}>Início</Text>
+        <Text style={[styles.navText, { color: colors.textOnPrimary }]}>Início</Text>
       </TouchableOpacity>
       
       {/* Botão Nova Ocorrência - Centro */}
@@ -29,9 +32,9 @@ const BottomNav = ({
         onPress={onNewOccurrencePress}
       >
         <View style={styles.centralIconWrapper}>
-          <PlusIcon width={42} height={42} color="#bc010c" />
+          <PlusIcon width={42} height={42} color={colors.primary} />
         </View>
-        <Text style={styles.navText}>Nova Ocorrência</Text>
+        <Text style={[styles.navText, { color: colors.textOnPrimary }]}>Nova Ocorrência</Text>
       </TouchableOpacity>
       
       {/* Botão Usuário - Lado Direito */}
@@ -40,9 +43,9 @@ const BottomNav = ({
         onPress={onUserPress}
       >
         <View style={styles.iconWrapper}>
-          <UserIcon width={24} height={24} color="#f8f8f8" />
+          <UserIcon width={24} height={24} color={colors.textOnPrimary} />
         </View>
-        <Text style={styles.navText}>Usuário</Text>
+        <Text style={[styles.navText, { color: colors.textOnPrimary }]}>Usuário</Text>
       </TouchableOpacity>
     </View>
   );
@@ -53,11 +56,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: '#bc010c',
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderTopWidth: 1,
-    borderTopColor: '#a0010a',
   },
   navItem: {
     alignItems: 'center',
@@ -76,7 +77,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   navText: {
-    color: '#f8f8f8',
     fontSize: 12,
     fontWeight: '500',
     textAlign: 'center',
