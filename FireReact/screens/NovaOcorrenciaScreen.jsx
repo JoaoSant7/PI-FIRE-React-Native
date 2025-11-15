@@ -761,7 +761,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             <TextInput
               value={formData.ais}
               onChangeText={(value) => updateFormData("ais", value)}
-              placeholder="Digite o AIS"
+              placeholder="AIS00"
               keyboardType="numeric"
             />
           </InputGroup>
