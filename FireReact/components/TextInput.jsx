@@ -1,5 +1,6 @@
 import React from 'react';
 import { TextInput as RNTextInput, StyleSheet } from 'react-native';
+import { useSettings } from '../contexts/SettingsContext';
 
 const TextInput = ({ 
   value, 
@@ -10,12 +11,15 @@ const TextInput = ({
   numberOfLines = 1,
   style 
 }) => {
+  const { settings } = useSettings();
+  const fontScale = settings && settings.fontScale ? settings.fontScale : 1;
   return (
     <RNTextInput
       style={[
         styles.input,
         multiline && styles.multiline,
-        style
+        style,
+        { fontSize: Math.round(styles.input.fontSize * fontScale) }
       ]}
       value={value}
       onChangeText={onChangeText}

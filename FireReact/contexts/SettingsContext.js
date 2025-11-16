@@ -17,12 +17,14 @@ export const SettingsProvider = ({ children }) => {
           setSettings(JSON.parse(saved));
         } else {
           // Valores padrão
-          setSettings({
-            notifications: true,
-            darkMode: false,
-            sound: true,
-            vibration: true,
-          });
+            setSettings({
+              notifications: true,
+              darkMode: false,
+              sound: true,
+              vibration: true,
+              // escala de fonte global (1 = padrão). Pode ser 1.1, 1.2 para aumentar.
+              fontScale: 1,
+            });
         }
       } catch (e) {
         setSettings({
@@ -30,6 +32,7 @@ export const SettingsProvider = ({ children }) => {
           darkMode: false,
           sound: true,
           vibration: true,
+          fontScale: 1,
         });
       }
       setLoading(false);
