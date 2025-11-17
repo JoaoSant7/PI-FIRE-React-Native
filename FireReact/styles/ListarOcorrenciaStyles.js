@@ -50,7 +50,7 @@ export const styles = StyleSheet.create({
   placeholderTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
+    color: "#bc010c",
     marginTop: 15,
     marginBottom: 10,
   },
