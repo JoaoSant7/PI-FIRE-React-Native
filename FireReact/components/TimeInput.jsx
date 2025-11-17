@@ -1,6 +1,7 @@
 // components/TimeInput.js (versão avançada)
 import React, { useState } from 'react';
-import { TextInput, StyleSheet, View, Text } from 'react-native';
+import { TextInput, StyleSheet, View } from 'react-native';
+import ScaledText from './ScaledText';
 
 const TimeInput = ({ value, onChangeText, placeholder, showValidation = true, ...props }) => {
   const [internalValue, setInternalValue] = useState(value || '');
@@ -112,7 +113,7 @@ const TimeInput = ({ value, onChangeText, placeholder, showValidation = true, ..
         {...props}
       />
       {showValidation && !isValid && internalValue && (
-        <Text style={styles.errorText}>Horário inválido</Text>
+        <ScaledText style={styles.errorText}>Horário inválido</ScaledText>
       )}
     </View>
   );

@@ -11,6 +11,7 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from "react-native";
+import ScaledText from "../components/ScaledText";
 import { PieChart, BarChart, LineChart } from "react-native-chart-kit";
 import { Ionicons } from "@expo/vector-icons";
 import { useOcorrencias } from "../hooks/useOcorrencias";
@@ -247,7 +248,7 @@ const DashboardScreen = () => {
         {/* Cabeçalho com Status */}
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <Text style={styles.title}>Dashboard Operacional</Text>
+            <ScaledText style={styles.title}>Dashboard Operacional</ScaledText>
             <TouchableOpacity
               onPress={recarregarDados}
               style={styles.syncButton}
@@ -256,9 +257,9 @@ const DashboardScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.subtitle}>
+          <ScaledText style={styles.subtitle}>
             {ocorrencias?.length || 0} ocorrências registradas
-          </Text>
+          </ScaledText>
 
           {error && (
             <View style={styles.errorBanner}>
@@ -277,30 +278,30 @@ const DashboardScreen = () => {
 
         {/* Visão Geral */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Visão Geral</Text>
+          <ScaledText style={styles.sectionTitle}>Visão Geral</ScaledText>
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>
+              <ScaledText style={styles.statValue}>
                 {dashboardData.totalOcorrencias}
-              </Text>
+              </ScaledText>
               <Text style={styles.statLabel}>Total de Ocorrências</Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, styles.emphasis]}>
+              <ScaledText style={[styles.statValue, styles.emphasis]}>
                 {dashboardData.emAndamento}
-              </Text>
+              </ScaledText>
               <Text style={styles.statLabel}>Em Andamento</Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, styles.success]}>
+              <ScaledText style={[styles.statValue, styles.success]}>
                 {dashboardData.ocorrenciasAtendidas}
-              </Text>
+              </ScaledText>
               <Text style={styles.statLabel}>Ocorrências Atendidas</Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>
+              <ScaledText style={styles.statValue}>
                 {dashboardData.tempoMedioResposta}
-              </Text>
+              </ScaledText>
               <Text style={styles.statLabel}>Tempo Médio Resposta</Text>
             </View>
           </View>

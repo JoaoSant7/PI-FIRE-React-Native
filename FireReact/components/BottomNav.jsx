@@ -1,6 +1,7 @@
 // components/BottomNav.js
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import ScaledText from './ScaledText';
 import HomeIcon from './HomeIcon';
 import UserIcon from './UserIcon';
 import PlusIcon from './PlusIcon';
@@ -20,7 +21,7 @@ const BottomNav = ({
         <View style={styles.iconWrapper}>
           <HomeIcon size={24} color="#f8f8f8" />
         </View>
-        <Text style={styles.navText}>Início</Text>
+        <ScaledText style={styles.navText}>Início</ScaledText>
       </TouchableOpacity>
       
       {/* Botão Nova Ocorrência - Centro */}
@@ -31,7 +32,7 @@ const BottomNav = ({
         <View style={styles.centralIconWrapper}>
           <PlusIcon width={42} height={42} color="#bc010c" />
         </View>
-        <Text style={styles.navText}>Nova Ocorrência</Text>
+        <ScaledText style={styles.navText}>Nova Ocorrência</ScaledText>
       </TouchableOpacity>
       
       {/* Botão Usuário - Lado Direito */}
@@ -42,7 +43,7 @@ const BottomNav = ({
         <View style={styles.iconWrapper}>
           <UserIcon width={24} height={24} color="#f8f8f8" />
         </View>
-        <Text style={styles.navText}>Usuário</Text>
+        <ScaledText style={styles.navText}>Usuário</ScaledText>
       </TouchableOpacity>
     </View>
   );
