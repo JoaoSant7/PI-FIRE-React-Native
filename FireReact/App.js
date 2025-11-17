@@ -1,7 +1,6 @@
 // App.js
 import React from 'react';
-import { View, StatusBar } from 'react-native';
-import ScaledText from './components/ScaledText';
+import { View, Text, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -125,7 +124,7 @@ const AppContent = () => {
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: THEME_COLORS.primary }}>
-        <ScaledText style={{ color: 'white', fontSize: 18 }}>Carregando...</ScaledText>
+        <Text style={{ color: 'white', fontSize: 18 }}>Carregando...</Text>
       </View>
     );
   }

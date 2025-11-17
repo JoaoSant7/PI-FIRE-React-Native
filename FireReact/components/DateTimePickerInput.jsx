@@ -1,7 +1,6 @@
 // components/DateTimePickerInput.js
 import React, { useState } from "react";
-import { View, TouchableOpacity, Platform } from "react-native";
-import ScaledText from './ScaledText';
+import { View, TouchableOpacity, Text, Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 const DateTimePickerInput = ({
@@ -65,7 +64,7 @@ const DateTimePickerInput = ({
         ]}
         onPress={showPickerModal}
       >
-        <ScaledText
+        <Text
           style={{
             color: value ? "#333" : "#999",
             fontSize: 16,
@@ -73,7 +72,7 @@ const DateTimePickerInput = ({
           }}
         >
           {value ? formatDateTime(value) : placeholder}
-        </ScaledText>
+        </Text>
       </TouchableOpacity>
 
       {showPicker && (

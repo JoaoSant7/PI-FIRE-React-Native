@@ -1,7 +1,6 @@
 // components/ThemeToggle.js
 import React from 'react';
-import { Switch, View, StyleSheet } from 'react-native';
-import ScaledText from './ScaledText';
+import { Switch, View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 
 const ThemeToggle = () => {
@@ -38,10 +37,10 @@ const ThemeToggle = () => {
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
-        <ScaledText style={styles.title}>Modo Escuro</ScaledText>
-        <ScaledText style={styles.subtitle}>
+        <Text style={styles.title}>Modo Escuro</Text>
+        <Text style={styles.subtitle}>
           {isDark ? 'Ativado' : 'Desativado'} - {isDark ? 'Melhor para uso noturno' : 'Melhor para uso diurno'}
-        </ScaledText>
+        </Text>
       </View>
       <Switch
         value={isDark}

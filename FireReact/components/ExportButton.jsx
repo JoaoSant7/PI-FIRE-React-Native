@@ -1,6 +1,5 @@
 import React from "react";
-import { TouchableOpacity, StyleSheet } from "react-native";
-import ScaledText from './ScaledText';
+import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 const ExportButton = () => {
@@ -11,7 +10,7 @@ const ExportButton = () => {
       style={styles.button}
       onPress={() => navigation.navigate("Export")}
     >
-      <ScaledText style={styles.buttonText}>Exportar</ScaledText>
+      <Text style={styles.buttonText}>Exportar</Text>
     </TouchableOpacity>
   );
 };
