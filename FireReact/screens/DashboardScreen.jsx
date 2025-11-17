@@ -9,9 +9,8 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from "react-native";
-
-import { SafeAreaView } from "react-native-safe-area-context";
-import { PieChart, BarChart } from "react-native-chart-kit";
+import ScaledText from "../components/ScaledText";
+import { PieChart, BarChart, LineChart } from "react-native-chart-kit";
 import { Ionicons } from "@expo/vector-icons";
 import { useOcorrencias } from "../hooks/useOcorrencias";
 
@@ -299,7 +298,7 @@ const DashboardScreen = () => {
       >
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <Text style={styles.title}>Dashboard Operacional</Text>
+            <ScaledText style={styles.title}>Dashboard Operacional</ScaledText>
             <TouchableOpacity
               onPress={recarregarDados}
               style={styles.syncButton}
@@ -308,9 +307,9 @@ const DashboardScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.subtitle}>
+          <ScaledText style={styles.subtitle}>
             {ocorrencias?.length || 0} ocorrências registradas
-          </Text>
+          </ScaledText>
 
           {error && (
             <View style={styles.errorBanner}>
@@ -328,44 +327,34 @@ const DashboardScreen = () => {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Visão Geral</Text>
-
+          <ScaledText style={styles.sectionTitle}>Visão Geral</ScaledText>
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>
+              <ScaledText style={styles.statValue}>
                 {dashboardData.totalOcorrencias}
-              </Text>
+              </ScaledText>
               <Text style={styles.statLabel}>Total de Ocorrências</Text>
             </View>
 
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: "#fb8c00" }]}>
+              <ScaledText style={[styles.statValue, styles.emphasis]}>
                 {dashboardData.emAndamento}
-              </Text>
+              </ScaledText>
               <Text style={styles.statLabel}>Em Andamento</Text>
             </View>
 
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: "#43a047" }]}>
+              <ScaledText style={[styles.statValue, styles.success]}>
                 {dashboardData.ocorrenciasAtendidas}
-              </Text>
-              <Text style={styles.statLabel}>Atendidas</Text>
+              </ScaledText>
+              <Text style={styles.statLabel}>Ocorrências Atendidas</Text>
             </View>
 
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: "#e53935" }]}>
-                {dashboardData.naoAtendidas}
-              </Text>
-              <Text style={styles.statLabel}>Não Atendidas</Text>
-            </View>
-
-            <View style={[styles.statItem, styles.fullWidth]}>
-              <Text style={styles.statValue}>
+              <ScaledText style={styles.statValue}>
                 {dashboardData.tempoMedioResposta}
-              </Text>
-              <Text style={styles.statLabel}>
-                Tempo Médio de Resposta
-              </Text>
+              </ScaledText>
+              <Text style={styles.statLabel}>Tempo Médio Resposta</Text>
             </View>
           </View>
         </View>

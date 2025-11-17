@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import ScaledText from './ScaledText';
 
 const Section = ({ title, children, style }) => {
   return (
     <View style={[styles.section, style]}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <ScaledText style={styles.sectionTitle}>{title}</ScaledText>
       {children}
     </View>
   );

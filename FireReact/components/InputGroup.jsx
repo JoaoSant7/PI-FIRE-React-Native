@@ -1,6 +1,7 @@
 // components/InputGroup.js
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import ScaledText from './ScaledText';
 import SearchablePicker from "./SearchablePicker";
 
 const InputGroup = ({
@@ -17,9 +18,9 @@ const InputGroup = ({
 }) => {
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.label}>
-        {label} {required && <Text style={styles.required}>*</Text>}
-      </Text>
+      <ScaledText style={styles.label}>
+        {label} {required && <ScaledText style={styles.required}>*</ScaledText>}
+      </ScaledText>
 
       {searchable ? (
         <SearchablePicker

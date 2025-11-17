@@ -1,6 +1,7 @@
 // screens/HomeScreen.jsx
-import React, { useLayoutEffect } from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import React, { useLayoutEffect } from "react"; // Adicione o useLayoutEffect
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import ScaledText from "../components/ScaledText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
@@ -70,9 +71,9 @@ export default function HomeScreen({ navigation }) {
         onPress={onPress}
         activeOpacity={0.8}
       >
-        <View style={styles.buttonContent}>
+          <View style={styles.buttonContent}>
           <MaterialCommunityIcons name={iconName} size={32} color="#fff" />
-          <Text style={styles.buttonText}>{title}</Text>
+          <ScaledText style={styles.buttonText}>{title}</ScaledText>
         </View>
       </TouchableOpacity>
     );
@@ -82,7 +83,7 @@ export default function HomeScreen({ navigation }) {
     <SafeAreaView style={styles.container}>
       {/* Conteúdo Principal */}
       <View style={styles.content}>
-        <Text style={styles.sectionTitle}>O que você deseja acessar?</Text>
+        <ScaledText style={styles.sectionTitle}>O que você deseja acessar?</ScaledText>
 
         <View style={styles.buttonsContainer}>
           {/* Botões de Acesso */}
