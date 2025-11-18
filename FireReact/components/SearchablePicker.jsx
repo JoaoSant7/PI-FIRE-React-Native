@@ -1,7 +1,16 @@
-// components/SearchablePicker.jsx
-import React from "react";
-import { Dropdown } from "react-native-element-dropdown";
-import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
+// components/SearchablePicker.jsx - VERSÃO COM MODAL NATIVO
+import React, { useState, useMemo } from "react";
+import {
+  Modal,
+  View,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 
 const SearchablePicker = ({
   selectedValue,
@@ -9,77 +18,169 @@ const SearchablePicker = ({
   items,
   placeholder = "Selecione uma opção",
   style,
-  disabled = false,
 }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredItems = useMemo(() => {
+    if (!searchQuery) return items;
+
+    const query = searchQuery.toLowerCase();
+    return items.filter((item) => item.label.toLowerCase().includes(query));
+  }, [items, searchQuery]);
+
+  const handleSelectItem = (item) => {
+    onValueChange(item.value);
+    setModalVisible(false);
+    setSearchQuery("");
+  };
+
+  const selectedItem = items.find((item) => item.value === selectedValue);
+
   return (
-    <Dropdown
-      style={[styles.dropdown, style, disabled && styles.disabled]}
-      placeholderStyle={styles.placeholderStyle}
-      selectedTextStyle={styles.selectedTextStyle}
-      inputSearchStyle={styles.inputSearchStyle}
-      iconStyle={styles.iconStyle}
-      data={items}
-      search
-      maxHeight={300}
-      labelField="label"
-      valueField="value"
-      placeholder={placeholder}
-      searchPlaceholder="Digite para buscar..."
-      value={selectedValue}
-      onChange={(item) => onValueChange(item.value)}
-      // Configurações para evitar problemas com teclado
-      autoScroll={false}
-      keyboardAvoiding={Platform.OS === "ios"} // true para iOS
-      showsVerticalScrollIndicator={true}
-      // Melhor comportamento do modal
-      modalProps={{
-        animationType: "slide",
-        transparent: true,
-        presentationStyle: "overFullScreen",
-        hardwareAccelerated: true,
-        statusBarTranslucent: true,
-      }}
-      // Configurações da lista
-      flatListProps={{
-        keyboardShouldPersistTaps: "handled",
-        showsVerticalScrollIndicator: true,
-      }}
-      // Evita que o dropdown abra quando disabled
-      disable={disabled}
-    />
+    <View>
+      {/* Botão que abre o modal */}
+      <TouchableOpacity
+        style={[styles.triggerButton, style]}
+        onPress={() => setModalVisible(true)}
+      >
+        <Text
+          style={selectedValue ? styles.selectedText : styles.placeholderText}
+        >
+          {selectedItem ? selectedItem.label : placeholder}
+        </Text>
+      </TouchableOpacity>
+
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => {
+          setModalVisible(false);
+          setSearchQuery("");
+        }}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              {/* Cabeçalho */}
+              <View style={styles.modalHeader}>
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Buscar..."
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  autoFocus={true}
+                />
+                <TouchableOpacity
+                  style={styles.closeButton}
+                  onPress={() => {
+                    setModalVisible(false);
+                    setSearchQuery("");
+                  }}
+                >
+                  <Text style={styles.closeButtonText}>Fechar</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Lista de itens */}
+              <FlatList
+                data={filteredItems}
+                keyExtractor={(item) => item.value.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={[
+                      styles.item,
+                      item.value === selectedValue && styles.selectedItem,
+                    ]}
+                    onPress={() => handleSelectItem(item)}
+                  >
+                    <Text style={styles.itemText}>{item.label}</Text>
+                  </TouchableOpacity>
+                )}
+                ListEmptyComponent={
+                  <Text style={styles.emptyText}>Nenhum item encontrado</Text>
+                }
+              />
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  dropdown: {
+  triggerButton: {
     height: 56,
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 12,
     backgroundColor: "#fff",
+    justifyContent: "center",
   },
-  disabled: {
-    backgroundColor: "#f5f5f5",
-    borderColor: "#e0e0e0",
-  },
-  placeholderStyle: {
-    fontSize: 16,
-    color: "#9e9e9e",
-  },
-  selectedTextStyle: {
+  selectedText: {
     fontSize: 16,
     color: "#333",
   },
-  iconStyle: {
-    width: 20,
-    height: 20,
-  },
-  inputSearchStyle: {
-    height: 40,
+  placeholderText: {
     fontSize: 16,
+    color: "#9e9e9e",
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    overflow: "hidden",
+    maxHeight: "80%",
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 15,
+    borderBottomColor: "#f0f0f0",
+    borderBottomWidth: 1,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    borderColor: "#ddd",
+    borderWidth: 1,
     borderRadius: 8,
-    backgroundColor: "#f9f9f9",
+    paddingHorizontal: 10,
+    marginRight: 10,
+  },
+  closeButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  closeButtonText: {
+    color: "#bc010c",
+    fontWeight: "600",
+  },
+  item: {
+    padding: 15,
+    borderBottomColor: "#f0f0f0",
+    borderBottomWidth: 1,
+  },
+  selectedItem: {
+    backgroundColor: "#e6f2ff",
+  },
+  itemText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  emptyText: {
+    textAlign: "center",
+    padding: 20,
+    color: "#999",
+    fontSize: 16,
   },
 });
 
