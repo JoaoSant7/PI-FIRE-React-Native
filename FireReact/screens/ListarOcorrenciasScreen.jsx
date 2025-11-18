@@ -51,11 +51,17 @@ export default function ListarOcorrenciasScreen({ navigation }) {
     return false;
   });
 
-  // Funções da barra inferior
-  const handleConfiguracoes = () => navigation.navigate("Configuracoes");
+  // Funções da barra inferior - CORRIGIDAS
   const handleInicio = () => navigation.navigate("Home");
   const handleUsuario = () =>
     navigation.navigate("Usuario", { email: "email_do_usuario@exemplo.com" });
+
+  // FUNÇÃO ADICIONADA: Navegação para Nova Ocorrência
+  const handleNovaOcorrencia = () => {
+    console.log("🔄 Navegando para Nova Ocorrência...");
+    navigation.navigate("NovaOcorrencia");
+  };
+
   const handleDashboard = () => navigation.navigate("Dashboard");
 
   // Funções de seleção
@@ -321,7 +327,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
             {ocorrencias.length === 0 && (
               <TouchableOpacity
                 style={styles.novaOcorrenciaButton}
-                onPress={() => navigation.navigate("NovaOcorrencia")}
+                onPress={handleNovaOcorrencia} // Usando a mesma função
               >
                 <Text style={styles.novaOcorrenciaButtonText}>
                   Registrar Primeira Ocorrência
@@ -495,10 +501,11 @@ export default function ListarOcorrenciasScreen({ navigation }) {
         </View>
       </Modal>
 
+      {/* BOTTOM NAV CORRIGIDO - COM A FUNÇÃO DE NOVA OCORRÊNCIA */}
       <BottomNav
-        onConfigPress={handleConfiguracoes}
         onHomePress={handleInicio}
         onUserPress={handleUsuario}
+        onNewOccurrencePress={handleNovaOcorrencia} // CORREÇÃO AQUI
       />
     </View>
   );
