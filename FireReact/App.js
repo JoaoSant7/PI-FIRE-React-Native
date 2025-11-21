@@ -14,6 +14,7 @@ import ListarOcorrenciasScreen from './screens/ListarOcorrenciasScreen.jsx';
 import NovaOcorrenciaScreen from './screens/NovaOcorrenciaScreen.jsx';
 import OcorrenciaRegistradaScreen from './screens/OcorrenciaRegistradaScreen.jsx';
 import DetalhesOcorrenciaScreen from './screens/DetalhesOcorrenciaScreen.jsx';
+import LocalizacaoScreen from './screens/LocalizacaoScreen'; // ADICIONE ESTA LINHA
 
 // Import de Contexts
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
@@ -113,6 +114,14 @@ const MainStack = () => (
         title: 'DETALHES DA OCORRÊNCIA'
       }}
     />
+    {/* ADICIONE ESTA TELA */}
+    <Stack.Screen
+      name="Localizacao"
+      component={LocalizacaoScreen}
+      options={{
+        title: 'GEOLOCALIZAÇÃO'
+      }}
+    />
   </Stack.Navigator>
 );
 
@@ -151,4 +160,4 @@ export default function App() {
       </AuthProvider>
     </SettingsProvider>
   );
-} 
+}
