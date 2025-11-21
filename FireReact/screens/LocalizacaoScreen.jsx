@@ -9,7 +9,7 @@ import {
   Platform,
 } from "react-native";
 import * as Location from "expo-location";
-import LocalizacaoStyles from "./LocalizacaoStyles";
+import LocalizacaoStyles from "../styles/LocalizacaoStyles";
 
 const LocalizacaoScreen = () => {
   const [location, setLocation] = useState(null);
@@ -108,7 +108,7 @@ const LocalizacaoScreen = () => {
     }
 
     try {
-      const message = `📍 Minha localização:\nLatitude: ${location.latitude.toFixed(
+      const message = `Minha localização:\nLatitude: ${location.latitude.toFixed(
         6
       )}\nLongitude: ${location.longitude.toFixed(6)}${
         address ? `\nEndereço: ${address}` : ""
@@ -154,7 +154,9 @@ const LocalizacaoScreen = () => {
   return (
     <View style={LocalizacaoStyles.container}>
       <View style={LocalizacaoStyles.content}>
-        <Text style={LocalizacaoStyles.sectionTitle}>Geolocalização</Text>
+        <Text style={LocalizacaoStyles.sectionTitle}>
+          Clique no botão abaixo
+        </Text>
 
         {errorMsg && (
           <View style={LocalizacaoStyles.errorContainer}>
@@ -190,7 +192,7 @@ const LocalizacaoScreen = () => {
         {location && (
           <View style={LocalizacaoStyles.locationContainer}>
             <Text style={LocalizacaoStyles.locationText}>
-              📍 Localização Encontrada
+              Localização Encontrada
             </Text>
 
             <View style={LocalizacaoStyles.coordinatesContainer}>
