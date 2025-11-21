@@ -236,21 +236,82 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     }));
   }, [dataHora]);
 
-  // Efeito para preencher automaticamente os campos de localização
+  // Na NovaOcorrenciaScreen, substitua o useEffect por este:
   useEffect(() => {
     if (
       currentLocation.municipio ||
       currentLocation.latitude ||
       currentLocation.longitude
     ) {
+      console.log(
+        "📍 Localização recebida para preenchimento:",
+        currentLocation
+      );
+
+      let municipioValue = currentLocation.municipio;
+
+      if (currentLocation.municipio) {
+        // Função para normalizar strings (remover acentos e tornar minúsculo)
+        const normalizarTexto = (texto) => {
+          if (!texto) return "";
+          return texto
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .trim();
+        };
+
+        const municipioNormalizado = normalizarTexto(currentLocation.municipio);
+
+        // Busca exata primeiro
+        const municipioEncontrado = MUNICIPIOS_PERNAMBUCO.find(
+          (item) =>
+            normalizarTexto(item.label) === municipioNormalizado ||
+            normalizarTexto(item.value) === municipioNormalizado
+        );
+
+        if (municipioEncontrado) {
+          municipioValue = municipioEncontrado.value;
+          console.log("✅ Município encontrado (exato):", municipioValue);
+        } else {
+          // Busca por correspondência parcial
+          const municipioParcial = MUNICIPIOS_PERNAMBUCO.find(
+            (item) =>
+              normalizarTexto(item.label).includes(municipioNormalizado) ||
+              normalizarTexto(item.value).includes(municipioNormalizado) ||
+              municipioNormalizado.includes(normalizarTexto(item.label)) ||
+              municipioNormalizado.includes(normalizarTexto(item.value))
+          );
+
+          if (municipioParcial) {
+            municipioValue = municipioParcial.value;
+            console.log("✅ Município encontrado (parcial):", municipioValue);
+          } else {
+            console.log(
+              "❌ Município NÃO encontrado na lista:",
+              currentLocation.municipio
+            );
+            console.log(
+              "📋 Municípios disponíveis:",
+              MUNICIPIOS_PERNAMBUCO.map((m) => m.value)
+            );
+          }
+        }
+      }
+
       setFormData((prev) => ({
         ...prev,
-        municipio: currentLocation.municipio || prev.municipio,
+        municipio: municipioValue || prev.municipio,
         bairro: currentLocation.bairro || prev.bairro,
         logradouro: currentLocation.endereco || prev.logradouro,
         latitude: currentLocation.latitude || prev.latitude,
         longitude: currentLocation.longitude || prev.longitude,
       }));
+
+      // Se o município foi preenchido, mostre uma mensagem
+      if (municipioValue) {
+        console.log("🎯 Município definido no formulário:", municipioValue);
+      }
     }
   }, [currentLocation]);
 
@@ -277,12 +338,21 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
             text: "Usar Localização",
             onPress: async () => {
               try {
-                await getCurrentLocation();
-                Alert.alert(
-                  "Sucesso",
-                  "Localização obtida com sucesso! Campos preenchidos automaticamente.",
-                  [{ text: "OK" }]
-                );
+                const locationData = await getCurrentLocation();
+
+                if (!locationData.municipio) {
+                  Alert.alert(
+                    "Atenção",
+                    "Localização obtida, mas o município não foi detectado automaticamente. Por favor, selecione o município manualmente.",
+                    [{ text: "OK" }]
+                  );
+                } else {
+                  Alert.alert(
+                    "Sucesso",
+                    "Localização obtida com sucesso! Campos preenchidos automaticamente.",
+                    [{ text: "OK" }]
+                  );
+                }
               } catch (error) {
                 Alert.alert(
                   "Erro de Localização",
@@ -1080,7 +1150,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 <ActivityIndicator size="small" color="#FFFFFF" />
               ) : (
                 <Text style={styles.locationButtonText}>
-                  📍 Usar Minha Localização Atual
+                  Usar Minha Localização Atual
                 </Text>
               )}
             </TouchableOpacity>

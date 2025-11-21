@@ -1,5 +1,5 @@
-// components/SearchablePicker.jsx - VERSÃO COM MODAL NATIVO
-import React, { useState, useMemo } from "react";
+// components/SearchablePicker.jsx - VERSÃO CORRIGIDA
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Modal,
   View,
@@ -21,33 +21,62 @@ const SearchablePicker = ({
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [displayValue, setDisplayValue] = useState("");
+
+  // Efeito para atualizar o valor exibido quando selectedValue mudar
+  useEffect(() => {
+    if (selectedValue) {
+      const selectedItem = items.find((item) => item.value === selectedValue);
+      if (selectedItem) {
+        setDisplayValue(selectedItem.label);
+      } else {
+        setDisplayValue("");
+      }
+    } else {
+      setDisplayValue("");
+    }
+  }, [selectedValue, items]);
 
   const filteredItems = useMemo(() => {
     if (!searchQuery) return items;
 
     const query = searchQuery.toLowerCase();
-    return items.filter((item) => item.label.toLowerCase().includes(query));
+    return items.filter(
+      (item) =>
+        item.label.toLowerCase().includes(query) ||
+        item.value.toLowerCase().includes(query)
+    );
   }, [items, searchQuery]);
 
   const handleSelectItem = (item) => {
     onValueChange(item.value);
+    setDisplayValue(item.label);
     setModalVisible(false);
     setSearchQuery("");
   };
 
-  const selectedItem = items.find((item) => item.value === selectedValue);
+  const handleOpenModal = () => {
+    setModalVisible(true);
+    setSearchQuery("");
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setSearchQuery("");
+  };
 
   return (
     <View>
       {/* Botão que abre o modal */}
       <TouchableOpacity
         style={[styles.triggerButton, style]}
-        onPress={() => setModalVisible(true)}
+        onPress={handleOpenModal}
       >
         <Text
-          style={selectedValue ? styles.selectedText : styles.placeholderText}
+          style={displayValue ? styles.selectedText : styles.placeholderText}
+          numberOfLines={1}
         >
-          {selectedItem ? selectedItem.label : placeholder}
+          {displayValue || placeholder}
         </Text>
       </TouchableOpacity>
 
@@ -55,10 +84,7 @@ const SearchablePicker = ({
         visible={modalVisible}
         animationType="slide"
         transparent={true}
-        onRequestClose={() => {
-          setModalVisible(false);
-          setSearchQuery("");
-        }}
+        onRequestClose={handleCloseModal}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.modalContainer}>
@@ -71,13 +97,12 @@ const SearchablePicker = ({
                   value={searchQuery}
                   onChangeText={setSearchQuery}
                   autoFocus={true}
+                  autoCapitalize="none"
+                  autoCorrect={false}
                 />
                 <TouchableOpacity
                   style={styles.closeButton}
-                  onPress={() => {
-                    setModalVisible(false);
-                    setSearchQuery("");
-                  }}
+                  onPress={handleCloseModal}
                 >
                   <Text style={styles.closeButtonText}>Fechar</Text>
                 </TouchableOpacity>
@@ -96,6 +121,9 @@ const SearchablePicker = ({
                     onPress={() => handleSelectItem(item)}
                   >
                     <Text style={styles.itemText}>{item.label}</Text>
+                    {item.value === selectedValue && (
+                      <Text style={styles.selectedIndicator}>✓</Text>
+                    )}
                   </TouchableOpacity>
                 )}
                 ListEmptyComponent={
@@ -168,6 +196,9 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomColor: "#f0f0f0",
     borderBottomWidth: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   selectedItem: {
     backgroundColor: "#e6f2ff",
@@ -175,6 +206,12 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 16,
     color: "#333",
+    flex: 1,
+  },
+  selectedIndicator: {
+    color: "#bc010c",
+    fontWeight: "bold",
+    fontSize: 16,
   },
   emptyText: {
     textAlign: "center",

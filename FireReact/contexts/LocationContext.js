@@ -1,3 +1,4 @@
+// contexts/LocationContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import * as Location from 'expo-location';
 
@@ -47,29 +48,52 @@ export const LocationProvider = ({ children }) => {
         longitude,
       });
 
+      console.log("📌 DADOS DE GEOLOCALIZAÇÃO COMPLETOS:", geocode);
+
       if (geocode.length > 0) {
         const address = geocode[0];
-        setCurrentLocation({
-          municipio: address.city || '',
+        
+        // Tentar obter o município de diferentes campos
+        let municipio = address.city || 
+                       address.subregion || 
+                       address.region || 
+                       '';
+        
+        // Se ainda não encontrou, tenta extrair do nome ou district
+        if (!municipio && address.district) {
+          // Tenta inferir o município pelo bairro (para Recife)
+          if (address.district.includes('Recife') || 
+              address.district.includes('Casa Amarela') ||
+              address.district.includes('Boa Vista') ||
+              address.district.includes('Boa Viagem')) {
+            municipio = 'Recife';
+          }
+        }
+
+        console.log("📍 Município detectado:", municipio);
+        console.log("🏘️ Bairro:", address.district);
+        console.log("🛣️ Rua:", address.street);
+
+        const locationData = {
+          municipio: municipio,
           latitude: latitude.toString(),
           longitude: longitude.toString(),
           endereco: address.street || '',
           bairro: address.district || '',
           loading: false,
           error: null,
-        });
-      }
+        };
 
-      return {
-        municipio: geocode[0]?.city || '',
-        latitude: latitude.toString(),
-        longitude: longitude.toString(),
-        endereco: geocode[0]?.street || '',
-        bairro: geocode[0]?.district || '',
-      };
+        setCurrentLocation(locationData);
+        return locationData;
+      } else {
+        throw new Error('Nenhum endereço encontrado para as coordenadas');
+      }
 
     } catch (error) {
       const errorMessage = error.message || 'Erro ao obter localização';
+      console.error("Erro na geolocalização:", error);
+      
       setCurrentLocation(prev => ({
         ...prev,
         loading: false,
