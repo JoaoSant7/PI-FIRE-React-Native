@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontWeight: "600",
-    color: "#333",
+    color: "#BC010C",
     marginBottom: 40,
     textAlign: "center",
   },
