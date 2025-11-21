@@ -156,12 +156,12 @@ const LocalizacaoScreen = () => {
     }
   };
 
-  // Região inicial do mapa (centro do Brasil como fallback)
+  // Região inicial do mapa: Recife
   const initialRegion = {
-    latitude: -15.77972,
-    longitude: -47.92972,
-    latitudeDelta: 10,
-    longitudeDelta: 10,
+    latitude: -8.05428,
+    longitude: -34.8813,
+    latitudeDelta: 0.5,
+    longitudeDelta: 0.5,
   };
 
   return (
@@ -171,8 +171,6 @@ const LocalizacaoScreen = () => {
         contentContainerStyle={LocalizacaoStyles.scrollContent}
         showsVerticalScrollIndicator={true}
       >
-        <Text style={LocalizacaoStyles.sectionTitle}>Geolocalização</Text>
-
         {errorMsg && (
           <View style={LocalizacaoStyles.errorContainer}>
             <Text style={LocalizacaoStyles.errorText}>{errorMsg}</Text>
@@ -256,7 +254,7 @@ const LocalizacaoScreen = () => {
         {location && (
           <View style={LocalizacaoStyles.locationContainer}>
             <Text style={LocalizacaoStyles.locationText}>
-              📍 Localização Encontrada
+              Localização Encontrada
             </Text>
 
             <View style={LocalizacaoStyles.coordinatesContainer}>
