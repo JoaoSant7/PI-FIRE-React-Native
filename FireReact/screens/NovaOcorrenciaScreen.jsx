@@ -631,6 +631,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
               }
 
               // Monta objeto completo da ocorrência para o Dashboard
+              // Monta objeto completo da ocorrência para o Dashboard
               const ocorrenciaData = {
                 // Dados básicos para Dashboard
                 id: `ocorrencia_${Date.now()}_${Math.random()
@@ -662,15 +663,8 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 horaChegadaLocal: formatHoraToString(horaLocal),
                 horaSaidaLocal: formatHoraToString(horaSaidaLocal),
 
-                // ✅ ATUALIZADO - Compatível com expo-image-picker
-                foto: fotoOcorrencia
-                  ? {
-                      uri: fotoOcorrencia.uri,
-                      type: fotoOcorrencia.type || "image/jpeg",
-                      fileName:
-                        fotoOcorrencia.fileName || `foto_${Date.now()}.jpg`,
-                    }
-                  : null,
+                // ✅ CORREÇÃO - Mudar para array de URIs
+                fotos: fotoOcorrencia ? [fotoOcorrencia.uri] : [],
 
                 // Mantém todos os dados originais para detalhes
                 ...formData,

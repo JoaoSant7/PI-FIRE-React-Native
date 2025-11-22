@@ -95,9 +95,19 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
   };
 
   // Função para renderizar as fotos
+  // Função para renderizar as fotos (versão mais robusta)
   const renderFotos = () => {
-    // Verifica se existem fotos no array
-    if (!ocorrencia.fotos || ocorrencia.fotos.length === 0) {
+    // Verifica se existem fotos de diferentes formas
+    let fotosArray = [];
+
+    if (ocorrencia.fotos && Array.isArray(ocorrencia.fotos)) {
+      fotosArray = ocorrencia.fotos;
+    } else if (ocorrencia.foto) {
+      // Backup para formato antigo (se houver migração)
+      fotosArray = [ocorrencia.foto.uri || ocorrencia.foto];
+    }
+
+    if (fotosArray.length === 0) {
       return (
         <View style={styles.noPhotosContainer}>
           <Icon name="photo-camera" size={40} color="#ccc" />
@@ -115,10 +125,12 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
         style={styles.photosScrollView}
       >
         <View style={styles.photosContainer}>
-          {ocorrencia.fotos.map((foto, index) => (
+          {fotosArray.map((foto, index) => (
             <Image
               key={index}
-              source={{ uri: foto }}
+              source={{
+                uri: typeof foto === "string" ? foto : foto.uri || foto,
+              }}
               style={[
                 styles.photo,
                 { width: screenWidth * 0.8, height: screenWidth * 0.6 },
