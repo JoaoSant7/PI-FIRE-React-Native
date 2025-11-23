@@ -1,7 +1,6 @@
 // contexts/ThemeContext.js
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Cores específicas para aplicativo de emergência
 const lightColors = {
@@ -62,48 +61,37 @@ const darkColors = {
 
 const ThemeContext = createContext(undefined);
 
-export const ThemeProvider = ({ children }) => {
+export const ThemeProvider = ({ children, initialDark, onThemeChange }) => {
   const systemTheme = useColorScheme();
-  const [isDark, setIsDark] = useState(systemTheme === 'dark');
-  const [isLoaded, setIsLoaded] = useState(false);
+  // Se `initialDark` for fornecido (por SettingsProvider), usá-lo;
+  // caso contrário, usar o tema do sistema.
+  const [isDark, setIsDark] = useState(
+    typeof initialDark === 'boolean' ? initialDark : systemTheme === 'dark'
+  );
 
+  // Se o `initialDark` mudar após o mount, sincroniza o estado interno.
   useEffect(() => {
-    loadStoredTheme();
-  }, []);
-
-  const loadStoredTheme = async () => {
-    try {
-      const stored = await AsyncStorage.getItem('bombeiros_theme');
-      if (stored !== null) {
-        setIsDark(stored === 'dark');
-      } else {
-        // Seguir o tema do sistema por padrão
-        setIsDark(systemTheme === 'dark');
-      }
-    } catch (error) {
-      console.error('Erro ao carregar tema:', error);
-    } finally {
-      setIsLoaded(true);
+    if (typeof initialDark === 'boolean' && initialDark !== isDark) {
+      setIsDark(initialDark);
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialDark]);
 
-  const setTheme = async (dark) => {
+  const setTheme = (dark) => {
     setIsDark(dark);
-    try {
-      await AsyncStorage.setItem('bombeiros_theme', dark ? 'dark' : 'light');
-    } catch (error) {
-      console.error('Erro ao salvar tema:', error);
+    if (typeof onThemeChange === 'function') {
+      try {
+        onThemeChange(dark);
+      } catch (e) {
+        // onThemeChange é tipicamente updateSetting; ignore erros aqui
+        console.error('Erro em onThemeChange:', e);
+      }
     }
   };
 
   const toggleTheme = () => setTheme(!isDark);
 
   const colors = isDark ? darkColors : lightColors;
-
-  // Evita renderizar até o tema estar carregado
-  if (!isLoaded) {
-    return null;
-  }
 
   return (
     <ThemeContext.Provider value={{ colors, isDark, setTheme, toggleTheme }}>

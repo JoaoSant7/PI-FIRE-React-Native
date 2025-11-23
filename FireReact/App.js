@@ -14,13 +14,13 @@ import ListarOcorrenciasScreen from './screens/ListarOcorrenciasScreen.jsx';
 import NovaOcorrenciaScreen from './screens/NovaOcorrenciaScreen.jsx';
 import OcorrenciaRegistradaScreen from './screens/OcorrenciaRegistradaScreen.jsx';
 import DetalhesOcorrenciaScreen from './screens/DetalhesOcorrenciaScreen.jsx';
-import LocalizacaoScreen from './screens/LocalizacaoScreen'; // ADICIONE ESTA LINHA
+import LocalizacaoScreen from './screens/LocalizacaoScreen';
 
 // Import de Contexts
 import { AuthProvider, AuthContext } from './contexts/AuthContext';
 import { OcorrenciasProvider } from './contexts/OcorrenciasContext';
 import { SettingsProvider } from './contexts/SettingsContext';
-import { LocationProvider } from './contexts/LocationContext'; // ADICIONE ESTA LINHA
+import { LocationProvider } from './contexts/LocationContext';
 
 // Configurações do tema
 const THEME_COLORS = {
@@ -115,7 +115,7 @@ const MainStack = () => (
         title: 'DETALHES DA OCORRÊNCIA'
       }}
     />
-    {}
+    
     <Stack.Screen
       name="Localizacao"
       component={LocalizacaoScreen}

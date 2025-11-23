@@ -1,6 +1,7 @@
 // contexts/SettingsContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ThemeProvider } from './ThemeContext';
 
 const SettingsContext = createContext();
 
@@ -14,26 +15,29 @@ export const SettingsProvider = ({ children }) => {
       try {
         const saved = await AsyncStorage.getItem("@settings");
         if (saved) {
-          setSettings(JSON.parse(saved));
+          const parsed = JSON.parse(saved);
+          setSettings(parsed);
         } else {
           // Valores padrão
-            setSettings({
+            const defaults = {
               notifications: true,
               darkMode: false,
               sound: true,
               vibration: true,
               // escala de fonte global (1 = padrão). Pode ser 0.9 (pequeno), 1.2 (grande).
               fontScale: 1,
-            });
+            };
+            setSettings(defaults);
         }
       } catch (e) {
-        setSettings({
-          notifications: true,
-          darkMode: false,
-          sound: true,
-          vibration: true,
-          fontScale: 1,
-        });
+          const defaults = {
+            notifications: true,
+            darkMode: false,
+            sound: true,
+            vibration: true,
+            fontScale: 1,
+          };
+          setSettings(defaults);
       }
       setLoading(false);
     };
@@ -47,9 +51,24 @@ export const SettingsProvider = ({ children }) => {
     await AsyncStorage.setItem("@settings", JSON.stringify(newSettings));
   };
 
+  // Se `settings` estiver carregado, providenciar também o ThemeProvider
+  // para que o tema leia `settings.darkMode` como fonte de verdade.
+  if (!settings) {
+    return (
+      <SettingsContext.Provider value={{ settings, updateSetting, loading }}>
+        {children}
+      </SettingsContext.Provider>
+    );
+  }
+
   return (
     <SettingsContext.Provider value={{ settings, updateSetting, loading }}>
-      {children}
+      <ThemeProvider
+        initialDark={typeof settings.darkMode === 'boolean' ? settings.darkMode : undefined}
+        onThemeChange={(v) => updateSetting('darkMode', v)}
+      >
+        {children}
+      </ThemeProvider>
     </SettingsContext.Provider>
   );
 };

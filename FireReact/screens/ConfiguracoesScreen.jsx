@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useSettings } from "../contexts/SettingsContext";
+import { useTheme } from '../contexts/ThemeContext';
 import { useFontScale } from "../hooks/useFontScale";
 
 // Import dos estilos
@@ -18,6 +19,7 @@ import { createConfiguracoesStyles } from "../styles/ConfiguracoesStyles";
 export default function ConfiguracoesScreen() {
   const { settings, updateSetting, loading } = useSettings();
   const { scaleFont } = useFontScale();
+  const { isDark, setTheme } = useTheme();
 
   // Criar estilos dinâmicos com escala de fonte
   const dynamicStyles = React.useMemo(
@@ -54,8 +56,12 @@ export default function ConfiguracoesScreen() {
           <View style={dynamicStyles.switchContainer}>
             <Text style={dynamicStyles.switchText}>Modo Escuro</Text>
             <Switch
-              onValueChange={(v) => updateSetting("darkMode", v)}
-              value={settings.darkMode}
+              onValueChange={(v) => {
+                // Persistência é feita por SettingsProvider via onThemeChange
+                // então aqui apenas atualizamos o tema.
+                setTheme(v);
+              }}
+              value={isDark}
             />
           </View>
         </View>
