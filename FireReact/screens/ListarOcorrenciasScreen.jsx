@@ -17,9 +17,14 @@ import { MaterialIcons as Icon } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
 import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
 import { exportToCSV, exportToPDF } from "../services/exportService";
-import styles from "../styles/ListarOcorrenciaStyles";
+import styles, { createListarOcorrenciaStyles } from "../styles/ListarOcorrenciaStyles";
+import { useFontScale } from "../hooks/useFontScale";
 
 export default function ListarOcorrenciasScreen({ navigation }) {
+  // Hook para escala de fonte
+  const { scaleFont } = useFontScale();
+  const dynamicStyles = React.useMemo(() => createListarOcorrenciaStyles(scaleFont), [scaleFont]);
+
   const { ocorrencias, loading, refreshing, atualizarDados } =
     useOcorrenciasContext();
 
@@ -240,21 +245,21 @@ export default function ListarOcorrenciasScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={dynamicStyles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
 
       {/* Header de seleção */}
       {selectedOccurrences.length > 0 && (
-        <View style={styles.selectionHeader}>
-          <Text style={styles.selectionText}>
+        <View style={dynamicStyles.selectionHeader}>
+          <Text style={dynamicStyles.selectionText}>
             {selectedOccurrences.length} ocorrência(s) selecionada(s)
           </Text>
-          <View style={styles.selectionActions}>
+          <View style={dynamicStyles.selectionActions}>
             <TouchableOpacity
               onPress={toggleSelectAll}
-              style={styles.selectionButton}
+              style={dynamicStyles.selectionButton}
             >
-              <Text style={styles.selectAllText}>
+              <Text style={dynamicStyles.selectAllText}>
                 {selectedOccurrences.length === ocorrenciasFiltradas.length
                   ? "Desmarcar todas"
                   : "Selecionar todas"}
@@ -262,16 +267,16 @@ export default function ListarOcorrenciasScreen({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setSelectedOccurrences([])}
-              style={styles.selectionButton}
+              style={dynamicStyles.selectionButton}
             >
-              <Text style={styles.cancelSelectionText}>Cancelar</Text>
+              <Text style={dynamicStyles.cancelSelectionText}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         </View>
       )}
 
       <ScrollView
-        style={styles.content}
+        style={dynamicStyles.content}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -280,30 +285,30 @@ export default function ListarOcorrenciasScreen({ navigation }) {
           />
         }
       >
-        <View style={styles.placeholderSection}>
+        <View style={dynamicStyles.placeholderSection}>
           <Icon name="list" size={80} color="#bc010c" />
-          <Text style={styles.placeholderTitle}>Ocorrências</Text>
-          <Text style={styles.placeholderText}>
+          <Text style={dynamicStyles.placeholderTitle}>Ocorrências</Text>
+          <Text style={dynamicStyles.placeholderText}>
             Lista de todas as ocorrências registradas no sistema
           </Text>
-          <Text style={styles.contador}>
+          <Text style={dynamicStyles.contador}>
             {ocorrenciasFiltradas.length} de {ocorrencias.length} ocorrências
             {selectedOccurrences.length > 0 &&
               ` • ${selectedOccurrences.length} selecionadas`}
           </Text>
 
           {selectedOccurrences.length === 0 && (
-            <Text style={styles.exportHint}>
+            <Text style={dynamicStyles.exportHint}>
               Toque longo em uma ocorrência para selecionar para exportação
             </Text>
           )}
         </View>
 
         {/* Filtro por data */}
-        <View style={styles.filtroContainer}>
+        <View style={dynamicStyles.filtroContainer}>
           <Icon name="calendar-today" size={20} color="#bc010c" />
           <TextInput
-            style={styles.filtroInput}
+            style={dynamicStyles.filtroInput}
             placeholder="Filtrar por data (AAAA-MM-DD)"
             value={dataFiltro}
             onChangeText={setDataFiltro}
@@ -312,7 +317,7 @@ export default function ListarOcorrenciasScreen({ navigation }) {
           {dataFiltro ? (
             <TouchableOpacity
               onPress={() => setDataFiltro("")}
-              style={styles.limparFiltro}
+              style={dynamicStyles.limparFiltro}
             >
               <Icon name="clear" size={20} color="#999" />
             </TouchableOpacity>
@@ -321,28 +326,28 @@ export default function ListarOcorrenciasScreen({ navigation }) {
 
         {/* Botão Dashboard */}
         <TouchableOpacity
-          style={styles.dashboardButton}
+          style={dynamicStyles.dashboardButton}
           onPress={handleDashboard}
         >
           <Icon name="dashboard" size={20} color="#fff" />
-          <Text style={styles.dashboardButtonText}>Ver Dashboard</Text>
+          <Text style={dynamicStyles.dashboardButtonText}>Ver Dashboard</Text>
         </TouchableOpacity>
 
         {/* Lista de ocorrências */}
         {ocorrenciasFiltradas.length === 0 ? (
-          <View style={styles.semResultados}>
+          <View style={dynamicStyles.semResultados}>
             <Icon name="search-off" size={60} color="#ccc" />
-            <Text style={styles.semResultadosText}>
+            <Text style={dynamicStyles.semResultadosText}>
               {dataFiltro
                 ? `Nenhuma ocorrência encontrada para ${dataFiltro}`
                 : "Nenhuma ocorrência registrada"}
             </Text>
             {ocorrencias.length === 0 && (
               <TouchableOpacity
-                style={styles.novaOcorrenciaButton}
+                style={dynamicStyles.novaOcorrenciaButton}
                 onPress={handleNovaOcorrencia}
               >
-                <Text style={styles.novaOcorrenciaButtonText}>
+                <Text style={dynamicStyles.novaOcorrenciaButtonText}>
                   Registrar Primeira Ocorrência
                 </Text>
               </TouchableOpacity>
@@ -359,8 +364,8 @@ export default function ListarOcorrenciasScreen({ navigation }) {
               <TouchableOpacity
                 key={occurrenceId}
                 style={[
-                  styles.ocorrenciaCard,
-                  isSelected && styles.selectedOccurrenceCard,
+                  dynamicStyles.ocorrenciaCard,
+                  isSelected && dynamicStyles.selectedOccurrenceCard,
                 ]}
                 onPress={() => {
                   navigation.navigate("DetalhesOcorrencia", { ocorrencia });
@@ -370,15 +375,15 @@ export default function ListarOcorrenciasScreen({ navigation }) {
               >
                 {/* Indicador de seleção */}
                 {isSelected && (
-                  <View style={styles.selectionIndicator}>
+                  <View style={dynamicStyles.selectionIndicator}>
                     <Icon name="check-circle" size={20} color="#bc010c" />
                   </View>
                 )}
 
-                <View style={styles.ocorrenciaContent}>
+                <View style={dynamicStyles.ocorrenciaContent}>
                   {/* HEADER COM TÍTULO À ESQUERDA E TAG À DIREITA */}
-                  <View style={styles.ocorrenciaHeader}>
-                    <Text style={styles.ocorrenciaTipo}>
+                  <View style={dynamicStyles.ocorrenciaHeader}>
+                    <Text style={dynamicStyles.ocorrenciaTipo}>
                       {getTipoOcorrencia(ocorrencia)}
                     </Text>
 
@@ -386,31 +391,31 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                     {statusText && statusColor && (
                       <View
                         style={[
-                          styles.statusBadge,
+                          dynamicStyles.statusBadge,
                           { backgroundColor: statusColor },
                         ]}
                       >
-                        <Text style={styles.statusText}>{statusText}</Text>
+                        <Text style={dynamicStyles.statusText}>{statusText}</Text>
                       </View>
                     )}
                   </View>
 
                   {ocorrencia.descricao && (
-                    <Text style={styles.ocorrenciaDescricao} numberOfLines={2}>
+                    <Text style={dynamicStyles.ocorrenciaDescricao} numberOfLines={2}>
                       {ocorrencia.descricao}
                     </Text>
                   )}
 
-                  <View style={styles.ocorrenciaInfo}>
+                  <View style={dynamicStyles.ocorrenciaInfo}>
                     <Icon name="location-on" size={16} color="#666" />
-                    <Text style={styles.ocorrenciaLocal}>
+                    <Text style={dynamicStyles.ocorrenciaLocal}>
                       {getLocalOcorrencia(ocorrencia)}
                     </Text>
                   </View>
 
-                  <View style={styles.ocorrenciaInfo}>
+                  <View style={dynamicStyles.ocorrenciaInfo}>
                     <Icon name="access-time" size={16} color="#666" />
-                    <Text style={styles.ocorrenciaHora}>
+                    <Text style={dynamicStyles.ocorrenciaHora}>
                       {extrairHora(
                         ocorrencia.dataHora || ocorrencia.dataCriacao
                       )}
@@ -420,9 +425,9 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                   {(ocorrencia.regiao ||
                     ocorrencia.numeroAviso ||
                     ocorrencia.grupamento) && (
-                    <View style={styles.ocorrenciaInfo}>
+                    <View style={dynamicStyles.ocorrenciaInfo}>
                       <Icon name="info" size={16} color="#666" />
-                      <Text style={styles.ocorrenciaDetalhes}>
+                      <Text style={dynamicStyles.ocorrenciaDetalhes}>
                         {[
                           ocorrencia.regiao,
                           ocorrencia.numeroAviso,
@@ -434,9 +439,9 @@ export default function ListarOcorrenciasScreen({ navigation }) {
                     </View>
                   )}
 
-                  <View style={styles.ocorrenciaInfo}>
+                  <View style={dynamicStyles.ocorrenciaInfo}>
                     <Icon name="date-range" size={16} color="#666" />
-                    <Text style={styles.ocorrenciaData}>
+                    <Text style={dynamicStyles.ocorrenciaData}>
                       {formatarDataHora(
                         ocorrencia.dataHora || ocorrencia.dataCriacao
                       )}
@@ -456,41 +461,41 @@ export default function ListarOcorrenciasScreen({ navigation }) {
         visible={exportModalVisible}
         onRequestClose={() => setExportModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Exportar Ocorrências</Text>
-            <Text style={styles.modalSubtitle}>
+        <View style={dynamicStyles.modalContainer}>
+          <View style={dynamicStyles.modalContent}>
+            <Text style={dynamicStyles.modalTitle}>Exportar Ocorrências</Text>
+            <Text style={dynamicStyles.modalSubtitle}>
               {selectedOccurrences.length > 0
                 ? `Exportar ${selectedOccurrences.length} ocorrência(s) selecionada(s)`
                 : "Exportar todas as ocorrências visíveis"}
             </Text>
-            <Text style={styles.modalInfo}>
+            <Text style={dynamicStyles.modalInfo}>
               A exportação incluirá TODOS os dados detalhados das ocorrências
             </Text>
 
-            <View style={styles.modalButtons}>
+            <View style={dynamicStyles.modalButtons}>
               <TouchableOpacity
-                style={[styles.modalButton, styles.csvButton]}
+                style={[dynamicStyles.modalButton, dynamicStyles.csvButton]}
                 onPress={handleExportCSV}
               >
                 <Icon name="table-chart" size={24} color="#fff" />
-                <Text style={styles.modalButtonText}>Exportar CSV</Text>
+                <Text style={dynamicStyles.modalButtonText}>Exportar CSV</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.modalButton, styles.pdfButton]}
+                style={[dynamicStyles.modalButton, dynamicStyles.pdfButton]}
                 onPress={handleExportPDF}
               >
                 <Icon name="picture-as-pdf" size={24} color="#fff" />
-                <Text style={styles.modalButtonText}>Exportar PDF</Text>
+                <Text style={dynamicStyles.modalButtonText}>Exportar PDF</Text>
               </TouchableOpacity>
             </View>
 
             <TouchableOpacity
-              style={styles.cancelButton}
+              style={dynamicStyles.cancelButton}
               onPress={() => setExportModalVisible(false)}
             >
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
+              <Text style={dynamicStyles.cancelButtonText}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         </View>

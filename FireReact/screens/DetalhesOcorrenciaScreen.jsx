@@ -3,9 +3,14 @@ import React from "react";
 import { View, ScrollView, Text, Image, Dimensions } from "react-native";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
-import styles from "../styles/DetalhesStyles";
+import styles, { createDetalhesStyles } from "../styles/DetalhesStyles";
+import { useFontScale } from "../hooks/useFontScale";
 
 export default function DetalhesOcorrenciaScreen({ route, navigation }) {
+  // Hook para escala de fonte
+  const { scaleFont } = useFontScale();
+  const dynamicStyles = React.useMemo(() => createDetalhesStyles(scaleFont), [scaleFont]);
+
   const { ocorrencia } = route.params;
   const { width: screenWidth } = Dimensions.get("window");
 
@@ -87,9 +92,9 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
   const renderInfo = (label, value, condition = true) => {
     if (!condition || !value) return null;
     return (
-      <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>{label}:</Text>
-        <Text style={styles.infoValue}>{value}</Text>
+      <View style={dynamicStyles.infoRow}>
+        <Text style={dynamicStyles.infoLabel}>{label}:</Text>
+        <Text style={dynamicStyles.infoValue}>{value}</Text>
       </View>
     );
   };
@@ -109,9 +114,9 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
 
     if (fotosArray.length === 0) {
       return (
-        <View style={styles.noPhotosContainer}>
+        <View style={dynamicStyles.noPhotosContainer}>
           <Icon name="photo-camera" size={40} color="#ccc" />
-          <Text style={styles.noPhotosText}>
+          <Text style={dynamicStyles.noPhotosText}>
             Não há registro fotográfico desta ocorrência
           </Text>
         </View>
@@ -122,9 +127,9 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={true}
-        style={styles.photosScrollView}
+        style={dynamicStyles.photosScrollView}
       >
-        <View style={styles.photosContainer}>
+        <View style={dynamicStyles.photosContainer}>
           {fotosArray.map((foto, index) => (
             <Image
               key={index}
@@ -132,7 +137,7 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
                 uri: typeof foto === "string" ? foto : foto.uri || foto,
               }}
               style={[
-                styles.photo,
+                dynamicStyles.photo,
                 { width: screenWidth * 0.8, height: screenWidth * 0.6 },
               ]}
               resizeMode="cover"
@@ -144,15 +149,15 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.content}>
+    <View style={dynamicStyles.container}>
+      <ScrollView style={dynamicStyles.content}>
         {/* Card Principal */}
-        <View style={styles.card}>
+        <View style={dynamicStyles.card}>
           {/* Seção: Dados Internos */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
+          <View style={dynamicStyles.section}>
+            <View style={dynamicStyles.sectionHeader}>
               <Icon name="business" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Dados Internos</Text>
+              <Text style={dynamicStyles.sectionTitle}>Dados Internos</Text>
             </View>
 
             {renderInfo("Data e Hora", formatarDataHora(ocorrencia.dataHora))}
@@ -163,10 +168,10 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
           </View>
 
           {/* Seção: Ocorrência */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
+          <View style={dynamicStyles.section}>
+            <View style={dynamicStyles.sectionHeader}>
               <Icon name="warning" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Ocorrência</Text>
+              <Text style={dynamicStyles.sectionTitle}>Ocorrência</Text>
             </View>
 
             {renderInfo("Natureza", ocorrencia.natureza)}
@@ -203,10 +208,10 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
           </View>
 
           {/* Seção: Informações da Vítima */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
+          <View style={dynamicStyles.section}>
+            <View style={dynamicStyles.sectionHeader}>
               <Icon name="person" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Informações da Vítima</Text>
+              <Text style={dynamicStyles.sectionTitle}>Informações da Vítima</Text>
             </View>
 
             {renderInfo(
@@ -220,10 +225,10 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
           </View>
 
           {/* Seção: Viatura e Acionamento */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
+          <View style={dynamicStyles.section}>
+            <View style={dynamicStyles.sectionHeader}>
               <Icon name="directions-car" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Viatura e Acionamento</Text>
+              <Text style={dynamicStyles.sectionTitle}>Viatura e Acionamento</Text>
             </View>
 
             {renderInfo("Viatura Empregada", ocorrencia.viatura)}
@@ -233,10 +238,10 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
           </View>
 
           {/* Seção: Endereço */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
+          <View style={dynamicStyles.section}>
+            <View style={dynamicStyles.sectionHeader}>
               <Icon name="place" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Endereço da Ocorrência</Text>
+              <Text style={dynamicStyles.sectionTitle}>Endereço da Ocorrência</Text>
             </View>
 
             {renderInfo("Município", ocorrencia.municipio)}
@@ -250,33 +255,33 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
           </View>
 
           {/* NOVA SEÇÃO: Registro Fotográfico */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
+          <View style={dynamicStyles.section}>
+            <View style={dynamicStyles.sectionHeader}>
               <Icon name="photo-camera" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Registro Fotográfico</Text>
+              <Text style={dynamicStyles.sectionTitle}>Registro Fotográfico</Text>
             </View>
 
             {renderFotos()}
           </View>
 
           {/* Seção: Informações do Sistema */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
+          <View style={dynamicStyles.section}>
+            <View style={dynamicStyles.sectionHeader}>
               <Icon name="info" size={20} color="#bc010c" />
-              <Text style={styles.sectionTitle}>Informações do Sistema</Text>
+              <Text style={dynamicStyles.sectionTitle}>Informações do Sistema</Text>
             </View>
 
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Status:</Text>
+            <View style={dynamicStyles.infoRow}>
+              <Text style={dynamicStyles.infoLabel}>Status:</Text>
               <View
                 style={[
-                  styles.statusBadge,
+                  dynamicStyles.statusBadge,
                   {
                     backgroundColor: getStatusColor(getStatusText(ocorrencia)),
                   },
                 ]}
               >
-                <Text style={styles.statusText}>
+                <Text style={dynamicStyles.statusText}>
                   {getStatusText(ocorrencia)}
                 </Text>
               </View>

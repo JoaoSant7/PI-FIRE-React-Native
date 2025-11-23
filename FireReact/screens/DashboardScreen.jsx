@@ -15,9 +15,13 @@ import { PieChart, BarChart } from "react-native-chart-kit";
 import { Ionicons } from "@expo/vector-icons";
 import { useOcorrencias } from "../hooks/useOcorrencias";
 
-import styles from "../styles/DashboardStyles";
+import styles, { createDashboardStyles } from "../styles/DashboardStyles";
+import { useFontScale } from "../hooks/useFontScale";
 
 const DashboardScreen = () => {
+  // Hook para escala de fonte
+  const { scaleFont } = useFontScale();
+  const dynamicStyles = React.useMemo(() => createDashboardStyles(scaleFont), [scaleFont]);
   const ScreenWidth = Dimensions.get("window").width;
   const {
     ocorrencias,
@@ -277,17 +281,17 @@ const DashboardScreen = () => {
 
   if (loading && !refreshing) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
+      <SafeAreaView style={dynamicStyles.container}>
+        <View style={dynamicStyles.loadingContainer}>
           <ActivityIndicator size="large" color="#1e88e5" />
-          <Text style={styles.loadingText}>Carregando dados...</Text>
+          <Text style={dynamicStyles.loadingText}>Carregando dados...</Text>
         </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={dynamicStyles.container}>
       <ScrollView
         refreshControl={
           <RefreshControl
@@ -297,108 +301,108 @@ const DashboardScreen = () => {
           />
         }
       >
-        <View style={styles.header}>
-          <View style={styles.headerRow}>
-            <Text style={styles.title}>Dashboard Operacional</Text>
+        <View style={dynamicStyles.header}>
+          <View style={dynamicStyles.headerRow}>
+            <Text style={dynamicStyles.title}>Dashboard Operacional</Text>
             <TouchableOpacity
               onPress={recarregarDados}
-              style={styles.syncButton}
+              style={dynamicStyles.syncButton}
             >
               <Ionicons name="refresh" size={24} color="#1e88e5" />
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.subtitle}>
+          <Text style={dynamicStyles.subtitle}>
             {ocorrencias?.length || 0} ocorrências registradas
           </Text>
 
           {error && (
-            <View style={styles.errorBanner}>
+            <View style={dynamicStyles.errorBanner}>
               <Ionicons name="warning" size={16} color="#fff" />
-              <Text style={styles.errorText}>{error}</Text>
+              <Text style={dynamicStyles.errorText}>{error}</Text>
             </View>
           )}
 
-          <View style={styles.syncInfo}>
+          <View style={dynamicStyles.syncInfo}>
             <Ionicons name="time" size={12} color="#666" />
-            <Text style={styles.syncText}>
+            <Text style={dynamicStyles.syncText}>
               Última sincronização: {formatarData(lastSync)}
             </Text>
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Visão Geral</Text>
+        <View style={dynamicStyles.section}>
+          <Text style={dynamicStyles.sectionTitle}>Visão Geral</Text>
 
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>
+          <View style={dynamicStyles.statsContainer}>
+            <View style={dynamicStyles.statItem}>
+              <Text style={dynamicStyles.statValue}>
                 {dashboardData.totalOcorrencias}
               </Text>
-              <Text style={styles.statLabel}>Total de Ocorrências</Text>
+              <Text style={dynamicStyles.statLabel}>Total de Ocorrências</Text>
             </View>
 
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: "#fb8c00" }]}>
+            <View style={dynamicStyles.statItem}>
+              <Text style={[dynamicStyles.statValue, { color: "#fb8c00" }]}>
                 {dashboardData.emAndamento}
               </Text>
-              <Text style={styles.statLabel}>Em Andamento</Text>
+              <Text style={dynamicStyles.statLabel}>Em Andamento</Text>
             </View>
 
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: "#43a047" }]}>
+            <View style={dynamicStyles.statItem}>
+              <Text style={[dynamicStyles.statValue, { color: "#43a047" }]}>
                 {dashboardData.ocorrenciasAtendidas}
               </Text>
-              <Text style={styles.statLabel}>Atendidas</Text>
+              <Text style={dynamicStyles.statLabel}>Atendidas</Text>
             </View>
 
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: "#e53935" }]}>
+            <View style={dynamicStyles.statItem}>
+              <Text style={[dynamicStyles.statValue, { color: "#e53935" }]}>
                 {dashboardData.naoAtendidas}
               </Text>
-              <Text style={styles.statLabel}>Não Atendidas</Text>
+              <Text style={dynamicStyles.statLabel}>Não Atendidas</Text>
             </View>
 
-            <View style={[styles.statItem, styles.fullWidth]}>
-              <Text style={styles.statValue}>
+            <View style={[dynamicStyles.statItem, dynamicStyles.fullWidth]}>
+              <Text style={dynamicStyles.statValue}>
                 {dashboardData.tempoMedioResposta}
               </Text>
-              <Text style={styles.statLabel}>
+              <Text style={dynamicStyles.statLabel}>
                 Tempo Médio de Resposta
               </Text>
             </View>
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Taxa de Atendimento</Text>
+        <View style={dynamicStyles.section}>
+          <Text style={dynamicStyles.sectionTitle}>Taxa de Atendimento</Text>
 
-          <View style={styles.rowPercent}>
-            <View style={styles.percentBox}>
-              <Text style={[styles.percentValue, { color: "#43a047" }]}>
+          <View style={dynamicStyles.rowPercent}>
+            <View style={dynamicStyles.percentBox}>
+              <Text style={[dynamicStyles.percentValue, { color: "#43a047" }]}>
                 {pctAtendidas}%
               </Text>
-              <Text style={styles.percentLabel}>Atendidas</Text>
+              <Text style={dynamicStyles.percentLabel}>Atendidas</Text>
             </View>
 
-            <View style={styles.percentBox}>
-              <Text style={[styles.percentValue, { color: "#e53935" }]}>
+            <View style={dynamicStyles.percentBox}>
+              <Text style={[dynamicStyles.percentValue, { color: "#e53935" }]}>
                 {pctNaoAtendidas}%
               </Text>
-              <Text style={styles.percentLabel}>Não Atendidas</Text>
+              <Text style={dynamicStyles.percentLabel}>Não Atendidas</Text>
             </View>
           </View>
         </View>
 
         {/* Pizza */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Análises</Text>
+        <View style={dynamicStyles.section}>
+          <Text style={dynamicStyles.sectionTitle}>Análises</Text>
 
-          <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>
+          <View style={dynamicStyles.chartSection}>
+            <Text style={dynamicStyles.chartTitle}>
               Ocorrências por Natureza
             </Text>
-            <View style={styles.centeredChart}>
+            <View style={dynamicStyles.centeredChart}>
               <PieChart
                 data={pieData}
                 width={ScreenWidth - 40}
@@ -413,9 +417,9 @@ const DashboardScreen = () => {
           </View>
 
           {/* Região */}
-          <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>Ocorrências por Região</Text>
-            <View style={styles.centeredChart}>
+          <View style={dynamicStyles.chartSection}>
+            <Text style={dynamicStyles.chartTitle}>Ocorrências por Região</Text>
+            <View style={dynamicStyles.centeredChart}>
               <BarChart
                 data={barData}
                 width={ScreenWidth - 30}
@@ -431,11 +435,11 @@ const DashboardScreen = () => {
           </View>
 
           {/* Dias da Semana */}
-          <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>
+          <View style={dynamicStyles.chartSection}>
+            <Text style={dynamicStyles.chartTitle}>
               Ocorrências por dia da Semana
             </Text>
-            <View style={styles.centeredChart}>
+            <View style={dynamicStyles.centeredChart}>
               <BarChart
                 data={diasSemanaData}
                 width={ScreenWidth - 30}
@@ -450,9 +454,9 @@ const DashboardScreen = () => {
           </View>
 
           {/* Turnos */}
-          <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>Ocorrências por Turno</Text>
-            <View style={styles.centeredChart}>
+          <View style={dynamicStyles.chartSection}>
+            <Text style={dynamicStyles.chartTitle}>Ocorrências por Turno</Text>
+            <View style={dynamicStyles.centeredChart}>
               <PieChart
                 data={turnoData}
                 width={ScreenWidth - 40}
@@ -467,8 +471,8 @@ const DashboardScreen = () => {
           </View>
         </View>
 
-        <View style={styles.infoSection}>
-          <Text style={styles.infoText}>
+        <View style={dynamicStyles.infoSection}>
+          <Text style={dynamicStyles.infoText}>
             💡 Dados atualizados automaticamente. Puxe para baixo para
             atualizar.
           </Text>

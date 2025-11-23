@@ -4,11 +4,15 @@ import { Text, View, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import BottomNav from "../components/BottomNav";
+import { useFontScale } from "../hooks/useFontScale";
 
 // Import dos estilos
-import styles from "../styles/HomeStyles";
+import styles, { createHomeStyles } from "../styles/HomeStyles";
 
 export default function HomeScreen({ navigation }) {
+  const { scaleFont } = useFontScale();
+  const dynamicStyles = React.useMemo(() => createHomeStyles(scaleFont), [scaleFont]);
+
   // Adicione este useLayoutEffect para configurar o header
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -77,23 +81,23 @@ export default function HomeScreen({ navigation }) {
         onPress={onPress}
         activeOpacity={0.8}
       >
-        <View style={styles.buttonContent}>
+        <View style={dynamicStyles.buttonContent}>
           <MaterialCommunityIcons name={iconName} size={32} color="#fff" />
-          <Text style={styles.buttonText}>{title}</Text>
+          <Text style={dynamicStyles.buttonText}>{title}</Text>
         </View>
       </TouchableOpacity>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={dynamicStyles.container}>
       {/* Conteúdo Principal */}
-      <View style={styles.content}>
-        <Text style={styles.sectionTitle}>O que você deseja acessar?</Text>
+      <View style={dynamicStyles.content}>
+        <Text style={dynamicStyles.sectionTitle}>O que você deseja acessar?</Text>
 
-        <View style={styles.buttonsContainer}>
+        <View style={dynamicStyles.buttonsContainer}>
           {/* Primeira linha: Dashboard e Listar Ocorrências */}
-          <View style={styles.buttonRow}>
+          <View style={dynamicStyles.buttonRow}>
             <ModernButton
               title="Dashboard"
               type="dashboard"
@@ -110,7 +114,7 @@ export default function HomeScreen({ navigation }) {
           </View>
 
           {/* Segunda linha: Geolocalização (esquerda) e Registrar (direita) */}
-          <View style={styles.buttonRow}>
+          <View style={dynamicStyles.buttonRow}>
             <ModernButton
               title="Geolocalização"
               type="localizacao"

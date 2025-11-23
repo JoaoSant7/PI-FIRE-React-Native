@@ -12,11 +12,16 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import MapView, { Marker, Circle } from "react-native-maps";
-import LocalizacaoStyles from "../styles/LocalizacaoStyles";
+import LocalizacaoStyles, { createLocalizacaoStyles } from "../styles/LocalizacaoStyles";
+import { useFontScale } from "../hooks/useFontScale";
 
 const { width, height } = Dimensions.get("window");
 
 const LocalizacaoScreen = () => {
+  // Hook para escala de fonte
+  const { scaleFont } = useFontScale();
+  const dynamicStyles = React.useMemo(() => createLocalizacaoStyles(scaleFont), [scaleFont]);
+
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -165,23 +170,23 @@ const LocalizacaoScreen = () => {
   };
 
   return (
-    <View style={LocalizacaoStyles.container}>
+    <View style={dynamicStyles.container}>
       <ScrollView
-        style={LocalizacaoStyles.scrollView}
-        contentContainerStyle={LocalizacaoStyles.scrollContent}
+        style={dynamicStyles.scrollView}
+        contentContainerStyle={dynamicStyles.scrollContent}
         showsVerticalScrollIndicator={true}
       >
         {errorMsg && (
-          <View style={LocalizacaoStyles.errorContainer}>
-            <Text style={LocalizacaoStyles.errorText}>{errorMsg}</Text>
+          <View style={dynamicStyles.errorContainer}>
+            <Text style={dynamicStyles.errorText}>{errorMsg}</Text>
           </View>
         )}
 
         {/* Mapa */}
-        <View style={LocalizacaoStyles.mapContainer}>
+        <View style={dynamicStyles.mapContainer}>
           <MapView
             ref={mapRef}
-            style={LocalizacaoStyles.map}
+            style={dynamicStyles.map}
             initialRegion={initialRegion}
             showsUserLocation={false}
             showsMyLocationButton={false}
@@ -218,25 +223,25 @@ const LocalizacaoScreen = () => {
 
           {location && (
             <TouchableOpacity
-              style={LocalizacaoStyles.centerButton}
+              style={dynamicStyles.centerButton}
               onPress={centerMapOnLocation}
             >
-              <Text style={LocalizacaoStyles.centerButtonText}>⟲</Text>
+              <Text style={dynamicStyles.centerButtonText}>⟲</Text>
             </TouchableOpacity>
           )}
         </View>
 
         {/* Botão de obter localização movido para abaixo do mapa */}
         <TouchableOpacity
-          style={[LocalizacaoStyles.button, LocalizacaoStyles.obterLocalizacao]}
+          style={[dynamicStyles.button, dynamicStyles.obterLocalizacao]}
           onPress={getLocation}
           disabled={loading}
         >
-          <View style={LocalizacaoStyles.buttonContent}>
+          <View style={dynamicStyles.buttonContent}>
             {loading ? (
               <ActivityIndicator size="large" color="#FFF" />
             ) : (
-              <Text style={LocalizacaoStyles.buttonText}>
+              <Text style={dynamicStyles.buttonText}>
                 Obter Minha Localização
               </Text>
             )}
@@ -244,47 +249,47 @@ const LocalizacaoScreen = () => {
         </TouchableOpacity>
 
         {loading && (
-          <View style={LocalizacaoStyles.loadingContainer}>
+          <View style={dynamicStyles.loadingContainer}>
             <ActivityIndicator size="small" color="#3E4095" />
-            <Text style={LocalizacaoStyles.loadingText}>
+            <Text style={dynamicStyles.loadingText}>
               Obtendo localização...
             </Text>
           </View>
         )}
 
         {location && (
-          <View style={LocalizacaoStyles.locationContainer}>
-            <Text style={LocalizacaoStyles.locationText}>
+          <View style={dynamicStyles.locationContainer}>
+            <Text style={dynamicStyles.locationText}>
               Localização Encontrada
             </Text>
 
-            <View style={LocalizacaoStyles.coordinatesContainer}>
-              <View style={LocalizacaoStyles.coordinateBox}>
-                <Text style={LocalizacaoStyles.coordinateLabel}>LATITUDE</Text>
-                <Text style={LocalizacaoStyles.coordinateValue}>
+            <View style={dynamicStyles.coordinatesContainer}>
+              <View style={dynamicStyles.coordinateBox}>
+                <Text style={dynamicStyles.coordinateLabel}>LATITUDE</Text>
+                <Text style={dynamicStyles.coordinateValue}>
                   {location.latitude.toFixed(6)}
                 </Text>
               </View>
-              <View style={LocalizacaoStyles.coordinateBox}>
-                <Text style={LocalizacaoStyles.coordinateLabel}>LONGITUDE</Text>
-                <Text style={LocalizacaoStyles.coordinateValue}>
+              <View style={dynamicStyles.coordinateBox}>
+                <Text style={dynamicStyles.coordinateLabel}>LONGITUDE</Text>
+                <Text style={dynamicStyles.coordinateValue}>
                   {location.longitude.toFixed(6)}
                 </Text>
               </View>
             </View>
 
             {address && (
-              <View style={LocalizacaoStyles.addressContainer}>
-                <Text style={LocalizacaoStyles.addressLabel}>
+              <View style={dynamicStyles.addressContainer}>
+                <Text style={dynamicStyles.addressLabel}>
                   ENDEREÇO APROXIMADO
                 </Text>
-                <Text style={LocalizacaoStyles.addressText}>{address}</Text>
+                <Text style={dynamicStyles.addressText}>{address}</Text>
               </View>
             )}
 
             {location.accuracy && (
-              <View style={LocalizacaoStyles.accuracyContainer}>
-                <Text style={LocalizacaoStyles.accuracyText}>
+              <View style={dynamicStyles.accuracyContainer}>
+                <Text style={dynamicStyles.accuracyText}>
                   Precisão: ±{location.accuracy.toFixed(1)} metros
                 </Text>
               </View>
@@ -292,12 +297,12 @@ const LocalizacaoScreen = () => {
 
             <TouchableOpacity
               style={[
-                LocalizacaoStyles.actionButton,
-                LocalizacaoStyles.shareButton,
+                dynamicStyles.actionButton,
+                dynamicStyles.shareButton,
               ]}
               onPress={shareLocation}
             >
-              <Text style={LocalizacaoStyles.actionButtonText}>
+              <Text style={dynamicStyles.actionButtonText}>
                 Compartilhar Localização
               </Text>
             </TouchableOpacity>

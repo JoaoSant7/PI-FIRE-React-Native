@@ -12,14 +12,17 @@ import {
   Image,
 } from "react-native";
 import { AuthContext } from "../contexts/AuthContext";
+import { useFontScale } from "../hooks/useFontScale";
 
 // Import dos estilos
-import styles from "../styles/LoginStyles";
+import styles, { createLoginStyles } from "../styles/LoginStyles";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useContext(AuthContext);
+  const { scaleFont } = useFontScale();
+  const dynamicStyles = React.useMemo(() => createLoginStyles(scaleFont), [scaleFont]);
 
   const handleLogin = () => {
     console.log("Email:", email);
@@ -40,31 +43,31 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={dynamicStyles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
-        contentContainerStyle={styles.scrollContainer}
+        contentContainerStyle={dynamicStyles.scrollContainer}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.header}>
+        <View style={dynamicStyles.header}>
           <Image
             source={require("../components/Fire-noBG.png")}
-            style={styles.logo}
+            style={dynamicStyles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.fireTitle}>FIRE</Text>
-          <Text style={styles.subtitle}>
+          <Text style={dynamicStyles.fireTitle}>FIRE</Text>
+          <Text style={dynamicStyles.subtitle}>
             Ferramenta Integrada de Resposta a Emergências
           </Text>
         </View>
 
-        <View style={styles.formContainer}>
-          <View style={styles.inputWrapper}>
-            <Text style={styles.label}>E-MAIL</Text>
+        <View style={dynamicStyles.formContainer}>
+          <View style={dynamicStyles.inputWrapper}>
+            <Text style={dynamicStyles.label}>E-MAIL</Text>
             <TextInput
-              style={styles.input}
+              style={dynamicStyles.input}
               placeholder="seu@email.com"
               placeholderTextColor="#999"
               keyboardType="email-address"
@@ -74,10 +77,10 @@ export default function LoginScreen({ navigation }) {
             />
           </View>
 
-          <View style={styles.inputWrapper}>
-            <Text style={styles.label}>SENHA</Text>
+          <View style={dynamicStyles.inputWrapper}>
+            <Text style={dynamicStyles.label}>SENHA</Text>
             <TextInput
-              style={styles.input}
+              style={dynamicStyles.input}
               placeholder="Sua senha"
               placeholderTextColor="#999"
               secureTextEntry
@@ -87,21 +90,21 @@ export default function LoginScreen({ navigation }) {
           </View>
 
           <TouchableOpacity
-            style={styles.forgotPasswordButton}
+            style={dynamicStyles.forgotPasswordButton}
             onPress={handleForgotPassword}
           >
-            <Text style={styles.forgotPasswordText}>Esqueci minha senha</Text>
+            <Text style={dynamicStyles.forgotPasswordText}>Esqueci minha senha</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[
-              styles.loginButton,
-              (!email || !password) && styles.loginButtonDisabled,
+              dynamicStyles.loginButton,
+              (!email || !password) && dynamicStyles.loginButtonDisabled,
             ]}
             onPress={handleLogin}
             disabled={!email || !password}
           >
-            <Text style={styles.loginButtonText}>ENTRAR</Text>
+            <Text style={dynamicStyles.loginButtonText}>ENTRAR</Text>
           </TouchableOpacity>
         </View>
 

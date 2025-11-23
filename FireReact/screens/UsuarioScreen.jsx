@@ -8,18 +8,23 @@ import {
   Alert,
 } from "react-native";
 
-// Import dos estilos
-import styles from "../styles/UsuarioStyles";
+// Import dos estilos e hook de escala de fonte
+import styles, { createUsuarioStyles } from "../styles/UsuarioStyles";
+import { useFontScale } from "../hooks/useFontScale";
 
 // Componente reutilizável para as linhas de informação (sem ícones)
-const InfoRow = ({ label, value }) => (
-  <View style={styles.infoRow}>
-    <Text style={styles.infoLabel}>{label}</Text>
-    <Text style={styles.infoValue}>{value}</Text>
+const InfoRow = ({ label, value, dynamicStyles }) => (
+  <View style={dynamicStyles.infoRow}>
+    <Text style={dynamicStyles.infoLabel}>{label}</Text>
+    <Text style={dynamicStyles.infoValue}>{value}</Text>
   </View>
 );
 
 export default function UsuarioScreen({ navigation, route }) {
+  // Hook para escala de fonte
+  const { scaleFont } = useFontScale();
+  const dynamicStyles = React.useMemo(() => createUsuarioStyles(scaleFont), [scaleFont]);
+
   // Dados do usuário (em uma aplicação real, viriam do contexto ou API)
   const userData = {
     nome: "Carlos Silva",
@@ -57,50 +62,51 @@ export default function UsuarioScreen({ navigation, route }) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={dynamicStyles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#bc010c" />
 
-      <ScrollView style={styles.scrollContent}>
+      <ScrollView style={dynamicStyles.scrollContent}>
         {/* Nome e Função do Usuário */}
-        <View style={styles.userInfoHeader}>
-          <Text style={styles.userName}>{userData.nome}</Text>
-          <Text style={styles.userRank}>{userData.funcao}</Text>
+        <View style={dynamicStyles.userInfoHeader}>
+          <Text style={dynamicStyles.userName}>{userData.nome}</Text>
+          <Text style={dynamicStyles.userRank}>{userData.funcao}</Text>
         </View>
 
         {/* Informações Pessoais */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Informações Pessoais</Text>
+        <View style={dynamicStyles.section}>
+          <Text style={dynamicStyles.sectionTitle}>Informações Pessoais</Text>
 
-          <InfoRow label="Nome Completo" value={userData.nome} />
-          <InfoRow label="Idade" value={`${userData.idade} anos`} />
+          <InfoRow label="Nome Completo" value={userData.nome}  dynamicStyles={dynamicStyles} />
+          <InfoRow label="Idade" value={`${userData.idade} anos`}  dynamicStyles={dynamicStyles} />
           <InfoRow
             label="Ano de Nascimento"
             value={userData.anoNascimento.toString()}
+            dynamicStyles={dynamicStyles}
           />
-          <InfoRow label="Tipo Sanguíneo" value={userData.tipoSanguineo} />
-          <InfoRow label="Matrícula" value={userData.matricula} />
+          <InfoRow label="Tipo Sanguíneo" value={userData.tipoSanguineo}  dynamicStyles={dynamicStyles} />
+          <InfoRow label="Matrícula" value={userData.matricula}  dynamicStyles={dynamicStyles} />
         </View>
 
         {/* Informações Profissionais */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Informações Profissionais</Text>
+        <View style={dynamicStyles.section}>
+          <Text style={dynamicStyles.sectionTitle}>Informações Profissionais</Text>
 
-          <InfoRow label="Batalhão" value={userData.batalhao} />
-          <InfoRow label="Função" value={userData.funcao} />
+          <InfoRow label="Batalhão" value={userData.batalhao}  dynamicStyles={dynamicStyles} />
+          <InfoRow label="Função" value={userData.funcao}  dynamicStyles={dynamicStyles} />
         </View>
 
         {/* Contato */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Contato</Text>
+        <View style={dynamicStyles.section}>
+          <Text style={dynamicStyles.sectionTitle}>Contato</Text>
 
-          <InfoRow label="E-mail" value={userData.email} />
-          <InfoRow label="Telefone" value={userData.telefone} />
+          <InfoRow label="E-mail" value={userData.email}  dynamicStyles={dynamicStyles} />
+          <InfoRow label="Telefone" value={userData.telefone}  dynamicStyles={dynamicStyles} />
         </View>
 
         {/* Botão Sair */}
-        <View style={styles.logoutSection}>
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.logoutButtonText}>Sair</Text>
+        <View style={dynamicStyles.logoutSection}>
+          <TouchableOpacity style={dynamicStyles.logoutButton} onPress={handleLogout}>
+            <Text style={dynamicStyles.logoutButtonText}>Sair</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

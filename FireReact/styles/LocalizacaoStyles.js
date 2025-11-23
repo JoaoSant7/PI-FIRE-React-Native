@@ -1,6 +1,216 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { FONT_SIZES } from "../utils/fontSizes";
 
 const { width, height } = Dimensions.get('window');
+
+/**
+ * Função que cria estilos dinâmicos baseados na escala de fonte
+ */
+export const createLocalizacaoStyles = (scaleFont) => {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: "#fff",
+    },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      paddingHorizontal: 20,
+      paddingTop: 20,
+      alignItems: "center",
+      paddingBottom: 40,
+    },
+    sectionTitle: {
+      fontSize: scaleFont(FONT_SIZES.xxl),
+      fontWeight: "600",
+      color: "#333",
+      marginBottom: 20,
+      textAlign: "center",
+    },
+    button: {
+      width: "100%",
+      height: 120,
+      borderRadius: 16,
+      marginBottom: 16,
+      elevation: 6,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.2,
+      shadowRadius: 6,
+    },
+    buttonContent: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 10,
+    },
+    obterLocalizacao: {
+      backgroundColor: "#BC010C",
+    },
+    buttonText: {
+      color: "white",
+      fontSize: scaleFont(FONT_SIZES.md),
+      fontWeight: "600",
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+      textAlign: "center",
+      marginTop: 12,
+    },
+    mapContainer: {
+      width: '100%',
+      height: 300,
+      borderRadius: 16,
+      overflow: 'hidden',
+      marginBottom: 20,
+      position: 'relative',
+      elevation: 8,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+    },
+    map: {
+      width: '100%',
+      height: '100%',
+    },
+    centerButton: {
+      position: 'absolute',
+      top: 10,
+      right: 10,
+      backgroundColor: '#fff',
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      elevation: 4,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+    },
+    centerButtonText: {
+      fontSize: scaleFont(FONT_SIZES.lg),
+      fontWeight: 'bold',
+      color: '#333',
+    },
+    locationContainer: {
+      padding: 20,
+      backgroundColor: "#F8F8F8",
+      borderRadius: 16,
+      width: "100%",
+      elevation: 4,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      marginBottom: 20,
+    },
+    locationText: {
+      fontSize: scaleFont(FONT_SIZES.lg),
+      color: "#333",
+      marginBottom: 15,
+      textAlign: "center",
+      fontWeight: "600",
+    },
+    coordinatesContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginBottom: 15,
+    },
+    coordinateBox: {
+      flex: 1,
+      padding: 12,
+      backgroundColor: "#fff",
+      borderRadius: 10,
+      marginHorizontal: 5,
+      alignItems: "center",
+      elevation: 2,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+    },
+    coordinateLabel: {
+      fontSize: scaleFont(FONT_SIZES.sm),
+      color: "#666",
+      marginBottom: 4,
+      fontWeight: "500",
+    },
+    coordinateValue: {
+      fontSize: scaleFont(FONT_SIZES.md),
+      color: "#333",
+      fontWeight: "600",
+    },
+    addressContainer: {
+      backgroundColor: "#E3F2FD",
+      padding: 12,
+      borderRadius: 8,
+      marginBottom: 10,
+    },
+    addressLabel: {
+      fontSize: scaleFont(FONT_SIZES.xs),
+      color: "#1976D2",
+      fontWeight: "600",
+      marginBottom: 4,
+    },
+    addressText: {
+      fontSize: scaleFont(FONT_SIZES.md),
+      color: "#333",
+      fontWeight: "500",
+    },
+    accuracyContainer: {
+      marginTop: 8,
+      padding: 8,
+      backgroundColor: "#E8F5E8",
+      borderRadius: 6,
+      alignItems: "center",
+      marginBottom: 15,
+    },
+    accuracyText: {
+      fontSize: scaleFont(FONT_SIZES.sm),
+      color: "#2E7D32",
+      fontWeight: "500",
+    },
+    loadingContainer: {
+      marginTop: 10,
+      alignItems: "center",
+    },
+    loadingText: {
+      fontSize: scaleFont(FONT_SIZES.md),
+      color: "#333",
+      marginTop: 10,
+    },
+    errorContainer: {
+      backgroundColor: "#FFEBEE",
+      padding: 12,
+      borderRadius: 8,
+      marginBottom: 15,
+      width: "100%",
+    },
+    errorText: {
+      fontSize: scaleFont(FONT_SIZES.md),
+      color: "#C62828",
+      textAlign: "center",
+      fontWeight: "500",
+    },
+    actionButton: {
+      padding: 15,
+      borderRadius: 8,
+      alignItems: "center",
+      marginTop: 10,
+    },
+    shareButton: {
+      backgroundColor: "#4CAF50",
+    },
+    actionButtonText: {
+      color: "white",
+      fontSize: scaleFont(FONT_SIZES.md),
+      fontWeight: "600",
+    },
+  });
+};
 
 export const LocalizacaoStyles = StyleSheet.create({
   container: {
@@ -14,10 +224,10 @@ export const LocalizacaoStyles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
     alignItems: "center",
-    paddingBottom: 40, // Espaço extra no final para scroll
+    paddingBottom: 40,
   },
   sectionTitle: {
-    fontSize: 22,
+    fontSize: FONT_SIZES.xxl,
     fontWeight: "600",
     color: "#333",
     marginBottom: 20,
@@ -45,14 +255,13 @@ export const LocalizacaoStyles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 0.5,
     textAlign: "center",
     marginTop: 12,
   },
-  // Estilos do Mapa
   mapContainer: {
     width: '100%',
     height: 300,
@@ -87,7 +296,7 @@ export const LocalizacaoStyles = StyleSheet.create({
     shadowRadius: 4,
   },
   centerButtonText: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.lg,
     fontWeight: 'bold',
     color: '#333',
   },
@@ -101,10 +310,10 @@ export const LocalizacaoStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    marginBottom: 20, // Espaço extra no final
+    marginBottom: 20,
   },
   locationText: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.lg,
     color: "#333",
     marginBottom: 15,
     textAlign: "center",
@@ -129,13 +338,13 @@ export const LocalizacaoStyles = StyleSheet.create({
     shadowRadius: 2,
   },
   coordinateLabel: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     color: "#666",
     marginBottom: 4,
     fontWeight: "500",
   },
   coordinateValue: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     color: "#333",
     fontWeight: "600",
   },
@@ -146,13 +355,13 @@ export const LocalizacaoStyles = StyleSheet.create({
     marginBottom: 10,
   },
   addressLabel: {
-    fontSize: 11,
+    fontSize: FONT_SIZES.xs,
     color: "#1976D2",
     fontWeight: "600",
     marginBottom: 4,
   },
   addressText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     color: "#333",
     fontWeight: "500",
   },
@@ -165,7 +374,7 @@ export const LocalizacaoStyles = StyleSheet.create({
     marginBottom: 15,
   },
   accuracyText: {
-    fontSize: 12,
+    fontSize: FONT_SIZES.sm,
     color: "#2E7D32",
     fontWeight: "500",
   },
@@ -174,7 +383,7 @@ export const LocalizacaoStyles = StyleSheet.create({
     alignItems: "center",
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     color: "#333",
     marginTop: 10,
   },
@@ -186,7 +395,7 @@ export const LocalizacaoStyles = StyleSheet.create({
     width: "100%",
   },
   errorText: {
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     color: "#C62828",
     textAlign: "center",
     fontWeight: "500",
@@ -202,7 +411,7 @@ export const LocalizacaoStyles = StyleSheet.create({
   },
   actionButtonText: {
     color: "white",
-    fontSize: 14,
+    fontSize: FONT_SIZES.md,
     fontWeight: "600",
   },
 });

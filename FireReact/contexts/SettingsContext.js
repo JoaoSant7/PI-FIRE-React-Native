@@ -22,7 +22,7 @@ export const SettingsProvider = ({ children }) => {
               darkMode: false,
               sound: true,
               vibration: true,
-              // escala de fonte global (1 = padrão). Pode ser 1.1, 1.2 para aumentar.
+              // escala de fonte global (1 = padrão). Pode ser 0.9 (pequeno), 1.2 (grande).
               fontScale: 1,
             });
         }
