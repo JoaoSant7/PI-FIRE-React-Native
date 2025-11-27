@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { listIncidents, addIncident, addManyIncidents } from '../services/incidentService';
-import { AuthReq } from '../middlewares/auth';
+import { AuthReq } from '../middleware/auth';
 
 export const list = async (req: AuthReq, res: Response) => {
   const rows = await listIncidents(req.user!.id);

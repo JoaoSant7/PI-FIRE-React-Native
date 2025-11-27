@@ -1,7 +1,7 @@
 import express from 'express';
 import { login } from '../controllers /authController';
 import { list, create, batch } from '../controllers /incidentController';
-import { auth } from '../middlewares/auth';
+import { auth } from '../middleware/auth';
 
 const router = express.Router();
 
