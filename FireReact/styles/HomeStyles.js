@@ -49,16 +49,16 @@ export const createHomeStyles = (scaleFont) => {
       padding: 10,
     },
     dashboard: {
-      backgroundColor: "#3E4095",
+      backgroundColor: "#BC010C",
     },
     listar: {
-      backgroundColor: "#E6A400",
+      backgroundColor: "#BC010C",
     },
     registrar: {
       backgroundColor: "#BC010C",
     },
     localizacao: {
-      backgroundColor: "#4CAF50",
+      backgroundColor: "#BC010C",
     },
     buttonText: {
       color: "white",
@@ -116,16 +116,16 @@ export const styles = StyleSheet.create({
     padding: 10,
   },
   dashboard: {
-    backgroundColor: "#3E4095",
+    backgroundColor: "#BC010C",
   },
   listar: {
-    backgroundColor: "#E6A400",
+    backgroundColor: "#BC010C",
   },
   registrar: {
     backgroundColor: "#BC010C",
   },
   localizacao: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#BC010C",
   },
   buttonText: {
     color: "white",

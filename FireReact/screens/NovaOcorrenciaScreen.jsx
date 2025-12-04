@@ -26,7 +26,7 @@ import SearchablePicker from "../components/SearchablePicker";
 // Import do ícone de câmera SVG
 import CameraIcon from "../components/CameraIcon";
 
-// Import do contexto CORRIGIDO
+// Import do contexto de Ocorrências
 import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
 
 // Import do contexto de Localização
@@ -174,16 +174,16 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
   const { scaleFont } = useFontScale();
   const dynamicStyles = React.useMemo(() => createNovaOcorrenciaStyles(scaleFont), [scaleFont]);
 
-  // Hook do contexto CORRIGIDO
+  // Hook do contexto de Ocorrência
   const { adicionarOcorrencia } = useOcorrenciasContext();
 
   // Hook do contexto de Localização
   const { currentLocation, getCurrentLocation } = useLocation();
 
-  // Estado principal do formulário - REMOVIDOS OS CAMPOS DE HORÁRIO DO formData
+  // Estado principal do formulário
   const [formData, setFormData] = useState({
     // Dados Internos - númeroAviso será gerado automaticamente
-    numeroAviso: gerarNumeroAviso(), // GERA AUTOMATICAMENTE AO INICIAR
+    numeroAviso: gerarNumeroAviso(),
     diretoria: "DIM",
     grupamento: "",
     pontoBase: "",
@@ -221,7 +221,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     longitude: "",
   });
 
-  // ESTADOS SEPARADOS PARA DATAS E HORÁRIOS
+  // Estados separados para datas e horários
   const [dataHora, setDataHora] = useState(new Date());
   const [horaSaidaQuartel, setHoraSaidaQuartel] = useState(null);
   const [horaLocal, setHoraLocal] = useState(null);
@@ -241,7 +241,6 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     }));
   }, [dataHora]);
 
-  // Na NovaOcorrenciaScreen, substitua o useEffect por este:
   useEffect(() => {
     if (
       currentLocation.municipio ||
@@ -249,7 +248,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
       currentLocation.longitude
     ) {
       console.log(
-        "📍 Localização recebida para preenchimento:",
+        "Localização recebida para preenchimento:",
         currentLocation
       );
 
@@ -277,7 +276,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
         if (municipioEncontrado) {
           municipioValue = municipioEncontrado.value;
-          console.log("✅ Município encontrado (exato):", municipioValue);
+          console.log("Município encontrado (exato):", municipioValue);
         } else {
           // Busca por correspondência parcial
           const municipioParcial = MUNICIPIOS_PERNAMBUCO.find(
@@ -290,14 +289,14 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
           if (municipioParcial) {
             municipioValue = municipioParcial.value;
-            console.log("✅ Município encontrado (parcial):", municipioValue);
+            console.log("Município encontrado (parcial):", municipioValue);
           } else {
             console.log(
-              "❌ Município NÃO encontrado na lista:",
+              "Município NÃO encontrado na lista:",
               currentLocation.municipio
             );
             console.log(
-              "📋 Municípios disponíveis:",
+              "Municípios disponíveis:",
               MUNICIPIOS_PERNAMBUCO.map((m) => m.value)
             );
           }
@@ -315,7 +314,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
       // Se o município foi preenchido, mostre uma mensagem
       if (municipioValue) {
-        console.log("🎯 Município definido no formulário:", municipioValue);
+        console.log("Município definido no formulário:", municipioValue);
       }
     }
   }, [currentLocation]);
@@ -377,7 +376,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     }
   };
 
-  // ✅ NOVAS FUNÇÕES COM EXPO-IMAGE-PICKER (SUBSTITUINDO AS ANTIGAS)
+  // Novas funções com expo-image-picker
 
   // Função para abrir a câmera
   const abrirCamera = async () => {
@@ -435,7 +434,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     }
   };
 
-  // Função para mostrar opções de foto - ATUALIZADA
+  // Função para mostrar opções de foto
   const mostrarOpcoesFoto = () => {
     console.log("Mostrando opções de foto...");
 
@@ -581,7 +580,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     Alert.alert(
       "Confirmar Salvamento",
       `Tem certeza que deseja salvar esta ocorrência?${
-        fotoOcorrencia ? "\n\n✅ Uma foto será incluída no registro." : ""
+        fotoOcorrencia ? "\n\n Uma foto será incluída no registro." : ""
       }`,
       [
         {
@@ -608,7 +607,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 tempoResposta = Math.max(0, localSegundos - saidaSegundos) / 60; // Em minutos
               }
 
-              // ✅ CORREÇÃO: Mapeamento correto para os status específicos
+              //Mapeamento para os status específicos
               const mapStatus = (situacao) => {
                 // Retorna o próprio texto da situação para manter consistência
                 // A ListarOcorrenciasScreen já filtra os status permitidos
@@ -643,11 +642,10 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                   "Local não informado",
                 regiao: formData.regiao,
 
-                // ✅ CORREÇÃO: Usa a situação diretamente do formulário
+                //Usa a situação diretamente do formulário
                 status: formData.situacao,
                 situacao: formData.situacao, // Mantém também no campo original
 
-                // REMOVIDA a prioridade conforme solicitado
                 dataHora: dataHora.toISOString(),
                 dataCriacao: new Date().toISOString(),
                 tempoResposta: Math.round(tempoResposta),
@@ -657,7 +655,6 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
                 horaChegadaLocal: formatHoraToString(horaLocal),
                 horaSaidaLocal: formatHoraToString(horaSaidaLocal),
 
-                // ✅ CORREÇÃO - Mudar para array de URIs
                 fotos: fotoOcorrencia ? [fotoOcorrencia.uri] : [],
 
                 // Mantém todos os dados originais para detalhes
@@ -675,7 +672,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
 
               console.log("Salvando ocorrência:", ocorrenciaData);
 
-              // SALVA NO CONTEXTO - CORRIGIDO
+              // Salva no contexto
               await adicionarOcorrencia(ocorrenciaData);
 
               // Feedback de sucesso
@@ -709,7 +706,7 @@ const NovaOcorrenciaScreen = ({ navigation }) => {
     );
   };
 
-  // Função para limpar o formulário - ATUALIZADA
+  // Função para limpar o formulário
   const handleClear = () => {
     Alert.alert(
       "Limpar Formulário",

@@ -297,7 +297,7 @@ const DashboardScreen = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={atualizarDados}
-            colors={["#1e88e5"]}
+            colors={["#BC010C"]}
           />
         }
       >
@@ -308,7 +308,7 @@ const DashboardScreen = () => {
               onPress={recarregarDados}
               style={dynamicStyles.syncButton}
             >
-              <Ionicons name="refresh" size={24} color="#1e88e5" />
+              <Ionicons name="refresh" size={24} color="#BC010C" />
             </TouchableOpacity>
           </View>
 
@@ -473,7 +473,7 @@ const DashboardScreen = () => {
 
         <View style={dynamicStyles.infoSection}>
           <Text style={dynamicStyles.infoText}>
-            💡 Dados atualizados automaticamente. Puxe para baixo para
+            Dados atualizados automaticamente. Puxe para baixo para
             atualizar.
           </Text>
         </View>
