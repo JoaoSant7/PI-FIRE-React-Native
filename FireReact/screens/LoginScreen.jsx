@@ -1,115 +1,107 @@
-// screens/LoginScreen.jsx
-import { StatusBar } from "expo-status-bar";
-import React, { useState, useContext } from "react";
+import React from 'react';
 import {
-  Text,
   View,
+  Text,
   TextInput,
   TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
-  Image,
-} from "react-native";
-import { AuthContext } from "../contexts/AuthContext";
-import { useFontScale } from "../hooks/useFontScale";
-
-// Import dos estilos
-import styles, { createLoginStyles } from "../styles/LoginStyles";
+} from 'react-native';
+import { AuthContext } from '../contexts/AuthContext';
+import styles, { createLoginStyles } from '../styles/LoginStyles';
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { login } = useContext(AuthContext);
-  const { scaleFont } = useFontScale();
-  const dynamicStyles = React.useMemo(() => createLoginStyles(scaleFont), [scaleFont]);
+  const [email, setEmail] = React.useState('');
+  const [senha, setSenha] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
 
-  const handleLogin = () => {
-    console.log("Email:", email);
-    console.log("Password:", password);
+  const { login } = React.useContext(AuthContext);
 
-    if (email && password) {
-      login();
-    } else {
-      alert("Por favor, preencha email e senha!");
+  const handleLogin = async () => {
+    // Validação básica
+    if (!email.trim() || !senha.trim()) {
+      Alert.alert('Atenção', 'Por favor, preencha todos os campos.');
+      return;
+    }
+
+    if (!email.includes('@')) {
+      Alert.alert('Atenção', 'Por favor, insira um e-mail válido.');
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      const result = await login(email.trim(), senha);
+      
+      if (!result.success) {
+        Alert.alert('Erro no Login', result.message);
+      }
+      // Se o login for bem-sucedido, o usuário será redirecionado
+      // automaticamente pois isAuthenticated mudou para true
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+      Alert.alert('Erro', 'Ocorreu um erro inesperado. Tente novamente.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleForgotPassword = () => {
-    alert(
-      "Entre em contato com o setor de suporte técnico do seu batalhão para realizar a recuperação de sua senha."
-    );
-  };
-
   return (
-    <KeyboardAvoidingView
-      style={dynamicStyles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    <KeyboardAvoidingView 
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView
-        contentContainerStyle={dynamicStyles.scrollContainer}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={dynamicStyles.header}>
-          <Image
-            source={require("../components/Fire-noBG.png")}
-            style={dynamicStyles.logo}
-            resizeMode="contain"
-          />
-          <Text style={dynamicStyles.fireTitle}>FIRE</Text>
-          <Text style={dynamicStyles.subtitle}>
-            Ferramenta Integrada de Resposta a Emergências
-          </Text>
-        </View>
+      <View style={styles.content}>
+        <Text style={styles.title}>FIRE</Text>
+        <Text style={styles.subtitle}>Ferramenta Integrada de Resposta a Emergências</Text>
+        
+        <TextInput
+          style={styles.input}
+          placeholder="Insira o seu endereço de E-Mail"
+          placeholderTextColor="#999"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoCorrect={false}
+          editable={!loading}
+        />
+        
+        <TextInput
+          style={styles.input}
+          placeholder="Digite a sua senha"
+          placeholderTextColor="#999"
+          value={senha}
+          onChangeText={setSenha}
+          secureTextEntry
+          editable={!loading}
+        />
+        
+        <TouchableOpacity 
+          style={[styles.button, loading && styles.buttonDisabled]} 
+          onPress={handleLogin}
+          disabled={loading}
+          activeOpacity={0.7}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" size="small" />
+          ) : (
+            <Text style={styles.buttonText}>Entrar</Text>
+          )}
+        </TouchableOpacity>
 
-        <View style={dynamicStyles.formContainer}>
-          <View style={dynamicStyles.inputWrapper}>
-            <Text style={dynamicStyles.label}>E-MAIL</Text>
-            <TextInput
-              style={dynamicStyles.input}
-              placeholder="seu@email.com"
-              placeholderTextColor="#999"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              value={email}
-              onChangeText={setEmail}
-            />
-          </View>
-
-          <View style={dynamicStyles.inputWrapper}>
-            <Text style={dynamicStyles.label}>SENHA</Text>
-            <TextInput
-              style={dynamicStyles.input}
-              placeholder="Sua senha"
-              placeholderTextColor="#999"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
-          </View>
-
-          <TouchableOpacity
-            style={dynamicStyles.forgotPasswordButton}
-            onPress={handleForgotPassword}
-          >
-            <Text style={dynamicStyles.forgotPasswordText}>Esqueci minha senha</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              dynamicStyles.loginButton,
-              (!email || !password) && dynamicStyles.loginButtonDisabled,
-            ]}
-            onPress={handleLogin}
-            disabled={!email || !password}
-          >
-            <Text style={dynamicStyles.loginButtonText}>ENTRAR</Text>
-          </TouchableOpacity>
-        </View>
-
-        <StatusBar style="auto" />
-      </ScrollView>
+        {/* Opcional: Link para recuperação de senha */}
+        <TouchableOpacity 
+          style={styles.forgotPassword}
+          onPress={() => Alert.alert('Recuperar Senha', 'Para recuperar a sua senha, entre em contato com a equipe de suporte técnico de seu batalhão.')}
+        >
+          <Text style={styles.forgotPasswordText}>Esqueceu sua senha?</Text>
+        </TouchableOpacity>
+      </View>
     </KeyboardAvoidingView>
   );
 }
