@@ -2,10 +2,10 @@
 
 // Regiões organizadas em ordem alfabética
 export const REGIOES = [
-  { label: 'AGRESTE', value: 'AGRESTE' },
-  { label: 'RMR', value: 'RMR' },
-  { label: 'SERTÃO', value: 'SERTÃO' },
-  { label: 'ZONA DA MATA', value: 'ZONA DA MATA' },
+  { label: 'Agreste', value: 'Agreste' },
+  { label: 'Rmr', value: 'Rmr' },
+  { label: 'Sertão', value: 'Sertão' },
+  { label: 'Zona da mata', value: 'Zona da mata' },
 ];
 
 export const GRUPAMENTOS = [
@@ -16,11 +16,11 @@ export const GRUPAMENTOS = [
 ];
 
 export const NATUREZAS = [
-  { label: 'APH', value: 'APH' },
-  { label: 'INCÊNDIO', value: 'Incêndio' },
-  { label: 'PREVENÇÃO', value: 'PREVENÇÃO' },
-  { label: 'PRODUTOS PERIGOSOS', value: 'PRODUTOS PERIGOSOS' },
-  { label: 'SALVAMENTO', value: 'Resgate' },
+  { label: 'Aph', value: 'Aph' },
+  { label: 'Incêndio', value: 'Incêndio' },
+  { label: 'Prevenção', value: 'Prevenção' },
+  { label: 'Produtos perigosos', value: 'Produtos perigosos' },
+  { label: 'Salvamento', value: 'Resgate' },
 ];
 
 // Grupos de ocorrência organizados alfabeticamente
@@ -164,9 +164,9 @@ export const DESTINOS = [
 
 export const ACIONAMENTOS = [
   { label: 'CIODS', value: 'CIODS' },
-  { label: 'CO DO GRUPAMENTO', value: 'CO DO GRUPAMENTO' },
-  { label: 'OUTRO', value: 'OUTRO' },
-  { label: 'PESSOALMENTE', value: 'PESSOALMENTE' },
+  { label: 'CO do Grupamento', value: 'CO do grupamento' },
+  { label: 'Outro', value: 'Outro' },
+  { label: 'Pessoalmente', value: 'Pessoalmente' },
 ];
 
 export const MUNICIPIOS_PERNAMBUCO = [
@@ -357,12 +357,13 @@ export const MUNICIPIOS_PERNAMBUCO = [
 ];
 
 export const TIPOS_LOGRADOURO = [
-  { label: 'ALAMEDA', value: 'ALAMEDA' },
-  { label: 'AVENIDA', value: 'AVENIDA' },
-  { label: 'ESTRADA', value: 'ESTRADA' },
-  { label: 'RUA', value: 'RUA' },
-  { label: 'TRAVESSA', value: 'TRAVESSA' },
+  { label: 'Alameda', value: 'Alameda' },
+  { label: 'Avenida', value: 'Avenida' },
+  { label: 'Estrada', value: 'Estrada' },
+  { label: 'Rua', value: 'Rua' },
+  { label: 'Travessa', value: 'Travessa' },
 ];
+
 
 // Export padrão
 export default GRUPOS_OCORRENCIA;
