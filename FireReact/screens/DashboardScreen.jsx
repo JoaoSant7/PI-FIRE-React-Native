@@ -13,7 +13,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PieChart, BarChart } from "react-native-chart-kit";
 import { Ionicons } from "@expo/vector-icons";
-import { useOcorrencias } from "../hooks/useOcorrencias";
+// ✅ MUDANÇA: Importar o Context ao invés do hook
+import { useOcorrenciasContext } from "../contexts/OcorrenciasContext";
 
 import styles, { createDashboardStyles } from "../styles/DashboardStyles";
 import { useFontScale } from "../hooks/useFontScale";
@@ -23,15 +24,40 @@ const DashboardScreen = () => {
   const { scaleFont } = useFontScale();
   const dynamicStyles = React.useMemo(() => createDashboardStyles(scaleFont), [scaleFont]);
   const ScreenWidth = Dimensions.get("window").width;
+  
+  // ✅ MUDANÇA: Usar o Context
   const {
     ocorrencias,
     loading,
-    error,
-    lastSync,
-    refreshing,
-    atualizarDados,
-    recarregarDados,
-  } = useOcorrencias();
+    recarregarOcorrencias,
+  } = useOcorrenciasContext();
+
+  // Estado local para controlar refresh
+  const [refreshing, setRefreshing] = React.useState(false);
+  const [lastSync, setLastSync] = React.useState(new Date().toISOString());
+
+  // Função para atualizar dados (pull to refresh)
+  const atualizarDados = async () => {
+    setRefreshing(true);
+    try {
+      await recarregarOcorrencias();
+      setLastSync(new Date().toISOString());
+    } catch (error) {
+      console.error('Erro ao atualizar:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  // Função para recarregar dados (botão refresh)
+  const recarregarDados = async () => {
+    try {
+      await recarregarOcorrencias();
+      setLastSync(new Date().toISOString());
+    } catch (error) {
+      console.error('Erro ao recarregar:', error);
+    }
+  };
 
   const processarDadosDashboard = () => {
     if (!ocorrencias || ocorrencias.length === 0) {
@@ -40,18 +66,30 @@ const DashboardScreen = () => {
         emAndamento: "0",
         ocorrenciasAtendidas: "0",
         naoAtendidas: "0",
+        semAtuacao: "0",
+        canceladas: "0",
         tempoMedioResposta: "0min",
       };
     }
 
     const totalOcorrencias = ocorrencias.length;
-    const emAndamento = ocorrencias.filter(
-      (oc) => oc.status === "em_andamento" || oc.status === "pendente"
-    ).length;
+    
+    // ✅ Usar os status reais do sistema
     const atendidas = ocorrencias.filter(
-      (oc) => oc.status === "finalizada" || oc.status === "atendida"
+      (oc) => oc.status === "Atendidas"
     ).length;
-    const naoAtendidas = totalOcorrencias - atendidas;
+    
+    const naoAtendidas = ocorrencias.filter(
+      (oc) => oc.status === "Não Atendidas"
+    ).length;
+    
+    const semAtuacao = ocorrencias.filter(
+      (oc) => oc.status === "Sem Atuação"
+    ).length;
+    
+    const canceladas = ocorrencias.filter(
+      (oc) => oc.status === "Cancelada"
+    ).length;
 
     const tempos = ocorrencias
       .filter((o) => o.tempoResposta)
@@ -63,9 +101,11 @@ const DashboardScreen = () => {
 
     return {
       totalOcorrencias: totalOcorrencias.toString(),
-      emAndamento: emAndamento.toString(),
+      emAndamento: semAtuacao.toString(),
       ocorrenciasAtendidas: atendidas.toString(),
       naoAtendidas: naoAtendidas.toString(),
+      semAtuacao: semAtuacao.toString(),
+      canceladas: canceladas.toString(),
       tempoMedioResposta: `${tempoMedio}min`,
     };
   };
@@ -271,8 +311,8 @@ const DashboardScreen = () => {
   const pctAtendidas =
     ocorrencias?.length > 0
       ? Math.round(
-          (dashboardData.ocorrenciasAtendidas /
-            dashboardData.totalOcorrencias) *
+          (parseInt(dashboardData.ocorrenciasAtendidas) /
+            parseInt(dashboardData.totalOcorrencias)) *
             100
         )
       : 0;
@@ -316,13 +356,6 @@ const DashboardScreen = () => {
             {ocorrencias?.length || 0} ocorrências registradas
           </Text>
 
-          {error && (
-            <View style={dynamicStyles.errorBanner}>
-              <Ionicons name="warning" size={16} color="#fff" />
-              <Text style={dynamicStyles.errorText}>{error}</Text>
-            </View>
-          )}
-
           <View style={dynamicStyles.syncInfo}>
             <Ionicons name="time" size={12} color="#666" />
             <Text style={dynamicStyles.syncText}>
@@ -344,9 +377,9 @@ const DashboardScreen = () => {
 
             <View style={dynamicStyles.statItem}>
               <Text style={[dynamicStyles.statValue, { color: "#fb8c00" }]}>
-                {dashboardData.emAndamento}
+                {dashboardData.semAtuacao}
               </Text>
-              <Text style={dynamicStyles.statLabel}>Em Andamento</Text>
+              <Text style={dynamicStyles.statLabel}>Sem Atuação</Text>
             </View>
 
             <View style={dynamicStyles.statItem}>
@@ -361,6 +394,13 @@ const DashboardScreen = () => {
                 {dashboardData.naoAtendidas}
               </Text>
               <Text style={dynamicStyles.statLabel}>Não Atendidas</Text>
+            </View>
+
+            <View style={dynamicStyles.statItem}>
+              <Text style={[dynamicStyles.statValue, { color: "#9e9e9e" }]}>
+                {dashboardData.canceladas}
+              </Text>
+              <Text style={dynamicStyles.statLabel}>Canceladas</Text>
             </View>
 
             <View style={[dynamicStyles.statItem, dynamicStyles.fullWidth]}>

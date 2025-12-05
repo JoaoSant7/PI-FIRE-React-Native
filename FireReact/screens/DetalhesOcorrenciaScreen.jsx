@@ -17,9 +17,6 @@ export default function DetalhesOcorrenciaScreen({ route, navigation }) {
   // Função para obter a cor do status
   const getStatusColor = (status) => {
     switch (status) {
-      case "Em Andamento":
-      case "aberta":
-        return "#FF9800";
       case "Finalizada":
       case "finalizada":
         return "#4CAF50";

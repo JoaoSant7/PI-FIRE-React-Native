@@ -1,30 +1,143 @@
 // contexts/OcorrenciasContext.js
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OcorrenciasContext = createContext();
+const OCORRENCIAS_STORAGE_KEY = '@ocorrencias_data';
 
 export const OcorrenciasProvider = ({ children }) => {
   const [ocorrencias, setOcorrencias] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // ✅ CORREÇÃO - Função adicionarOcorrencia definida corretamente
-  const adicionarOcorrencia = (ocorrencia) => {
-    const novaOcorrencia = {
-      ...ocorrencia,
-      id: ocorrencia.id || `ocorrencia_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      dataRegistro: new Date().toISOString(),
-      // Garantir que fotos seja sempre um array
-      fotos: ocorrencia.fotos || (ocorrencia.foto ? [ocorrencia.foto.uri] : [])
-    };
-    
-    setOcorrencias(prev => [novaOcorrencia, ...prev]);
-    return Promise.resolve(novaOcorrencia);
+  // 🔄 Carregar ocorrências do AsyncStorage ao iniciar
+  useEffect(() => {
+    carregarOcorrencias();
+  }, []);
+
+  // 📥 Carregar ocorrências do AsyncStorage
+  const carregarOcorrencias = async () => {
+    try {
+      console.log('📥 Carregando ocorrências do AsyncStorage...');
+      const dataString = await AsyncStorage.getItem(OCORRENCIAS_STORAGE_KEY);
+      
+      if (dataString) {
+        const data = JSON.parse(dataString);
+        setOcorrencias(data.ocorrencias || []);
+        console.log('✅ Ocorrências carregadas:', data.ocorrencias?.length || 0);
+      } else {
+        console.log('⚠️ Nenhuma ocorrência encontrada, iniciando vazio');
+        setOcorrencias([]);
+      }
+    } catch (error) {
+      console.error('❌ Erro ao carregar ocorrências:', error);
+      setOcorrencias([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ✅ CORREÇÃO - Incluir a função no value do contexto
+  // 💾 Salvar ocorrências no AsyncStorage
+  const salvarOcorrencias = async (novasOcorrencias) => {
+    try {
+      const data = {
+        ocorrencias: novasOcorrencias,
+        timestamp: new Date().toISOString()
+      };
+      
+      await AsyncStorage.setItem(OCORRENCIAS_STORAGE_KEY, JSON.stringify(data));
+      console.log('💾 Ocorrências salvas no AsyncStorage:', novasOcorrencias.length);
+    } catch (error) {
+      console.error('❌ Erro ao salvar ocorrências:', error);
+      throw error;
+    }
+  };
+
+  // ➕ Adicionar nova ocorrência
+  const adicionarOcorrencia = async (ocorrencia) => {
+    try {
+      const novaOcorrencia = {
+        ...ocorrencia,
+        id: ocorrencia.id || `ocorrencia_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        dataRegistro: new Date().toISOString(),
+        dataCriacao: new Date().toISOString(),
+        dataAtualizacao: new Date().toISOString(),
+        sincronizado: false,
+        // Garantir que fotos seja sempre um array
+        fotos: ocorrencia.fotos || (ocorrencia.foto ? [ocorrencia.foto.uri] : [])
+      };
+      
+      console.log('➕ Adicionando ocorrência:', novaOcorrencia.id);
+      
+      // Atualizar estado local
+      const novasOcorrencias = [novaOcorrencia, ...ocorrencias];
+      setOcorrencias(novasOcorrencias);
+      
+      // Salvar no AsyncStorage
+      await salvarOcorrencias(novasOcorrencias);
+      
+      console.log('✅ Ocorrência adicionada com sucesso!');
+      return novaOcorrencia;
+    } catch (error) {
+      console.error('❌ Erro ao adicionar ocorrência:', error);
+      throw error;
+    }
+  };
+
+  // 🗑️ Remover ocorrência
+  const removerOcorrencia = async (id) => {
+    try {
+      console.log('🗑️ Removendo ocorrência:', id);
+      
+      const novasOcorrencias = ocorrencias.filter(oc => oc.id !== id);
+      setOcorrencias(novasOcorrencias);
+      
+      await salvarOcorrencias(novasOcorrencias);
+      
+      console.log('✅ Ocorrência removida com sucesso!');
+    } catch (error) {
+      console.error('❌ Erro ao remover ocorrência:', error);
+      throw error;
+    }
+  };
+
+  // ✏️ Atualizar ocorrência
+  const atualizarOcorrencia = async (id, dadosAtualizados) => {
+    try {
+      console.log('✏️ Atualizando ocorrência:', id);
+      
+      const novasOcorrencias = ocorrencias.map(oc => 
+        oc.id === id 
+          ? { 
+              ...oc, 
+              ...dadosAtualizados, 
+              dataAtualizacao: new Date().toISOString() 
+            }
+          : oc
+      );
+      
+      setOcorrencias(novasOcorrencias);
+      await salvarOcorrencias(novasOcorrencias);
+      
+      console.log('✅ Ocorrência atualizada com sucesso!');
+    } catch (error) {
+      console.error('❌ Erro ao atualizar ocorrência:', error);
+      throw error;
+    }
+  };
+
+  // 🔄 Recarregar ocorrências
+  const recarregarOcorrencias = async () => {
+    await carregarOcorrencias();
+  };
+
   const value = {
     ocorrencias,
+    loading,
     adicionarOcorrencia,
-    // incluir outras funções se necessário
+    removerOcorrencia,
+    atualizarOcorrencia,
+    recarregarOcorrencias,
+    carregarOcorrencias,
   };
 
   return (
