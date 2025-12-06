@@ -117,6 +117,32 @@ export const createEditarOcorrenciaStyles = (scaleFont) => {
       fontWeight: "600",
       textAlign: "center",
     },
+    // Novos estilos para seções e switches
+    sectionHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginTop: 24,
+      marginBottom: 16,
+      paddingBottom: 8,
+      borderBottomWidth: 2,
+      borderBottomColor: "#bc010c",
+      gap: 10,
+    },
+    sectionTitle: {
+      fontSize: scaleFont(FONT_SIZES.lg),
+      fontWeight: "bold",
+      color: "#bc010c",
+    },
+    switchContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 20,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      backgroundColor: "#f8f8f8",
+      borderRadius: 8,
+    },
   });
 };
 
@@ -231,6 +257,32 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZES.base,
     fontWeight: "600",
     textAlign: "center",
+  },
+  // Novos estilos para seções e switches
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 24,
+    marginBottom: 16,
+    paddingBottom: 8,
+    borderBottomWidth: 2,
+    borderBottomColor: "#bc010c",
+    gap: 10,
+  },
+  sectionTitle: {
+    fontSize: FONT_SIZES.lg,
+    fontWeight: "bold",
+    color: "#bc010c",
+  },
+  switchContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: "#f8f8f8",
+    borderRadius: 8,
   },
 });
 
